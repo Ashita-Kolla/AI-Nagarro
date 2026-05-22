@@ -1,0 +1,7 @@
+.env
+
+venv
+venv
+week2/rag-chatbot/__pycache__
+week1/mini-project/__pycache__
+week2/rag-chatbot/chroma_db/
