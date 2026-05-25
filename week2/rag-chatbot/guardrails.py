@@ -2,9 +2,7 @@ import re
 import json
 from pydantic import BaseModel, Field, ValidationError
 
-# ==========================================
-# SIMPLE PYDANTIC SCHEMAS
-# ==========================================
+# PYDANTIC SCHEMAS
 class AnswerSchema(BaseModel):
     answer: str = Field(description="The factual, concise answer based only on the context.")
     grounded: bool = Field(description="True if the answer is fully supported by the context, False otherwise.")
@@ -23,9 +21,7 @@ class QuizSchema(BaseModel):
     questions: list[QuizQuestion] = Field(description="List of 3 generated questions.")
 
 
-# ==========================================
 # INPUT GUARDRAILS
-# ==========================================
 UNSAFE_KEYWORDS = [
     "hack", "bypass", "illegal", "exploit", "malware", "virus", "bomb", "weapon", "kill", "harm", 
     "suicide", "hate", "racist", "sexist", "violence", "porn", "abuse", "steal", "drugs"
@@ -47,9 +43,7 @@ def check_input_guardrail(query: str) -> tuple[bool, str]:
     return True, ""
 
 
-# ==========================================
 # IP & SENSITIVE INFORMATION REDACTION
-# ==========================================
 def redact_sensitive_ip(text: str) -> str:
     """Detects and redacts sensitive Intellectual Property (IP), credentials, passwords,
 
@@ -93,9 +87,7 @@ def redact_sensitive_ip(text: str) -> str:
     return text
 
 
-# ==========================================
 # STRICT SOURCE GROUNDING CHECK
-# ==========================================
 def check_source_grounding(source: str, context: str) -> bool:
     """Checks if a cited source sentence physically exists in the retrieved context."""
     # Strip punctuation and spaces to perform clean comparison
@@ -106,9 +98,7 @@ def check_source_grounding(source: str, context: str) -> bool:
     return clean_source in clean_context
 
 
-# ==========================================
 # RESILIENT LLM OUTPUT PARSERS
-# ==========================================
 def parse_and_validate_answer(raw_text: str, context: str) -> AnswerSchema:
     """Parses raw text into AnswerSchema and applies IP redaction & source grounding checks."""
     raw_text = redact_sensitive_ip(raw_text)

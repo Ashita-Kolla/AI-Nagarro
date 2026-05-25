@@ -4,3 +4,8 @@ venv
 week2/rag-chatbot/__pycache__
 week1/mini-project/__pycache__
 week2/rag-chatbot/chroma_db/
+week3/trixie_wellness/llm/__pycache__/
+week3/trixie_wellness/agents/__pycache__/
+week3/trixie_wellness/graph/__pycache__/
+week3/trixie_wellness/__pycache__/
+week3/trixie_wellness/tools/__pycache__/

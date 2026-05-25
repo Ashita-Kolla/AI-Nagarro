@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trixie AI - Wellness Assistant</title>
+    <meta name="description" content="Trixie AI — AI-powered workplace wellness support with MCP tool integrations for breathing exercises, resource lookup, and stress tips.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon"></div>
+            <div>
+                <h2 class="sidebar-title">Trixie AI</h2>
+                <p class="sidebar-subtitle">Enterprise Wellness</p>
+            </div>
+        </div>
+
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                Wellness Check-in
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="status-indicator">
+                <span class="status-dot"></span>
+                <span>System: Online</span>
+            </div>
+            <div class="model-info">Local TinyLlama 1.1B + MCP Tools</div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1 class="header-title">Trixie AI</h1>
+            <p class="header-subtitle">Employee Wellness Support Assistant</p>
+        </div>
+
+        <div class="expander" id="howItWorks">
+            <div class="expander-header" onclick="toggleExpander()">
+                <span>How does Trixie work?</span>
+                <span id="expanderArrow">+</span>
+            </div>
+            <div class="expander-content">
+                <p>Trixie routes your input through 3 AI agents, then uses <strong>MCP-style tool calls</strong> to enrich the response:</p>
+                <table class="expander-table">
+                    <thead>
+                        <tr><th>Step</th><th>Agent / Tool</th><th>Job</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><strong>Emotion Agent</strong></td>
+                            <td>Detects your emotion &amp; severity (low / medium / high)</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><strong>Context Agent</strong></td>
+                            <td>Identifies the root cause (workload, meetings, personal …)</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><strong>Recommendation Agent</strong></td>
+                            <td>Decides which tools to call, fetches structured data, blends with LLM output</td>
+                        </tr>
+                        <tr class="mcp-row">
+                            <td>↳</td>
+                            <td><code>get_breathing_exercise()</code></td>
+                            <td>Returns a guided breathwork routine matched to severity</td>
+                        </tr>
+                        <tr class="mcp-row">
+                            <td>↳</td>
+                            <td><code>lookup_wellness_resources()</code></td>
+                            <td>Fetches curated strategies for the stress cause</td>
+                        </tr>
+                        <tr class="mcp-row">
+                            <td>↳</td>
+                            <td><code>get_stress_tip()</code></td>
+                            <td>Returns a motivational insight for high-severity or unclear stress</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mode-toggle">
+            <button class="mode-btn active" id="btnChat" onclick="setMode('chat')">Describe in your own words</button>
+            <button class="mode-btn" id="btnForm" onclick="setMode('form')">Quick stress check-in form</button>
+        </div>
+
+        <div class="input-panel">
+            <div id="chatInputs">
+                <div class="form-group">
+                    <label class="form-label" for="chatText">How are you feeling today?</label>
+                    <textarea class="textarea-input" id="chatText" placeholder="e.g. I am really stressed - I have 3 deadlines this week and my manager keeps adding tasks..." oninput="validateInput()"></textarea>
+                </div>
+            </div>
+
+            <div id="formInputs" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Rate your current stress level</label>
+                    <div class="slider-container">
+                        <div class="slider-option" id="stressLow" onclick="selectStress('Low')">Low</div>
+                        <div class="slider-option selected" id="stressMedium" onclick="selectStress('Medium')">Medium</div>
+                        <div class="slider-option" id="stressHigh" onclick="selectStress('High')">High</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="formCause">What's causing this? (optional)</label>
+                    <input class="text-input" type="text" id="formCause" placeholder="e.g. back-to-back meetings, too many tasks, personal issues..." oninput="validateInput()">
+                </div>
+            </div>
+
+            <button class="action-btn" id="submitBtn" onclick="runPipeline()" disabled>Get Wellness Support</button>
+        </div>
+
+        <div class="pipeline-status" id="pipelineStatus">
+            <h3 class="pipeline-title">Running Agent Pipeline...</h3>
+            <div class="pipeline-steps">
+                <div class="step-card" id="step1">
+                    <div class="step-name">Agent 1</div>
+                    <div class="step-desc">Emotion Analyzer</div>
+                    <div class="step-state" id="step1State">Waiting...</div>
+                </div>
+                <div class="step-card" id="step2">
+                    <div class="step-name">Agent 2</div>
+                    <div class="step-desc">Context Analyzer</div>
+                    <div class="step-state" id="step2State">Waiting...</div>
+                </div>
+                <div class="step-card" id="step3">
+                    <div class="step-name">Agent 3</div>
+                    <div class="step-desc">Recommendations + Tools</div>
+                    <div class="step-state" id="step3State">Waiting...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <h3 class="results-title">Trixie's Analysis &amp; Support</h3>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Emotion Detected</div>
+                    <div class="metric-value" id="resEmotion">Stressed</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Severity</div>
+                    <div class="metric-value" id="resSeverity">Medium</div>
+                </div>
+            </div>
+
+            <div class="context-card">
+                <div class="context-title" id="resCause">Root Cause: Workload</div>
+                <p class="context-summary" id="resSummary">Employee is overwhelmed by too many tasks.</p>
+            </div>
+
+            <div class="recs-container">
+                <h4 class="recs-title">Personalized Wellness Recommendations</h4>
+                <div id="recsList"></div>
+            </div>
+
+
+
+            <div class="footer-caption"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'chat';
+        let selectedStress = 'Medium';
+
+        function toggleExpander() {
+            const exp = document.getElementById('howItWorks');
+            const arrow = document.getElementById('expanderArrow');
+            if (exp.classList.contains('open')) {
+                exp.classList.remove('open');
+                arrow.textContent = '+';
+            } else {
+                exp.classList.add('open');
+                arrow.textContent = '-';
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.getElementById('btnChat').classList.toggle('active', mode === 'chat');
+            document.getElementById('btnForm').classList.toggle('active', mode === 'form');
+            document.getElementById('chatInputs').style.display = mode === 'chat' ? 'block' : 'none';
+            document.getElementById('formInputs').style.display = mode === 'form' ? 'block' : 'none';
+            validateInput();
+        }
+
+        function selectStress(level) {
+            selectedStress = level;
+            document.getElementById('stressLow').classList.toggle('selected', level === 'Low');
+            document.getElementById('stressMedium').classList.toggle('selected', level === 'Medium');
+            document.getElementById('stressHigh').classList.toggle('selected', level === 'High');
+            validateInput();
+        }
+
+        function validateInput() {
+            const btn = document.getElementById('submitBtn');
+            if (currentMode === 'chat') {
+                const text = document.getElementById('chatText').value.trim();
+                btn.disabled = text.length === 0;
+            } else {
+                btn.disabled = false;
+            }
+        }
+
+
+
+        /* ── Pipeline ────────────────────────────────────────────────── */
+
+        async function runPipeline() {
+            const btn            = document.getElementById('submitBtn');
+            const pipelineStatus = document.getElementById('pipelineStatus');
+            const resultsSection = document.getElementById('resultsSection');
+
+            btn.disabled = true;
+            resultsSection.style.display = 'none';
+            pipelineStatus.style.display = 'block';
+
+            const step1      = document.getElementById('step1');
+            const step2      = document.getElementById('step2');
+            const step3      = document.getElementById('step3');
+            const step1State = document.getElementById('step1State');
+            const step2State = document.getElementById('step2State');
+            const step3State = document.getElementById('step3State');
+
+            step1.className = 'step-card active';
+            step2.className = 'step-card';
+            step3.className = 'step-card';
+            step1State.textContent = 'Processing...';
+            step2State.textContent = 'Waiting...';
+            step3State.textContent = 'Waiting...';
+
+            let userInput = '';
+            let stressLevel = '';
+
+            if (currentMode === 'chat') {
+                userInput = document.getElementById('chatText').value.trim();
+            } else {
+                userInput = `I am experiencing ${selectedStress.toLowerCase()} stress at work.`;
+                const extra = document.getElementById('formCause').value.trim();
+                if (extra) userInput += ` ${extra}`;
+                stressLevel = selectedStress.toLowerCase();
+            }
+
+            try {
+                const response = await fetch('/api/checkin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_input: userInput, stress_level: stressLevel })
+                });
+
+                if (!response.ok) throw new Error('Pipeline request failed');
+                const result = await response.json();
+
+                step1.className = 'step-card done'; step1State.textContent = 'Done';
+                step2.className = 'step-card active'; step2State.textContent = 'Processing...';
+                await new Promise(r => setTimeout(r, 700));
+
+                step2.className = 'step-card done'; step2State.textContent = 'Done';
+                step3.className = 'step-card active'; step3State.textContent = 'Calling tools...';
+                await new Promise(r => setTimeout(r, 700));
+
+                step3.className = 'step-card done'; step3State.textContent = 'Done';
+
+                // ── Populate results ───────────────────────────────────
+                document.getElementById('resEmotion').textContent =
+                    result.emotion.charAt(0).toUpperCase() + result.emotion.slice(1);
+
+                const severityStr = result.severity.charAt(0).toUpperCase() + result.severity.slice(1);
+                document.getElementById('resSeverity').textContent = severityStr;
+
+                const causeStr = result.cause.replace('_', ' ');
+                document.getElementById('resCause').textContent =
+                    'Root Cause: ' + causeStr.charAt(0).toUpperCase() + causeStr.slice(1);
+                document.getElementById('resSummary').textContent = result.cause_summary;
+
+                const recsList = document.getElementById('recsList');
+                recsList.innerHTML = '';
+                result.recommendations.forEach((rec, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'rec-item';
+                    // Bold markdown (**text**) → <strong>
+                    const formatted = rec.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                         .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                    item.innerHTML = `<span class="rec-num">${idx + 1}.</span> ${formatted}`;
+                    recsList.appendChild(item);
+                });
+
+                await new Promise(r => setTimeout(r, 300));
+                resultsSection.style.display = 'block';
+                resultsSection.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                step1.className = step2.className = step3.className = 'step-card';
+                step1State.textContent = step2State.textContent = step3State.textContent = 'Error';
+                alert('An error occurred during pipeline execution. Please verify your local LLM model state and try again.');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
