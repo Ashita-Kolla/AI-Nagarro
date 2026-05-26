@@ -16,6 +16,14 @@ from tools.wellness_tools import (
     lookup_wellness_resources,
     get_stress_tip,
 )
+from tools.google_docs_tool import (
+    save_journal_entry,
+    get_journal_history,
+)
+from tools.calendar_tool import (
+    create_calendar_reminder,
+    get_calendar_reminders,
+)
 
 # ---------------------------------------------------------------------------
 # Tool Manifest  (mirrors what an MCP server's tools/list response looks like)
@@ -74,6 +82,69 @@ TOOL_MANIFEST = [
         },
         "callable": get_stress_tip,
     },
+    {
+        "name": "save_journal_entry",
+        "description": (
+            "Saves a daily wellness journal entry to Google Docs for reflection and record keeping."
+        ),
+        "parameters": {
+            "content": {
+                "type": "string",
+                "description": "The content of the journal reflection.",
+            },
+            "emotion": {
+                "type": "string",
+                "description": "The user's detected emotion.",
+            },
+            "severity": {
+                "type": "string",
+                "description": "The user's stress severity level.",
+            },
+            "cause": {
+                "type": "string",
+                "description": "The identified root cause of stress.",
+            },
+        },
+        "callable": save_journal_entry,
+    },
+    {
+        "name": "get_journal_history",
+        "description": (
+            "Retrieves previous wellness journal entries from Google Docs to analyze emotional patterns."
+        ),
+        "parameters": {},
+        "callable": get_journal_history,
+    },
+    {
+        "name": "create_calendar_reminder",
+        "description": (
+            "Creates a wellness-related reminder in the calendar/reminder database."
+        ),
+        "parameters": {
+            "activity": {
+                "type": "string",
+                "enum": ["meditation", "hydration", "sleep", "journaling", "exercise"],
+                "description": "The wellness activity to remind the user about.",
+            },
+            "time": {
+                "type": "string",
+                "description": "The time of day in HH:MM format.",
+            },
+            "frequency": {
+                "type": "string",
+                "description": "How often the reminder should repeat (e.g. 'daily', 'every evening').",
+            }
+        },
+        "callable": create_calendar_reminder,
+    },
+    {
+        "name": "get_calendar_reminders",
+        "description": (
+            "Retrieves all scheduled calendar reminders from the persistent database."
+        ),
+        "parameters": {},
+        "callable": get_calendar_reminders,
+    },
 ]
 
 # Index by name for quick lookup
@@ -105,7 +176,7 @@ def call_tool(name: str, **kwargs) -> dict:
     return tool["callable"](**kwargs)
 
 
-def select_tools_for(cause: str, severity: str) -> list[str]:
+def select_tools_for(cause: str, severity: str, user_input: str = "") -> list[str]:
     """
     Agent decision function: given cause and severity, decide which tools to call.
 
@@ -126,5 +197,13 @@ def select_tools_for(cause: str, severity: str) -> list[str]:
     # Add a motivational tip for high severity or when cause is unclear
     if severity == "high" or cause == "unclear":
         tools_to_call.append("get_stress_tip")
+
+    # Automatically save check-ins as journal entries
+    tools_to_call.append("save_journal_entry")
+
+    # Dynamically select create_calendar_reminder if the user input contains reminder/schedule/calendar intent
+    ui_lower = user_input.lower()
+    if any(k in ui_lower for k in ["remind", "schedule", "calendar", "reminder", "alarm"]):
+        tools_to_call.append("create_calendar_reminder")
 
     return tools_to_call

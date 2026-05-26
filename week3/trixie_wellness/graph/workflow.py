@@ -15,6 +15,9 @@ class WellnessState(TypedDict):
     recommendations: List[str]
     tools_used:      List[str]   # MCP: which tools the agent called
     tool_results:    List[Any]   # MCP: raw structured results from each tool
+    journal_history:  List[Any]   # Historical journal entries
+    emotional_pattern: str        # Summary of user's emotional patterns
+    reminders:       List[Any]   # MCP: scheduled wellness reminders
 
 
 def _build_graph() -> object:
@@ -33,6 +36,14 @@ _compiled_graph = _build_graph()
 
 
 def run_pipeline(user_input: str, stress_level: str = "") -> WellnessState:
+    from tools.google_docs_tool import get_journal_history
+    from tools.calendar_tool import get_calendar_reminders
+    history_res = get_journal_history()
+    history = history_res.get("entries", [])
+    
+    reminders_res = get_calendar_reminders()
+    rem_list = reminders_res.get("reminders", [])
+    
     initial_state: WellnessState = {
         "user_input":      user_input,
         "stress_level":    stress_level,
@@ -43,5 +54,8 @@ def run_pipeline(user_input: str, stress_level: str = "") -> WellnessState:
         "recommendations": [],
         "tools_used":      [],
         "tool_results":    [],
+        "journal_history":  history,
+        "emotional_pattern": "",
+        "reminders":       rem_list,
     }
     return _compiled_graph.invoke(initial_state)

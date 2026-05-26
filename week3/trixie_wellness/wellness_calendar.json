@@ -1,0 +1,42 @@
+[
+  {
+    "id": "rem_ffa5041b",
+    "activity": "hydration",
+    "time": "14:07",
+    "frequency": "daily",
+    "active": true,
+    "timestamp": "2026-05-26T14:05:20.489429"
+  },
+  {
+    "id": "rem_54702268",
+    "activity": "meditation",
+    "time": "14:10",
+    "frequency": "daily",
+    "active": true,
+    "timestamp": "2026-05-26T14:10:17.282911"
+  },
+  {
+    "id": "rem_8cdc45c8",
+    "activity": "sleep",
+    "time": "14:12",
+    "frequency": "daily",
+    "active": true,
+    "timestamp": "2026-05-26T14:10:41.275971"
+  },
+  {
+    "id": "rem_c04baf5b",
+    "activity": "exercise",
+    "time": "14:25",
+    "frequency": "daily",
+    "active": true,
+    "timestamp": "2026-05-26T14:23:26.710820"
+  },
+  {
+    "id": "rem_43508d47",
+    "activity": "journaling",
+    "time": "14:32",
+    "frequency": "daily",
+    "active": true,
+    "timestamp": "2026-05-26T14:31:22.971073"
+  }
+]

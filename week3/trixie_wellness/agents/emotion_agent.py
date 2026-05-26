@@ -87,6 +87,13 @@ def run_emotion_agent(state: dict) -> dict:
     if stress_level:
         message += f"\nUser self-reported stress level from form: {stress_level}"
 
+    journal_history = state.get("journal_history", [])
+    if journal_history:
+        history_context = "\n\nHistorical journal entries for context:\n"
+        for entry in journal_history[-3:]:
+            history_context += f"- [{entry.get('timestamp')}] Emotion: {entry.get('emotion')}, Severity: {entry.get('severity')}, Cause: {entry.get('cause')}. Reflection: {entry.get('content')}\n"
+        message += history_context
+
     try:
         raw = chat(
             system_prompt=SYSTEM_PROMPT,

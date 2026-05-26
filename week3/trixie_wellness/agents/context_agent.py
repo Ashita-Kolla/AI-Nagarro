@@ -86,6 +86,14 @@ def run_context_agent(state: dict) -> dict:
         f"Detected emotion: {emotion} | Severity: {severity}"
     )
 
+    journal_history = state.get("journal_history", [])
+    if journal_history:
+        history_context = "\n\nHistorical journal entries for context:\n"
+        for entry in journal_history[-3:]:
+            history_context += f"- [{entry.get('timestamp')}] Emotion: {entry.get('emotion')}, Severity: {entry.get('severity')}, Cause: {entry.get('cause')}. Reflection: {entry.get('content')}\n"
+        history_context += "\nNote: If there is a repeating emotional or stress pattern, summarize it naturally in the single-sentence summary."
+        message += history_context
+
     try:
         raw = chat(
             system_prompt=SYSTEM_PROMPT,

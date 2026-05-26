@@ -24,9 +24,17 @@
         </div>
 
         <div class="sidebar-menu">
-            <a href="#" class="menu-item active">
+            <a href="#" class="menu-item active" id="menuCheckin" onclick="switchTab('checkin')">
                 <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                 Wellness Check-in
+            </a>
+            <a href="#" class="menu-item" id="menuJournal" onclick="switchTab('journal')">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Google Docs Journal
+            </a>
+            <a href="#" class="menu-item" id="menuCalendar" onclick="switchTab('calendar')">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Wellness Calendar
             </a>
         </div>
 
@@ -45,138 +53,384 @@
             <p class="header-subtitle">Employee Wellness Support Assistant</p>
         </div>
 
-        <div class="expander" id="howItWorks">
-            <div class="expander-header" onclick="toggleExpander()">
-                <span>How does Trixie work?</span>
-                <span id="expanderArrow">+</span>
-            </div>
-            <div class="expander-content">
-                <p>Trixie routes your input through 3 AI agents, then uses <strong>MCP-style tool calls</strong> to enrich the response:</p>
-                <table class="expander-table">
-                    <thead>
-                        <tr><th>Step</th><th>Agent / Tool</th><th>Job</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><strong>Emotion Agent</strong></td>
-                            <td>Detects your emotion &amp; severity (low / medium / high)</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><strong>Context Agent</strong></td>
-                            <td>Identifies the root cause (workload, meetings, personal …)</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td><strong>Recommendation Agent</strong></td>
-                            <td>Decides which tools to call, fetches structured data, blends with LLM output</td>
-                        </tr>
-                        <tr class="mcp-row">
-                            <td>↳</td>
-                            <td><code>get_breathing_exercise()</code></td>
-                            <td>Returns a guided breathwork routine matched to severity</td>
-                        </tr>
-                        <tr class="mcp-row">
-                            <td>↳</td>
-                            <td><code>lookup_wellness_resources()</code></td>
-                            <td>Fetches curated strategies for the stress cause</td>
-                        </tr>
-                        <tr class="mcp-row">
-                            <td>↳</td>
-                            <td><code>get_stress_tip()</code></td>
-                            <td>Returns a motivational insight for high-severity or unclear stress</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div class="mode-toggle">
-            <button class="mode-btn active" id="btnChat" onclick="setMode('chat')">Describe in your own words</button>
-            <button class="mode-btn" id="btnForm" onclick="setMode('form')">Quick stress check-in form</button>
-        </div>
-
-        <div class="input-panel">
-            <div id="chatInputs">
-                <div class="form-group">
-                    <label class="form-label" for="chatText">How are you feeling today?</label>
-                    <textarea class="textarea-input" id="chatText" placeholder="e.g. I am really stressed - I have 3 deadlines this week and my manager keeps adding tasks..." oninput="validateInput()"></textarea>
+        <div id="viewCheckin" class="view-pane">
+            <div class="expander" id="howItWorks">
+                <div class="expander-header" onclick="toggleExpander()">
+                    <span>How does Trixie work?</span>
+                    <span id="expanderArrow">+</span>
+                </div>
+                <div class="expander-content">
+                    <p>Trixie routes your input through 3 AI agents, then uses <strong>MCP-style tool calls</strong> to enrich the response:</p>
+                    <table class="expander-table">
+                        <thead>
+                            <tr><th>Step</th><th>Agent / Tool</th><th>Job</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Emotion Agent</strong></td>
+                                <td>Detects your emotion &amp; severity (low / medium / high)</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>Context Agent</strong></td>
+                                <td>Identifies the root cause (workload, meetings, personal …)</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>Recommendation Agent</strong></td>
+                                <td>Decides which tools to call, fetches structured data, blends with LLM output</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>get_breathing_exercise()</code></td>
+                                <td>Returns a guided breathwork routine matched to severity</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>lookup_wellness_resources()</code></td>
+                                <td>Fetches curated strategies for the stress cause</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>get_stress_tip()</code></td>
+                                <td>Returns a motivational insight for high-severity or unclear stress</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>save_journal_entry()</code></td>
+                                <td>Saves daily journal reflections securely to Google Docs [NEW]</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>get_journal_history()</code></td>
+                                <td>Retrieves past journal entries to recognize emotional patterns [NEW]</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>create_calendar_reminder()</code></td>
+                                <td>Creates recurring calendar reminders (meditation, exercise, hydration …) [NEW]</td>
+                            </tr>
+                            <tr class="mcp-row">
+                                <td>↳</td>
+                                <td><code>get_calendar_reminders()</code></td>
+                                <td>Retrieves wellness reminders for the interactive planner [NEW]</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <div id="formInputs" style="display: none;">
-                <div class="form-group">
-                    <label class="form-label">Rate your current stress level</label>
-                    <div class="slider-container">
-                        <div class="slider-option" id="stressLow" onclick="selectStress('Low')">Low</div>
-                        <div class="slider-option selected" id="stressMedium" onclick="selectStress('Medium')">Medium</div>
-                        <div class="slider-option" id="stressHigh" onclick="selectStress('High')">High</div>
+            <div class="mode-toggle">
+                <button class="mode-btn active" id="btnChat" onclick="setMode('chat')">Describe in your own words</button>
+                <button class="mode-btn" id="btnForm" onclick="setMode('form')">Quick stress check-in form</button>
+            </div>
+
+            <div class="input-panel">
+                <div id="chatInputs">
+                    <div class="form-group">
+                        <label class="form-label" for="chatText">How are you feeling today?</label>
+                        <textarea class="textarea-input" id="chatText" placeholder="e.g. I am really stressed - I have 3 deadlines this week and my manager keeps adding tasks..." oninput="validateInput()"></textarea>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="form-label" for="formCause">What's causing this? (optional)</label>
-                    <input class="text-input" type="text" id="formCause" placeholder="e.g. back-to-back meetings, too many tasks, personal issues..." oninput="validateInput()">
+
+                <div id="formInputs" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Rate your current stress level</label>
+                        <div class="slider-container">
+                            <div class="slider-option" id="stressLow" onclick="selectStress('Low')">Low</div>
+                            <div class="slider-option selected" id="stressMedium" onclick="selectStress('Medium')">Medium</div>
+                            <div class="slider-option" id="stressHigh" onclick="selectStress('High')">High</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="formCause">What's causing this? (optional)</label>
+                        <input class="text-input" type="text" id="formCause" placeholder="e.g. back-to-back meetings, too many tasks, personal issues..." oninput="validateInput()">
+                    </div>
+                </div>
+
+                <button class="action-btn" id="submitBtn" onclick="runPipeline()" disabled>Get Wellness Support</button>
+            </div>
+
+            <div class="pipeline-status" id="pipelineStatus">
+                <h3 class="pipeline-title">Running Agent Pipeline...</h3>
+                <div class="pipeline-steps">
+                    <div class="step-card" id="step1">
+                        <div class="step-name">Agent 1</div>
+                        <div class="step-desc">Emotion Analyzer</div>
+                        <div class="step-state" id="step1State">Waiting...</div>
+                    </div>
+                    <div class="step-card" id="step2">
+                        <div class="step-name">Agent 2</div>
+                        <div class="step-desc">Context Analyzer</div>
+                        <div class="step-state" id="step2State">Waiting...</div>
+                    </div>
+                    <div class="step-card" id="step3">
+                        <div class="step-name">Agent 3</div>
+                        <div class="step-desc">Recommendations + Tools</div>
+                        <div class="step-state" id="step3State">Waiting...</div>
+                    </div>
                 </div>
             </div>
 
-            <button class="action-btn" id="submitBtn" onclick="runPipeline()" disabled>Get Wellness Support</button>
+            <div class="results-section" id="resultsSection">
+                <h3 class="results-title">Trixie's Analysis &amp; Support</h3>
+
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Emotion Detected</div>
+                        <div class="metric-value" id="resEmotion">Stressed</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Severity</div>
+                        <div class="metric-value" id="resSeverity">Medium</div>
+                    </div>
+                </div>
+
+                <div class="context-card">
+                    <div class="context-title" id="resCause">Root Cause: Workload</div>
+                    <p class="context-summary" id="resSummary">Employee is overwhelmed by too many tasks.</p>
+                </div>
+
+                <div class="recs-container">
+                    <h4 class="recs-title">Personalized Wellness Recommendations</h4>
+                    <div id="recsList"></div>
+                </div>
+
+                <!-- MCP Tool Calls Log Visual Panel -->
+                <div class="mcp-panel" id="mcpPanel">
+                    <div class="mcp-panel-header" onclick="toggleMcpPanel()">
+                        <span>🛠️ MCP Tool Calls Log</span>
+                        <span id="mcpArrow">+</span>
+                    </div>
+                    <div class="mcp-panel-content" id="mcpContent">
+                        <div id="mcpLogList"></div>
+                    </div>
+                </div>
+
+                <div class="footer-caption"></div>
+            </div>
         </div>
 
-        <div class="pipeline-status" id="pipelineStatus">
-            <h3 class="pipeline-title">Running Agent Pipeline...</h3>
-            <div class="pipeline-steps">
-                <div class="step-card" id="step1">
-                    <div class="step-name">Agent 1</div>
-                    <div class="step-desc">Emotion Analyzer</div>
-                    <div class="step-state" id="step1State">Waiting...</div>
+        <div id="viewJournal" class="view-pane" style="display: none;">
+            <div class="google-doc-container">
+                <!-- Header with document name and menu -->
+                <div class="google-doc-header">
+                    <div class="google-doc-logo-and-title">
+                        <div class="google-doc-blue-icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                            </svg>
+                        </div>
+                        <div class="google-doc-details">
+                            <div class="google-doc-title-row">
+                                <input type="text" class="google-doc-name-input" value="My Trixie Wellness Journal" readonly>
+                                <span class="google-doc-status-cloud">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="cloud-icon">
+                                        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+                                    </svg>
+                                    Saved to Drive
+                                </span>
+                            </div>
+                            <div class="google-doc-menubar">
+                                <span>File</span>
+                                <span>Edit</span>
+                                <span>View</span>
+                                <span>Insert</span>
+                                <span>Format</span>
+                                <span>Tools</span>
+                                <span>Extensions</span>
+                                <span>Help</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="google-doc-share-btn">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                        </svg>
+                        Share
+                    </div>
                 </div>
-                <div class="step-card" id="step2">
-                    <div class="step-name">Agent 2</div>
-                    <div class="step-desc">Context Analyzer</div>
-                    <div class="step-state" id="step2State">Waiting...</div>
+
+                <!-- Google Docs Toolbar Mockup -->
+                <div class="google-doc-toolbar">
+                    <button class="toolbar-btn" title="Undo">↶</button>
+                    <button class="toolbar-btn" title="Redo">↷</button>
+                    <button class="toolbar-btn" title="Print">🖨️</button>
+                    <button class="toolbar-btn" title="Spelling and grammar check">✓</button>
+                    <div class="toolbar-separator"></div>
+                    <select class="toolbar-select" title="Zoom"><option>100%</option><option>90%</option><option>75%</option></select>
+                    <div class="toolbar-separator"></div>
+                    <select class="toolbar-select font-family-select" title="Font"><option>Arial</option><option>Times New Roman</option><option>Courier New</option></select>
+                    <div class="toolbar-separator"></div>
+                    <button class="toolbar-btn bold-btn" title="Bold">B</button>
+                    <button class="toolbar-btn italic-btn" title="Italic">I</button>
+                    <button class="toolbar-btn underline-btn" title="Underline">U</button>
+                    <button class="toolbar-btn" title="Text color" style="color: #ea4335;">A</button>
+                    <div class="toolbar-separator"></div>
+                    <button class="toolbar-btn" title="Align Left">⯵</button>
+                    <button class="toolbar-btn" title="Align Center">⯶</button>
+                    <button class="toolbar-btn" title="Line Spacing">⯹</button>
                 </div>
-                <div class="step-card" id="step3">
-                    <div class="step-name">Agent 3</div>
-                    <div class="step-desc">Recommendations + Tools</div>
-                    <div class="step-state" id="step3State">Waiting...</div>
+
+                <!-- The Google Doc Page Canvas -->
+                <div class="google-doc-page-canvas">
+                    <div class="google-doc-quick-entry">
+                        <h4 class="quick-entry-title">Write a new reflection entry directly into this Google Doc:</h4>
+                        <textarea class="quick-entry-textarea" id="journalDirectText" placeholder="How has your day been? Write down any thoughts, stress triggers, or things you're grateful for..."></textarea>
+                        <div class="quick-entry-footer">
+                            <span class="quick-entry-help">Trixie's multi-agent workflow will process it to update your wellness plan.</span>
+                            <button class="quick-entry-btn" id="saveJournalBtn" onclick="saveDirectJournalEntry()">Sync reflection to Doc</button>
+                        </div>
+                    </div>
+                    
+                    <div class="google-doc-paper">
+                        <div class="google-doc-paper-header">Trixie AI Wellness Support Journal</div>
+                        <div class="google-doc-paper-divider"></div>
+                        <div id="googleDocEntriesList">
+                            <!-- Entries will be loaded here dynamically -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="results-section" id="resultsSection">
-            <h3 class="results-title">Trixie's Analysis &amp; Support</h3>
-
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Emotion Detected</div>
-                    <div class="metric-value" id="resEmotion">Stressed</div>
+        <div id="viewCalendar" class="view-pane" style="display: none;">
+            <div class="calendar-workspace">
+                <!-- Left Sidebar of Calendar Workspace -->
+                <div class="calendar-sidebar">
+                    <div class="calendar-sidebar-section">
+                        <h4 class="calendar-sidebar-title">Categories</h4>
+                        <div class="category-filters">
+                            <button class="category-filter active" data-category="all" onclick="filterCalendar('all')">
+                                <span class="filter-dot all-dot"></span> All
+                            </button>
+                            <button class="category-filter" data-category="meditation" onclick="filterCalendar('meditation')">
+                                <span class="filter-dot meditation-dot"></span> Meditation
+                            </button>
+                            <button class="category-filter" data-category="hydration" onclick="filterCalendar('hydration')">
+                                <span class="filter-dot hydration-dot"></span> Hydration
+                            </button>
+                            <button class="category-filter" data-category="sleep" onclick="filterCalendar('sleep')">
+                                <span class="filter-dot sleep-dot"></span> Sleep
+                            </button>
+                            <button class="category-filter" data-category="journaling" onclick="filterCalendar('journaling')">
+                                <span class="filter-dot journaling-dot"></span> Journaling
+                            </button>
+                            <button class="category-filter" data-category="exercise" onclick="filterCalendar('exercise')">
+                                <span class="filter-dot exercise-dot"></span> Exercise
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="calendar-sidebar-section">
+                        <h4 class="calendar-sidebar-title">Quick Schedule</h4>
+                        <div class="quick-reminder-form">
+                            <div class="form-group">
+                                <label class="form-label" for="calActivity">Activity</label>
+                                <select class="text-input" id="calActivity" style="width: 100%;">
+                                    <option value="meditation">Meditation</option>
+                                    <option value="hydration">Hydration</option>
+                                    <option value="sleep">Sleep</option>
+                                    <option value="journaling">Journaling</option>
+                                    <option value="exercise">Exercise</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="calTime">Time</label>
+                                <input class="text-input" type="time" id="calTime" value="08:00" style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="calFreq">Frequency</label>
+                                <select class="text-input" id="calFreq" style="width: 100%;">
+                                    <option value="daily">Daily</option>
+                                    <option value="every morning">Every Morning</option>
+                                    <option value="every evening">Every Evening</option>
+                                    <option value="every night">Every Night</option>
+                                    <option value="weekly">Weekly</option>
+                                </select>
+                            </div>
+                            <button class="action-btn" onclick="addDirectReminder()" style="margin-top: 1.25rem; width: 100%;">Add Reminder</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-label">Severity</div>
-                    <div class="metric-value" id="resSeverity">Medium</div>
+
+                <!-- Main Calendar View Pane -->
+                <div class="calendar-main-pane">
+                    <div class="calendar-main-header">
+                        <div class="calendar-nav">
+                            <h3 class="calendar-month-year">Wellness Schedule</h3>
+                            <span class="calendar-sync-badge">
+                                <span class="sync-status-dot"></span>
+                                MCP Synced
+                            </span>
+                        </div>
+                        <div class="calendar-view-toggles">
+                            <span class="calendar-timezone">Timezone: Local (Active)</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Calendar Planner Grid -->
+                    <div class="calendar-timeline-container">
+                        <!-- Hour indicators left column -->
+                        <div class="calendar-timeline-hours">
+                            <div class="hour-marker">06:00</div>
+                            <div class="hour-marker">07:00</div>
+                            <div class="hour-marker">08:00</div>
+                            <div class="hour-marker">09:00</div>
+                            <div class="hour-marker">10:00</div>
+                            <div class="hour-marker">11:00</div>
+                            <div class="hour-marker">12:00</div>
+                            <div class="hour-marker">13:00</div>
+                            <div class="hour-marker">14:00</div>
+                            <div class="hour-marker">15:00</div>
+                            <div class="hour-marker">16:00</div>
+                            <div class="hour-marker">17:00</div>
+                            <div class="hour-marker">18:00</div>
+                            <div class="hour-marker">19:00</div>
+                            <div class="hour-marker">20:00</div>
+                            <div class="hour-marker">21:00</div>
+                            <div class="hour-marker">22:00</div>
+                        </div>
+
+                        <!-- Schedule day columns/timeline blocks -->
+                        <div class="calendar-timeline-grid" id="calendarTimelineGrid">
+                            <!-- Hours lines grid backdrop -->
+                            <div class="grid-backdrop">
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                            </div>
+                            
+                            <!-- Reminders container absolute positioned on top of backdrop -->
+                            <div class="reminders-events-container" id="remindersEventsContainer">
+                                <!-- Dynamically loaded reminder cards -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <div class="context-card">
-                <div class="context-title" id="resCause">Root Cause: Workload</div>
-                <p class="context-summary" id="resSummary">Employee is overwhelmed by too many tasks.</p>
-            </div>
-
-            <div class="recs-container">
-                <h4 class="recs-title">Personalized Wellness Recommendations</h4>
-                <div id="recsList"></div>
-            </div>
-
-
-
-            <div class="footer-caption"></div>
         </div>
     </div>
 
     <script>
         let currentMode = 'chat';
         let selectedStress = 'Medium';
+        let mcpPanelOpen = false;
 
         function toggleExpander() {
             const exp = document.getElementById('howItWorks');
@@ -187,6 +441,29 @@
             } else {
                 exp.classList.add('open');
                 arrow.textContent = '-';
+            }
+        }
+
+        function toggleMcpPanel() {
+            mcpPanelOpen = !mcpPanelOpen;
+            const content = document.getElementById('mcpContent');
+            const arrow = document.getElementById('mcpArrow');
+            content.classList.toggle('open', mcpPanelOpen);
+            arrow.textContent = mcpPanelOpen ? '-' : '+';
+        }
+
+        function switchTab(tabId) {
+            document.getElementById('menuCheckin').classList.toggle('active', tabId === 'checkin');
+            document.getElementById('menuJournal').classList.toggle('active', tabId === 'journal');
+            document.getElementById('menuCalendar').classList.toggle('active', tabId === 'calendar');
+            document.getElementById('viewCheckin').style.display = tabId === 'checkin' ? 'block' : 'none';
+            document.getElementById('viewJournal').style.display = tabId === 'journal' ? 'block' : 'none';
+            document.getElementById('viewCalendar').style.display = tabId === 'calendar' ? 'block' : 'none';
+            
+            if (tabId === 'journal') {
+                loadJournalEntries();
+            } else if (tabId === 'calendar') {
+                loadCalendarReminders();
             }
         }
 
@@ -217,7 +494,143 @@
             }
         }
 
+        /* ── Direct Journal entry saving ── */
+        async function saveDirectJournalEntry() {
+            const textarea = document.getElementById('journalDirectText');
+            const btn = document.getElementById('saveJournalBtn');
+            const text = textarea.value.trim();
+            
+            if (!text) {
+                alert('Please write something before syncing!');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Saving to Google Drive...';
+            
+            // Show a brief sync cloud animation
+            const statusCloud = document.querySelector('.google-doc-status-cloud');
+            statusCloud.style.opacity = '0.5';
+            
+            try {
+                // Submit to checkin pipeline so that AI analyzes and saves with full metadata!
+                const response = await fetch('/api/checkin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_input: text, stress_level: 'medium' })
+                });
+                
+                if (!response.ok) throw new Error('Failed to save reflection');
+                
+                textarea.value = '';
+                btn.textContent = 'Synced successfully!';
+                
+                // Play visual status update
+                statusCloud.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="cloud-icon" style="color: #3b82f6; animation: spin 1s linear infinite;">
+                        <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-8 8c0 1.57.46 3.03 1.24 4.26L6.7 17.7C6.25 16.87 6 15.01 6 12c0-3.31 2.69-6 6-6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8z"/>
+                    </svg>
+                    Saving...
+                `;
+                statusCloud.style.opacity = '1';
+                
+                await new Promise(r => setTimeout(r, 1200));
+                
+                statusCloud.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="cloud-icon" style="color: #10b981;">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Saved to Drive
+                `;
+                
+                btn.disabled = false;
+                btn.textContent = 'Sync reflection to Doc';
+                
+                // Reload entries
+                loadJournalEntries();
+            } catch (err) {
+                alert('Error syncing journal reflection to Google Docs: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Sync reflection to Doc';
+                statusCloud.style.opacity = '1';
+            }
+        }
 
+        async function loadJournalEntries() {
+            const entriesList = document.getElementById('googleDocEntriesList');
+            entriesList.innerHTML = '<div style="text-align: center; padding: 3rem; color: #475569;">Opening Google Doc and reading entries...</div>';
+            
+            try {
+                const res = await fetch('/api/journal');
+                if (!res.ok) throw new Error('Failed to load journal');
+                const data = await res.json();
+                
+                entriesList.innerHTML = '';
+                const entries = data.entries || [];
+                
+                if (entries.length === 0) {
+                    entriesList.innerHTML = `
+                        <div style="text-align: center; padding: 4rem 1.5rem; color: #64748b;">
+                            <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 0.5rem; color: #1e3a8a;">Your Google Doc is currently empty</p>
+                            <p style="font-size: 0.9rem;">Perform a Wellness Check-in or write a quick reflection above to sync your first journal entry.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Sort to show newest first inside the doc paper, like an ongoing log
+                entries.reverse().forEach(entry => {
+                    const docEntry = document.createElement('div');
+                    docEntry.className = 'google-doc-entry';
+                    
+                    // Create floating comments section on the side from Trixie!
+                    let commentHtml = '';
+                    if (entry.emotion === 'stressed' || entry.emotion === 'overwhelmed' || entry.emotion === 'anxious') {
+                        commentHtml = `
+                            <div class="google-doc-comment">
+                                <div class="comment-author">Trixie Advisor</div>
+                                <div class="comment-body">I noticed repeated stress spikes due to <strong>${entry.cause}</strong>. Guard your Focus Block tomorrow.</div>
+                            </div>
+                        `;
+                    } else if (entry.emotion === 'happy') {
+                        commentHtml = `
+                            <div class="google-doc-comment comment-positive">
+                                <div class="comment-author">Trixie Advisor</div>
+                                <div class="comment-body">Wonderful reflection! Journaling positive emotional peaks builds long-term mental clarity.</div>
+                            </div>
+                        `;
+                    } else {
+                        commentHtml = `
+                            <div class="google-doc-comment">
+                                <div class="comment-author">Trixie Advisor</div>
+                                <div class="comment-body">Balanced checkin. Consistent daily reflections help secure a clear emotional trend.</div>
+                            </div>
+                        `;
+                    }
+                    
+                    docEntry.innerHTML = `
+                        <div class="entry-header">
+                            <span class="entry-date">📅 ${entry.timestamp}</span>
+                            <div class="entry-badges">
+                                <span class="badge-tag tag-emotion emotion-${entry.emotion}">${entry.emotion}</span>
+                                <span class="badge-tag tag-severity severity-${entry.severity}">${entry.severity} severity</span>
+                                <span class="badge-tag tag-cause cause-${entry.cause}">${entry.cause}</span>
+                            </div>
+                        </div>
+                        <div class="entry-body-layout">
+                            <div class="entry-main-text">
+                                <p class="entry-paragraph">${entry.content}</p>
+                            </div>
+                            ${commentHtml}
+                        </div>
+                        <div class="google-doc-entry-separator"></div>
+                    `;
+                    entriesList.appendChild(docEntry);
+                });
+            } catch (err) {
+                entriesList.innerHTML = `<div style="text-align: center; padding: 3rem; color: #dc2626;">Error reading Google Docs Journal. Please verify API service configurations.</div>`;
+            }
+        }
 
         /* ── Pipeline ────────────────────────────────────────────────── */
 
@@ -293,12 +706,57 @@
                 result.recommendations.forEach((rec, idx) => {
                     const item = document.createElement('div');
                     item.className = 'rec-item';
-                    // Bold markdown (**text**) → <strong>
                     const formatted = rec.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                                          .replace(/\*(.*?)\*/g, '<em>$1</em>');
                     item.innerHTML = `<span class="rec-num">${idx + 1}.</span> ${formatted}`;
                     recsList.appendChild(item);
                 });
+
+                // ── Populate MCP Tool Call Log ───────────────────────────
+                const logList = document.getElementById('mcpLogList');
+                logList.innerHTML = '';
+                if (result.tool_results && result.tool_results.length > 0) {
+                    result.tool_results.forEach(toolRes => {
+                        const card = document.createElement('div');
+                        card.className = 'mcp-card';
+                        
+                        let args = {};
+                        if (toolRes.tool_name === 'get_breathing_exercise') args = { severity: result.severity };
+                        else if (toolRes.tool_name === 'lookup_wellness_resources') args = { cause: result.cause };
+                        else if (toolRes.tool_name === 'get_stress_tip') args = { cause: result.cause, emotion: result.emotion };
+                        else if (toolRes.tool_name === 'save_journal_entry') args = { content: userInput, emotion: result.emotion, severity: result.severity, cause: result.cause };
+                        else if (toolRes.tool_name === 'create_calendar_reminder') args = { activity: 'parsed', time: 'parsed', frequency: 'parsed' };
+                        
+                        card.innerHTML = `
+                            <div class="mcp-card-header">
+                                <span class="mcp-tool-badge">tool</span>
+                                <span class="mcp-tool-name">${toolRes.tool_name}()</span>
+                                <span class="mcp-tool-status">success</span>
+                            </div>
+                            <div class="mcp-card-io">
+                                <div class="mcp-io-section">
+                                    <span class="mcp-io-label">Arguments</span>
+                                    <pre class="mcp-code"><code>${JSON.stringify(args, null, 2)}</code></pre>
+                                </div>
+                                <div class="mcp-io-section">
+                                    <span class="mcp-io-label">Response</span>
+                                    <pre class="mcp-code"><code>${JSON.stringify(toolRes, null, 2)}</code></pre>
+                                </div>
+                            </div>
+                        `;
+                        logList.appendChild(card);
+                    });
+
+                    // Trigger toast and modal if a calendar reminder was scheduled through the chat checkin
+                    const calResult = result.tool_results.find(tr => tr.tool_name === 'create_calendar_reminder');
+                    if (calResult && calResult.status === 'success') {
+                        const rem = calResult.reminder;
+                        showCalendarModal(rem.activity, rem.time, rem.frequency);
+                        showToast(`Scheduled ${rem.frequency} ${rem.activity} at ${rem.time}!`);
+                    }
+                } else {
+                    logList.innerHTML = '<div style="color: #64748b; font-size: 0.9rem; font-style: italic;">No tools were executed.</div>';
+                }
 
                 await new Promise(r => setTimeout(r, 300));
                 resultsSection.style.display = 'block';
@@ -312,6 +770,371 @@
                 btn.disabled = false;
             }
         }
+
+        /* ── Calendar Workspaces Operations ── */
+        let allReminders = [];
+        let activeCategoryFilter = 'all';
+
+        async function loadCalendarReminders() {
+            const container = document.getElementById('remindersEventsContainer');
+            container.innerHTML = '<div class="calendar-loading" style="text-align: center; padding: 4rem; color: #64748b; font-style: italic;">Loading scheduled reminders...</div>';
+            
+            try {
+                const res = await fetch('/api/reminders');
+                if (!res.ok) throw new Error('Failed to fetch reminders');
+                const data = await res.json();
+                
+                allReminders = data.reminders || [];
+                renderCalendarReminders();
+            } catch (err) {
+                container.innerHTML = '<div class="calendar-error" style="text-align: center; padding: 4rem; color: #ef4444;">Error loading calendar reminders.</div>';
+            }
+        }
+
+        function filterCalendar(category) {
+            activeCategoryFilter = category;
+            
+            // Update active buttons in filter list
+            const buttons = document.querySelectorAll('.category-filter');
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-category') === category);
+            });
+            
+            renderCalendarReminders();
+        }
+
+        function renderCalendarReminders() {
+            const container = document.getElementById('remindersEventsContainer');
+            container.innerHTML = '';
+            
+            // Filter by active category
+            const filtered = allReminders.filter(rem => {
+                if (activeCategoryFilter === 'all') return true;
+                return rem.activity === activeCategoryFilter;
+            });
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; height: 100%; color: #64748b; font-style: italic; font-size: 0.95rem; padding: 4rem 0;">
+                        No ${activeCategoryFilter === 'all' ? '' : activeCategoryFilter + ' '}reminders scheduled.
+                    </div>
+                `;
+                return;
+            }
+            
+            filtered.forEach(rem => {
+                // Calculate position on the timeline
+                // Hour timeline goes from 06:00 to 22:00 (16 hours total)
+                const parts = rem.time.split(':');
+                const hour = parseInt(parts[0], 10);
+                const minute = parseInt(parts[1], 10);
+                
+                const startHour = 6;
+                const endHour = 23;
+                const totalHours = endHour - startHour;
+                
+                let decimalHour = hour + (minute / 60);
+                if (decimalHour < startHour) decimalHour = startHour;
+                if (decimalHour > endHour) decimalHour = endHour;
+                
+                const percentFromTop = ((decimalHour - startHour) / totalHours) * 94; // slightly offset from 100 to fit
+                
+                const card = document.createElement('div');
+                card.className = `reminder-event-card category-${rem.activity} ${rem.active ? 'active' : 'inactive'}`;
+                card.style.top = `calc(${percentFromTop}% + 6px)`;
+                
+                const activityIcons = {
+                    meditation: '🧘',
+                    hydration: '💧',
+                    sleep: '🛌',
+                    journaling: '✍️',
+                    exercise: '🏃'
+                };
+                
+                const icon = activityIcons[rem.activity] || '📅';
+                
+                card.innerHTML = `
+                    <div class="event-icon">${icon}</div>
+                    <div class="event-details">
+                        <div class="event-title-row">
+                            <span class="event-title">${rem.activity.charAt(0).toUpperCase() + rem.activity.slice(1)}</span>
+                            <span class="event-time">${rem.time}</span>
+                        </div>
+                        <div class="event-freq-row">
+                            <span class="event-freq">${rem.frequency}</span>
+                        </div>
+                    </div>
+                    <div class="event-actions">
+                        <button class="event-action-btn toggle-btn" onclick="toggleReminderState('${rem.id}', event)" title="${rem.active ? 'Mute reminder' : 'Unmute reminder'}">
+                            ${rem.active ? '🔔' : '🔕'}
+                        </button>
+                        <button class="event-action-btn delete-btn" onclick="deleteReminder('${rem.id}', event)" title="Delete reminder">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
+        async function toggleReminderState(reminderId, event) {
+            if (event) event.stopPropagation();
+            try {
+                const res = await fetch(`/api/reminders/toggle/${reminderId}`, { method: 'POST' });
+                if (!res.ok) throw new Error('Toggle failed');
+                await loadCalendarReminders();
+            } catch (err) {
+                alert('Failed to toggle reminder status.');
+            }
+        }
+
+        async function deleteReminder(reminderId, event) {
+            if (event) event.stopPropagation();
+            if (!confirm('Are you sure you want to delete this reminder?')) return;
+            try {
+                const res = await fetch(`/api/reminders/${reminderId}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error('Delete failed');
+                await loadCalendarReminders();
+            } catch (err) {
+                alert('Failed to delete reminder.');
+            }
+        }
+
+        async function addDirectReminder() {
+            const activity = document.getElementById('calActivity').value;
+            const time = document.getElementById('calTime').value;
+            const frequency = document.getElementById('calFreq').value;
+            
+            if (!time) {
+                alert('Please select a time!');
+                return;
+            }
+            
+            try {
+                const res = await fetch('/api/reminders', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ activity, time, frequency })
+                });
+                
+                if (!res.ok) throw new Error('Failed to create reminder');
+                
+                showCalendarModal(activity, time, frequency);
+                showToast(`Scheduled ${frequency} ${activity} at ${time}.`);
+                await loadCalendarReminders();
+            } catch (err) {
+                alert('Failed to add reminder.');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('calendarToast');
+            document.getElementById('calendarToastMsg').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        function closeToast() {
+            document.getElementById('calendarToast').classList.remove('show');
+        }
+
+        function showCalendarModal(activity, time, frequency) {
+            document.getElementById('modalValActivity').textContent = activity.charAt(0).toUpperCase() + activity.slice(1);
+            document.getElementById('modalValTime').textContent = time;
+            document.getElementById('modalValFreq').textContent = frequency.charAt(0).toUpperCase() + frequency.slice(1);
+            
+            const modal = document.getElementById('calendarModal');
+            modal.classList.add('show');
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendarModal').classList.remove('show');
+        }
+
+        /* ── Live Alarm Scheduler & Audio Synthesizer ── */
+        let checkedTime = '';
+
+        function startReminderScheduler() {
+            setInterval(checkActiveReminders, 10000); // Check every 10 seconds
+        }
+
+        function checkActiveReminders() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const currentTimeStr = `${hours}:${minutes}`;
+            
+            if (currentTimeStr === checkedTime) return;
+            checkedTime = currentTimeStr;
+            
+            allReminders.forEach(rem => {
+                if (rem.active && rem.time === currentTimeStr) {
+                    triggerReminderNotification(rem);
+                }
+            });
+        }
+
+        function triggerReminderNotification(rem) {
+            playWellnessChime();
+            
+            const title = document.getElementById('liveAlertTitle');
+            const icon = document.getElementById('liveAlertIcon');
+            const msg = document.getElementById('liveAlertMessage');
+            const primaryBtn = document.getElementById('liveAlertPrimaryBtn');
+            
+            const activityTitles = {
+                meditation: '🧘 Time to Meditate!',
+                hydration: '💧 Time to Hydrate!',
+                sleep: '🛌 Time for Sleep!',
+                journaling: '✍️ Time to Journal!',
+                exercise: '🏃 Time to Move!'
+            };
+            
+            const activityIcons = {
+                meditation: '🧘',
+                hydration: '💧',
+                sleep: '🛌',
+                journaling: '✍️',
+                exercise: '🏃'
+            };
+            
+            const activityMessages = {
+                meditation: "Take a 5-minute pause to breathe deeply, relax your shoulders, and clear your mind.",
+                hydration: "Pour yourself a refreshing glass of water. Staying hydrated keeps your focus sharp!",
+                sleep: "Time to wind down, turn off screens, and prepare your mind for restful sleep.",
+                journaling: "Open your Google Docs Journal and write down three things you are grateful for today.",
+                exercise: "Stand up, stretch your body, and take a quick 5-minute walk to re-energize."
+            };
+            
+            title.textContent = activityTitles[rem.activity] || '🔔 Wellness Break!';
+            icon.textContent = activityIcons[rem.activity] || '📅';
+            msg.textContent = activityMessages[rem.activity] || "It's time for your scheduled wellness reminder.";
+            
+            if (rem.activity === 'meditation') {
+                primaryBtn.textContent = 'Start Guided Breathing';
+                primaryBtn.onclick = function() {
+                    dismissLiveAlert();
+                    switchTab('checkin');
+                    setMode('form');
+                    selectStress('Medium');
+                    runPipeline();
+                };
+            } else if (rem.activity === 'journaling') {
+                primaryBtn.textContent = 'Open Journal Doc';
+                primaryBtn.onclick = function() {
+                    dismissLiveAlert();
+                    switchTab('journal');
+                };
+            } else {
+                primaryBtn.textContent = 'Got it!';
+                primaryBtn.onclick = dismissLiveAlert;
+            }
+            
+            const modal = document.getElementById('liveAlertModal');
+            modal.classList.add('show');
+        }
+
+        function dismissLiveAlert() {
+            document.getElementById('liveAlertModal').classList.remove('show');
+        }
+
+        function playWellnessChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                
+                const playNote = (freq, delay, duration) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
+                    
+                    gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+                    gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + delay + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    
+                    osc.start(ctx.currentTime + delay);
+                    osc.stop(ctx.currentTime + delay + duration);
+                };
+                
+                playNote(659.25, 0, 1.5);    // E5
+                playNote(880.00, 0.15, 1.5); // A5
+                playNote(1109.73, 0.3, 2.0); // C#6
+            } catch (e) {
+                console.error("Audio block: " + e.message);
+            }
+        }
+
+        // Initialize active alarm loop & load cache initially
+        startReminderScheduler();
+        loadCalendarReminders();
     </script>
+
+    <!-- Beautiful Toast Notification for MCP Calendar Sync -->
+    <div class="toast-notification" id="calendarToast">
+        <div class="toast-icon">📅</div>
+        <div class="toast-body">
+            <div class="toast-title">Calendar Synced</div>
+            <div class="toast-message" id="calendarToastMsg">New wellness reminder added!</div>
+        </div>
+        <div class="toast-close" onclick="closeToast()">×</div>
+    </div>
+
+    <!-- Beautiful Centered Modal Popup for Calendar Reminders -->
+    <div class="calendar-modal-overlay" id="calendarModal" onclick="closeCalendarModal()">
+        <div class="calendar-modal-content" onclick="event.stopPropagation()">
+            <div class="calendar-modal-header">
+                <div class="calendar-modal-icon">📅</div>
+                <h3 class="calendar-modal-title">Reminder Scheduled!</h3>
+            </div>
+            <div class="calendar-modal-body">
+                <p class="calendar-modal-message" id="calendarModalMsg">Your wellness reminder has been successfully synced with Trixie's planner.</p>
+                <div class="calendar-modal-details">
+                    <div class="modal-detail-item">
+                        <span class="detail-label">Activity</span>
+                        <span class="detail-value" id="modalValActivity">Meditation</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="detail-label">Time</span>
+                        <span class="detail-value" id="modalValTime">20:00</span>
+                    </div>
+                    <div class="modal-detail-item">
+                        <span class="detail-label">Frequency</span>
+                        <span class="detail-value" id="modalValFreq">Every Evening</span>
+                    </div>
+                </div>
+            </div>
+            <div class="calendar-modal-footer">
+                <button class="action-btn modal-close-btn" onclick="closeCalendarModal()">Awesome, thanks!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Beautiful Live Wellness Alert Popup (Alarm) -->
+    <div class="live-alert-overlay" id="liveAlertModal" onclick="dismissLiveAlert()">
+        <div class="live-alert-content" onclick="event.stopPropagation()">
+            <div class="live-alert-header">
+                <span class="live-alert-pulse">🔔</span>
+                <h3 class="live-alert-title" id="liveAlertTitle">Wellness Break Time!</h3>
+            </div>
+            <div class="live-alert-body">
+                <div class="live-alert-graphic" id="liveAlertIcon">🧘</div>
+                <p class="live-alert-message" id="liveAlertMessage">It's time for your scheduled meditation reminder.</p>
+                <p class="live-alert-quote">"Taking a short break today keeps stress away."</p>
+            </div>
+            <div class="live-alert-footer">
+                <button class="live-action-btn primary" id="liveAlertPrimaryBtn">Got it!</button>
+                <button class="live-action-btn secondary" onclick="dismissLiveAlert()">Dismiss</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

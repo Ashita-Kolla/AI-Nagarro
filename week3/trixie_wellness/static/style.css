@@ -576,3 +576,1227 @@ body {
     50% { transform: scale(1.1); opacity: 1; }
     100% { transform: scale(0.95); opacity: 0.5; }
 }
+
+/* ── Tab Views & Sidebar Enhancements ── */
+.view-pane {
+    animation: fadeIn 0.4s ease forwards;
+}
+
+.menu-item:not(.active):hover {
+    background-color: rgba(255, 255, 255, 0.04);
+    color: #3b82f6;
+}
+
+/* ── MCP Tool Calls Log styling ── */
+.mcp-panel {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-top: 2rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.mcp-panel-header {
+    background-color: #f8fafc;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    color: #0f1e36;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.2s ease;
+}
+
+.mcp-panel-header:hover {
+    background-color: #f1f5f9;
+}
+
+.mcp-panel-content {
+    display: none;
+    padding: 1.5rem;
+    background-color: #fafbfc;
+}
+
+.mcp-panel-content.open {
+    display: block;
+}
+
+.mcp-card {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.mcp-card:last-child {
+    margin-bottom: 0;
+}
+
+.mcp-card-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.mcp-tool-badge {
+    background-color: #1e3a8a;
+    color: #ffffff;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.mcp-tool-name {
+    font-weight: 700;
+    color: #1e3a8a;
+    font-size: 0.9rem;
+}
+
+.mcp-tool-status {
+    margin-left: auto;
+    color: #10b981;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background-color: #ecfdf5;
+    padding: 0.1rem 0.5rem;
+    border-radius: 12px;
+}
+
+.mcp-card-io {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.mcp-io-section {
+    display: flex;
+    flex-direction: column;
+}
+
+.mcp-io-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.mcp-code {
+    background-color: #0f1e36;
+    color: #f8fafc;
+    border-radius: 6px;
+    padding: 0.8rem;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    max-height: 200px;
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.4;
+}
+
+/* ── Google Docs Mockup Interface ── */
+.google-doc-container {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.google-doc-header {
+    background-color: #ffffff;
+    padding: 0.8rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.google-doc-logo-and-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.google-doc-blue-icon {
+    color: #2684fc;
+    display: flex;
+    align-items: center;
+}
+
+.google-doc-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.google-doc-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.google-doc-name-input {
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    width: 220px;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    background-color: transparent;
+}
+
+.google-doc-status-cloud {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: opacity 0.3s ease;
+}
+
+.cloud-icon {
+    color: #64748b;
+}
+
+.google-doc-menubar {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+.google-doc-menubar span {
+    cursor: pointer;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+}
+
+.google-doc-menubar span:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.google-doc-share-btn {
+    background-color: #c2e7ff;
+    color: #001d35;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.google-doc-share-btn:hover {
+    background-color: #b3dbf7;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.google-doc-toolbar {
+    background-color: #edf2fa;
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.toolbar-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #475569;
+    transition: background-color 0.15s ease;
+}
+
+.toolbar-btn:hover {
+    background-color: #dee5f2;
+    color: #0f172a;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 18px;
+    background-color: #cbd5e1;
+    margin: 0 0.3rem;
+}
+
+.toolbar-select {
+    border: none;
+    background-color: transparent;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: #475569;
+    outline: none;
+}
+
+.toolbar-select:hover {
+    background-color: #dee5f2;
+}
+
+.font-family-select {
+    font-weight: 600;
+}
+
+.bold-btn { font-weight: 800; }
+.italic-btn { font-style: italic; }
+.underline-btn { text-decoration: underline; }
+
+/* Doc Paper Page view */
+.google-doc-page-canvas {
+    background-color: #f1f5f9;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+    min-height: 600px;
+    overflow-y: auto;
+}
+
+.google-doc-quick-entry {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 820px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.quick-entry-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin-bottom: 0.8rem;
+}
+
+.quick-entry-textarea {
+    width: 100%;
+    height: 80px;
+    resize: none;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 0.8rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.quick-entry-textarea:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.quick-entry-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0.8rem;
+}
+
+.quick-entry-help {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.quick-entry-btn {
+    background-color: #2684fc;
+    color: #ffffff;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(38, 132, 252, 0.2);
+    transition: all 0.2s ease;
+}
+
+.quick-entry-btn:hover {
+    background-color: #1a73e8;
+    box-shadow: 0 4px 8px rgba(26, 115, 232, 0.3);
+}
+
+.quick-entry-btn:disabled {
+    background-color: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.google-doc-paper {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 820px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    padding: 4rem 3.5rem;
+    border: 1px solid #cbd5e1;
+    min-height: 800px;
+    display: flex;
+    flex-direction: column;
+}
+
+.google-doc-paper-header {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.google-doc-paper-divider {
+    height: 1px;
+    background-color: #f1f5f9;
+    margin-bottom: 2.5rem;
+}
+
+/* Journal entries lists */
+.google-doc-entry {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    position: relative;
+}
+
+.entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.entry-date {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.entry-badges {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.badge-tag {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.tag-emotion.emotion-stressed, .tag-emotion.emotion-overwhelmed, .tag-emotion.emotion-anxious {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.tag-emotion.emotion-happy {
+    background-color: #ecfdf5;
+    color: #065f46;
+}
+
+.tag-emotion.emotion-tired {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.tag-emotion {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.tag-severity.severity-high {
+    background-color: #f87171;
+    color: #ffffff;
+}
+
+.tag-severity.severity-medium {
+    background-color: #fbbf24;
+    color: #ffffff;
+}
+
+.tag-severity {
+    background-color: #cbd5e1;
+    color: #475569;
+}
+
+.tag-cause {
+    background-color: #eff6ff;
+    color: #1e40af;
+}
+
+.entry-body-layout {
+    display: grid;
+    grid-template-columns: 1fr 240px;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.entry-main-text {
+    background-color: transparent;
+    padding-right: 0.5rem;
+}
+
+.entry-paragraph {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #334155;
+    text-align: justify;
+    text-indent: 1.5rem; /* Standard book / doc indent */
+}
+
+.google-doc-comment {
+    background-color: #fdfaf2;
+    border: 1px solid #f6e6cb;
+    border-left: 3px solid #eab308;
+    border-radius: 6px;
+    padding: 0.8rem;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    line-height: 1.4;
+    color: #475569;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: #854d0e;
+    margin-bottom: 0.2rem;
+    font-size: 0.75rem;
+}
+
+.comment-positive {
+    background-color: #f0fdf4;
+    border-color: #dcfce7;
+    border-left-color: #22c55e;
+}
+
+.comment-positive .comment-author {
+    color: #166534;
+}
+
+.google-doc-entry-separator {
+    border-bottom: 1px dashed #cbd5e1;
+    margin-top: 1.5rem;
+    opacity: 0.5;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+    .mcp-card-io {
+        grid-template-columns: 1fr;
+    }
+    .entry-body-layout {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* ── Wellness Calendar Workspace Styles ── */
+.calendar-workspace {
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    margin-top: 1.5rem;
+}
+
+.calendar-sidebar {
+    width: 260px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    flex-shrink: 0;
+}
+
+.calendar-sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.calendar-sidebar-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #1e3a8a;
+    text-transform: uppercase;
+    letter-spacing: 0.75px;
+    margin-bottom: 0.25rem;
+    opacity: 0.9;
+}
+
+.category-filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.category-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.category-filter:hover {
+    background-color: #f8fafc;
+    color: #1e3a8a;
+}
+
+.category-filter.active {
+    background-color: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1e3a8a;
+}
+
+.filter-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.all-dot { background-color: #64748b; }
+.meditation-dot { background-color: #8b5cf6; }
+.hydration-dot { background-color: #0284c7; }
+.sleep-dot { background-color: #4338ca; }
+.journaling-dot { background-color: #059669; }
+.exercise-dot { background-color: #d97706; }
+
+.quick-reminder-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.calendar-main-pane {
+    flex-grow: 1;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
+}
+
+.calendar-main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+}
+
+.calendar-nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.calendar-month-year {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f1e36;
+}
+
+.calendar-sync-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #059669;
+    background-color: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    padding: 0.25rem 0.6rem;
+    border-radius: 9999px;
+}
+
+.sync-status-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 6px #10b981;
+}
+
+.calendar-timezone {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.calendar-timeline-container {
+    display: flex;
+    position: relative;
+    height: 596px; /* (23 - 6) * 35px = 595px */
+    overflow-y: auto;
+}
+
+.calendar-timeline-hours {
+    width: 65px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #f1f5f9;
+    background-color: #f8fafc;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.hour-marker {
+    height: 35px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.calendar-timeline-grid {
+    flex-grow: 1;
+    position: relative;
+    background-color: #ffffff;
+}
+
+.grid-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    pointer-events: none;
+}
+
+.grid-line {
+    height: 35px;
+    border-bottom: 1px solid #f1f5f9;
+    width: 100%;
+}
+
+.reminders-events-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 0.75rem;
+}
+
+.reminder-event-card {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    border-left: 4px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    padding: 0.4rem 0.75rem;
+    gap: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+}
+
+.reminder-event-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(15, 30, 54, 0.08);
+    z-index: 5;
+}
+
+/* Category card specifics */
+.reminder-event-card.category-meditation {
+    background-color: #f5f3ff;
+    border-color: #ddd6fe;
+    border-left-color: #8b5cf6;
+    color: #5b21b6;
+}
+.reminder-event-card.category-hydration {
+    background-color: #f0f9ff;
+    border-color: #bae6fd;
+    border-left-color: #0284c7;
+    color: #0369a1;
+}
+.reminder-event-card.category-sleep {
+    background-color: #eef2ff;
+    border-color: #c7d2fe;
+    border-left-color: #4338ca;
+    color: #3730a3;
+}
+.reminder-event-card.category-journaling {
+    background-color: #ecfdf5;
+    border-color: #a7f3d0;
+    border-left-color: #059669;
+    color: #047857;
+}
+.reminder-event-card.category-exercise {
+    background-color: #fffbeb;
+    border-color: #fde68a;
+    border-left-color: #d97706;
+    color: #b45309;
+}
+
+.reminder-event-card.inactive {
+    opacity: 0.5;
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
+    border-left-color: #94a3b8 !important;
+    color: #64748b !important;
+}
+
+.reminder-event-card.inactive .event-title {
+    text-decoration: line-through;
+    opacity: 0.75;
+}
+
+.event-icon {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.event-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.event-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.event-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.event-time {
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0.85;
+}
+
+.event-freq-row {
+    font-size: 0.7rem;
+    font-weight: 500;
+    opacity: 0.75;
+    margin-top: 0.05rem;
+}
+
+.event-actions {
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.reminder-event-card:hover .event-actions {
+    opacity: 1;
+}
+
+.event-action-btn {
+    background: transparent;
+    border: none;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease;
+}
+
+.event-action-btn:hover {
+    background-color: rgba(15, 30, 54, 0.08);
+}
+
+/* ── Toast Notifications ── */
+.toast-notification {
+    position: fixed;
+    bottom: 2rem;
+    right: -360px; /* Hidden off-screen right */
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-left: 4px solid #10b981;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(15, 30, 54, 0.1), 0 4px 6px -2px rgba(15, 30, 54, 0.05);
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 9999;
+    width: 320px;
+}
+
+.toast-notification.show {
+    right: 2rem; /* Slide in */
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast-body {
+    flex-grow: 1;
+}
+
+.toast-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+.toast-message {
+    font-size: 0.75rem;
+    color: #475569;
+    margin-top: 0.1rem;
+    font-weight: 500;
+}
+
+.toast-close {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.15s ease;
+}
+
+.toast-close:hover {
+    color: #475569;
+}
+
+/* ── Wellness Calendar Modal Popup Styles ── */
+.calendar-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 30, 54, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 10000;
+}
+
+.calendar-modal-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.calendar-modal-content {
+    background-color: #ffffff;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
+    padding: 2rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.calendar-modal-overlay.show .calendar-modal-content {
+    transform: scale(1);
+}
+
+.calendar-modal-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.calendar-modal-icon {
+    font-size: 3rem;
+    animation: pulse 2s infinite;
+}
+
+.calendar-modal-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+.calendar-modal-message {
+    font-size: 0.9rem;
+    color: #475569;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.calendar-modal-details {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.modal-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 0.5rem;
+}
+
+.modal-detail-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.detail-value {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0f1e36;
+}
+
+.modal-close-btn {
+    width: 100%;
+    padding: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+    transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.3);
+}
+
+/* ── Live Wellness Alarm Overlay Styles ── */
+.live-alert-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 30, 54, 0.85); /* Slightly darker to draw intense focus */
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 20000;
+}
+
+.live-alert-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.live-alert-content {
+    background-color: #ffffff;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 440px;
+    padding: 2.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: translateY(30px) scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.live-alert-overlay.show .live-alert-content {
+    transform: translateY(0) scale(1);
+}
+
+.live-alert-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.live-alert-pulse {
+    font-size: 3.5rem;
+    display: inline-block;
+    animation: ringBell 2.5s ease infinite;
+}
+
+@keyframes ringBell {
+    0%, 100% { transform: rotate(0); }
+    10% { transform: rotate(15deg); }
+    20% { transform: rotate(-10deg); }
+    30% { transform: rotate(8deg); }
+    40% { transform: rotate(-5deg); }
+    50% { transform: rotate(0); }
+}
+
+.live-alert-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e3a8a;
+    letter-spacing: -0.5px;
+}
+
+.live-alert-graphic {
+    font-size: 4rem;
+    margin: 1.5rem 0;
+    display: inline-block;
+    animation: gentleBounce 2s infinite ease-in-out;
+}
+
+@keyframes gentleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.live-alert-message {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+}
+
+.live-alert-quote {
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #64748b;
+    background-color: #f8fafc;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    border-left: 3px solid #3b82f6;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.live-alert-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.live-action-btn {
+    padding: 1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.live-action-btn.primary {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.live-action-btn.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+}
+
+.live-action-btn.secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+}
+
+.live-action-btn.secondary:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+

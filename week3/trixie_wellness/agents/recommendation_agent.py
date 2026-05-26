@@ -61,7 +61,7 @@ def _parse_numbered_list(text: str) -> list[str]:
     return recs
 
 
-def _invoke_tools(cause: str, severity: str, emotion: str) -> tuple[list[dict], list[str]]:
+def _invoke_tools(cause: str, severity: str, emotion: str, user_input: str) -> tuple[list[dict], list[str]]:
     """
     MCP-style tool invocation step.
 
@@ -69,7 +69,7 @@ def _invoke_tools(cause: str, severity: str, emotion: str) -> tuple[list[dict], 
     2. Agent CALLS each tool              (call_tool)
     3. Returns (raw tool results, human-readable rec strings extracted from results)
     """
-    tool_names = select_tools_for(cause, severity)
+    tool_names = select_tools_for(cause, severity, user_input)
     tool_results = []
     recs_from_tools: list[str] = []
 
@@ -98,6 +98,21 @@ def _invoke_tools(cause: str, severity: str, emotion: str) -> tuple[list[dict], 
                 tool_results.append(result)
                 recs_from_tools.append(f"{result['tip']}")
 
+            elif name == "save_journal_entry":
+                result = call_tool(name, content=user_input, emotion=emotion, severity=severity, cause=cause)
+                tool_results.append(result)
+
+            elif name == "create_calendar_reminder":
+                from tools.calendar_tool import parse_reminder_from_text
+                act, tm, freq = parse_reminder_from_text(user_input)
+                result = call_tool(name, activity=act, time=tm, frequency=freq)
+                tool_results.append(result)
+                if result.get("status") == "success":
+                    rem = result["reminder"]
+                    recs_from_tools.append(
+                        f"📅 **Calendar Reminder Scheduled:** I've scheduled a {rem['frequency']} reminder for **{rem['activity']}** at **{rem['time']}** to support your daily wellness journey!"
+                    )
+
         except Exception:
             pass  # Never crash the pipeline due to a tool failure
 
@@ -109,9 +124,10 @@ def run_recommendation_agent(state: dict) -> dict:
     severity     = state.get("severity", "medium")
     cause        = state.get("cause", "unclear")
     cause_summary = state.get("cause_summary", "")
+    user_input   = state.get("user_input", "")
 
     # ── Step 1: MCP tool invocation ─────────────────────────────────────────
-    tool_results, tool_recs = _invoke_tools(cause, severity, emotion)
+    tool_results, tool_recs = _invoke_tools(cause, severity, emotion, user_input)
 
     # ── Step 2: LLM for additional recommendations ──────────────────────────
     message = (
@@ -120,6 +136,14 @@ def run_recommendation_agent(state: dict) -> dict:
     )
     if cause_summary:
         message += f"Context: {cause_summary}\n"
+        
+    journal_history = state.get("journal_history", [])
+    if journal_history:
+        history_context = "\n\nHistorical journal entries for context:\n"
+        for entry in journal_history[-3:]:
+            history_context += f"- [{entry.get('timestamp')}] Emotion: {entry.get('emotion')}, Severity: {entry.get('severity')}, Cause: {entry.get('cause')}. Reflection: {entry.get('content')}\n"
+        message += history_context
+        
     message += "\nPlease provide 3 wellness recommendations."
 
     llm_recs: list[str] = []
@@ -149,8 +173,12 @@ def run_recommendation_agent(state: dict) -> dict:
     # ── Step 4: Expose tool call metadata back to the pipeline state ─────────
     tools_used = [r["tool_name"] for r in tool_results]
 
+    from tools.calendar_tool import get_calendar_reminders
+    latest_reminders = get_calendar_reminders().get("reminders", [])
+
     return {
         "recommendations": merged[:3],
         "tools_used": tools_used,
         "tool_results": tool_results,
+        "reminders": latest_reminders,
     }
