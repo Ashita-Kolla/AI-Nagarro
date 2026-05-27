@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trixie AI - Wellness Assistant</title>
-    <meta name="description" content="Trixie AI — AI-powered workplace wellness support with MCP tool integrations for breathing exercises, resource lookup, and stress tips.">
+    <meta name="description"
+        content="Trixie AI — AI-powered workplace wellness support with MCP tool integrations for breathing exercises, resource lookup, and stress tips.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <style>
 
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <div class="sidebar-header">
@@ -25,16 +30,41 @@
 
         <div class="sidebar-menu">
             <a href="#" class="menu-item active" id="menuCheckin" onclick="switchTab('checkin')">
-                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
                 Wellness Check-in
             </a>
             <a href="#" class="menu-item" id="menuJournal" onclick="switchTab('journal')">
-                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
                 Google Docs Journal
             </a>
             <a href="#" class="menu-item" id="menuCalendar" onclick="switchTab('calendar')">
-                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
                 Wellness Calendar
+            </a>
+            <a href="#" class="menu-item" id="menuAnalytics" onclick="switchTab('analytics')">
+                <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                Analytics & Insights
             </a>
         </div>
 
@@ -60,10 +90,15 @@
                     <span id="expanderArrow">+</span>
                 </div>
                 <div class="expander-content">
-                    <p>Trixie routes your input through 3 AI agents, then uses <strong>MCP-style tool calls</strong> to enrich the response:</p>
+                    <p>Trixie routes your input through 3 AI agents, then uses <strong>MCP-style tool calls</strong> to
+                        enrich the response:</p>
                     <table class="expander-table">
                         <thead>
-                            <tr><th>Step</th><th>Agent / Tool</th><th>Job</th></tr>
+                            <tr>
+                                <th>Step</th>
+                                <th>Agent / Tool</th>
+                                <th>Job</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <tr>
@@ -122,7 +157,8 @@
             </div>
 
             <div class="mode-toggle">
-                <button class="mode-btn active" id="btnChat" onclick="setMode('chat')">Describe in your own words</button>
+                <button class="mode-btn active" id="btnChat" onclick="setMode('chat')">Describe in your own
+                    words</button>
                 <button class="mode-btn" id="btnForm" onclick="setMode('form')">Quick stress check-in form</button>
             </div>
 
@@ -130,7 +166,9 @@
                 <div id="chatInputs">
                     <div class="form-group">
                         <label class="form-label" for="chatText">How are you feeling today?</label>
-                        <textarea class="textarea-input" id="chatText" placeholder="e.g. I am really stressed - I have 3 deadlines this week and my manager keeps adding tasks..." oninput="validateInput()"></textarea>
+                        <textarea class="textarea-input" id="chatText"
+                            placeholder="e.g. I am really stressed - I have 3 deadlines this week and my manager keeps adding tasks..."
+                            oninput="validateInput()"></textarea>
                     </div>
                 </div>
 
@@ -139,13 +177,22 @@
                         <label class="form-label">Rate your current stress level</label>
                         <div class="slider-container">
                             <div class="slider-option" id="stressLow" onclick="selectStress('Low')">Low</div>
-                            <div class="slider-option selected" id="stressMedium" onclick="selectStress('Medium')">Medium</div>
+                            <div class="slider-option selected" id="stressMedium" onclick="selectStress('Medium')">
+                                Medium</div>
                             <div class="slider-option" id="stressHigh" onclick="selectStress('High')">High</div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="formCause">What's causing this? (optional)</label>
-                        <input class="text-input" type="text" id="formCause" placeholder="e.g. back-to-back meetings, too many tasks, personal issues..." oninput="validateInput()">
+                        <input class="text-input" type="text" id="formCause"
+                            placeholder="e.g. back-to-back meetings, too many tasks, personal issues..."
+                            oninput="validateInput()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="formSleepHours">How many hours of sleep did you get last night?
+                            (optional)</label>
+                        <input class="text-input" type="number" id="formSleepHours" min="0" max="24" step="0.5"
+                            placeholder="e.g. 7.5" oninput="validateInput()">
                     </div>
                 </div>
 
@@ -185,6 +232,10 @@
                         <div class="metric-label">Severity</div>
                         <div class="metric-value" id="resSeverity">Medium</div>
                     </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Sleep Tracked</div>
+                        <div class="metric-value" id="resSleep">--</div>
+                    </div>
                 </div>
 
                 <div class="context-card">
@@ -219,15 +270,19 @@
                     <div class="google-doc-logo-and-title">
                         <div class="google-doc-blue-icon">
                             <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                                <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                                <path
+                                    d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
                             </svg>
                         </div>
                         <div class="google-doc-details">
                             <div class="google-doc-title-row">
-                                <input type="text" class="google-doc-name-input" value="My Trixie Wellness Journal" readonly>
+                                <input type="text" class="google-doc-name-input" value="My Trixie Wellness Journal"
+                                    readonly>
                                 <span class="google-doc-status-cloud">
-                                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="cloud-icon">
-                                        <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z"/>
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"
+                                        class="cloud-icon">
+                                        <path
+                                            d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM19 18H6c-2.21 0-4-1.79-4-4 0-2.05 1.53-3.76 3.56-3.97l1.07-.11.5-.95C8.08 7.14 9.94 6 12 6c2.62 0 4.88 1.86 5.39 4.43l.3 1.5 1.53.11c1.56.1 2.78 1.41 2.78 2.96 0 1.65-1.35 3-3 3z" />
                                     </svg>
                                     Saved to Drive
                                 </span>
@@ -246,7 +301,8 @@
                     </div>
                     <div class="google-doc-share-btn">
                         <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                            <path
+                                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
                         </svg>
                         Share
                     </div>
@@ -259,9 +315,17 @@
                     <button class="toolbar-btn" title="Print">🖨️</button>
                     <button class="toolbar-btn" title="Spelling and grammar check">✓</button>
                     <div class="toolbar-separator"></div>
-                    <select class="toolbar-select" title="Zoom"><option>100%</option><option>90%</option><option>75%</option></select>
+                    <select class="toolbar-select" title="Zoom">
+                        <option>100%</option>
+                        <option>90%</option>
+                        <option>75%</option>
+                    </select>
                     <div class="toolbar-separator"></div>
-                    <select class="toolbar-select font-family-select" title="Font"><option>Arial</option><option>Times New Roman</option><option>Courier New</option></select>
+                    <select class="toolbar-select font-family-select" title="Font">
+                        <option>Arial</option>
+                        <option>Times New Roman</option>
+                        <option>Courier New</option>
+                    </select>
                     <div class="toolbar-separator"></div>
                     <button class="toolbar-btn bold-btn" title="Bold">B</button>
                     <button class="toolbar-btn italic-btn" title="Italic">I</button>
@@ -277,13 +341,16 @@
                 <div class="google-doc-page-canvas">
                     <div class="google-doc-quick-entry">
                         <h4 class="quick-entry-title">Write a new reflection entry directly into this Google Doc:</h4>
-                        <textarea class="quick-entry-textarea" id="journalDirectText" placeholder="How has your day been? Write down any thoughts, stress triggers, or things you're grateful for..."></textarea>
+                        <textarea class="quick-entry-textarea" id="journalDirectText"
+                            placeholder="How has your day been? Write down any thoughts, stress triggers, or things you're grateful for..."></textarea>
                         <div class="quick-entry-footer">
-                            <span class="quick-entry-help">Trixie's multi-agent workflow will process it to update your wellness plan.</span>
-                            <button class="quick-entry-btn" id="saveJournalBtn" onclick="saveDirectJournalEntry()">Sync reflection to Doc</button>
+                            <span class="quick-entry-help">Trixie's multi-agent workflow will process it to update your
+                                wellness plan.</span>
+                            <button class="quick-entry-btn" id="saveJournalBtn" onclick="saveDirectJournalEntry()">Sync
+                                reflection to Doc</button>
                         </div>
                     </div>
-                    
+
                     <div class="google-doc-paper">
                         <div class="google-doc-paper-header">Trixie AI Wellness Support Journal</div>
                         <div class="google-doc-paper-divider"></div>
@@ -305,24 +372,28 @@
                             <button class="category-filter active" data-category="all" onclick="filterCalendar('all')">
                                 <span class="filter-dot all-dot"></span> All
                             </button>
-                            <button class="category-filter" data-category="meditation" onclick="filterCalendar('meditation')">
+                            <button class="category-filter" data-category="meditation"
+                                onclick="filterCalendar('meditation')">
                                 <span class="filter-dot meditation-dot"></span> Meditation
                             </button>
-                            <button class="category-filter" data-category="hydration" onclick="filterCalendar('hydration')">
+                            <button class="category-filter" data-category="hydration"
+                                onclick="filterCalendar('hydration')">
                                 <span class="filter-dot hydration-dot"></span> Hydration
                             </button>
                             <button class="category-filter" data-category="sleep" onclick="filterCalendar('sleep')">
                                 <span class="filter-dot sleep-dot"></span> Sleep
                             </button>
-                            <button class="category-filter" data-category="journaling" onclick="filterCalendar('journaling')">
+                            <button class="category-filter" data-category="journaling"
+                                onclick="filterCalendar('journaling')">
                                 <span class="filter-dot journaling-dot"></span> Journaling
                             </button>
-                            <button class="category-filter" data-category="exercise" onclick="filterCalendar('exercise')">
+                            <button class="category-filter" data-category="exercise"
+                                onclick="filterCalendar('exercise')">
                                 <span class="filter-dot exercise-dot"></span> Exercise
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="calendar-sidebar-section">
                         <h4 class="calendar-sidebar-title">Quick Schedule</h4>
                         <div class="quick-reminder-form">
@@ -350,7 +421,8 @@
                                     <option value="weekly">Weekly</option>
                                 </select>
                             </div>
-                            <button class="action-btn" onclick="addDirectReminder()" style="margin-top: 1.25rem; width: 100%;">Add Reminder</button>
+                            <button class="action-btn" onclick="addDirectReminder()"
+                                style="margin-top: 1.25rem; width: 100%;">Add Reminder</button>
                         </div>
                     </div>
                 </div>
@@ -369,7 +441,7 @@
                             <span class="calendar-timezone">Timezone: Local (Active)</span>
                         </div>
                     </div>
-                    
+
                     <!-- Calendar Planner Grid -->
                     <div class="calendar-timeline-container">
                         <!-- Hour indicators left column -->
@@ -415,12 +487,62 @@
                                 <div class="grid-line"></div>
                                 <div class="grid-line"></div>
                             </div>
-                            
+
                             <!-- Reminders container absolute positioned on top of backdrop -->
                             <div class="reminders-events-container" id="remindersEventsContainer">
                                 <!-- Dynamically loaded reminder cards -->
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="viewAnalytics" class="view-pane" style="display: none;">
+            <div class="analytics-workspace">
+                <div class="analytics-intro">
+                    <h3 class="analytics-panel-title">Wellness Analytics Assistant</h3>
+                    <p class="analytics-panel-desc">Trixie's natural language interface can translate your questions directly into secure, local database queries (Text-to-SQL) to find trends and logs.</p>
+                </div>
+                
+                <div class="query-panel">
+                    <div class="form-group">
+                        <label class="form-label" for="analyticsText">Ask Trixie anything about your history...</label>
+                        <div class="search-input-wrapper">
+                            <input class="text-input search-input" type="text" id="analyticsText"
+                                placeholder="e.g. When was my stress level highest this month?"
+                                onkeydown="if(event.key === 'Enter') runAnalyticsQuery()">
+                            <button class="search-submit-btn" onclick="runAnalyticsQuery()">Ask Trixie</button>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-queries">
+                        <span class="quick-queries-label">Suggested Questions:</span>
+                        <div class="quick-chips">
+                            <button class="quick-chip" onclick="clickQuickQuery('When was my stress level highest this month?')">📈 Highest stress this month</button>
+                            <button class="quick-chip" onclick="clickQuickQuery('How many journal entries did I make this week?')">📝 Journal entries this week</button>
+                            <button class="quick-chip" onclick="clickQuickQuery('Show my average mood score.')">📊 Average mood score</button>
+                            <button class="quick-chip" onclick="clickQuickQuery('Which activities did I schedule reminders for?')">⏰ Scheduled reminders</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analytics-loading" id="analyticsLoading" style="display: none;">
+                    <div class="spinner-container">
+                        <div class="spinner-dot"></div>
+                        <div class="spinner-dot"></div>
+                        <div class="spinner-dot"></div>
+                    </div>
+                    <p>Trixie is translating your request to SQLite and executing...</p>
+                </div>
+
+                <div class="analytics-results" id="analyticsResults" style="display: none;">
+                    <div class="synthesis-card">
+                        <div class="synthesis-header">
+                            <span class="synthesis-sparkle">✨</span>
+                            <h4 class="synthesis-title">Trixie's Wellness Insights</h4>
+                        </div>
+                        <p class="synthesis-text" id="synthesisText">Your stress level was highest on May 26th this month when you reported feeling overwhelmed by heavy workload.</p>
                     </div>
                 </div>
             </div>
@@ -431,6 +553,44 @@
         let currentMode = 'chat';
         let selectedStress = 'Medium';
         let mcpPanelOpen = false;
+
+        function formatMarkdown(text) {
+            if (!text) return '';
+            
+            // Escape HTML to prevent injection
+            let html = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Headings
+            html = html.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+            html = html.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+            html = html.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+
+            // Bold
+            html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic
+            html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+            // Bullet points
+            html = html.replace(/^\s*[-*]\s+(.*?)$/gm, '<li>$1</li>');
+            
+            // Wrap consecutive list items in <ul>
+            html = html.replace(/(<li>.*?<\/li>)+/gs, '<ul>$&</ul>');
+
+            // Paragraphs
+            html = html.split(/\n{2,}/).map(para => {
+                let trimmed = para.trim();
+                if (trimmed.startsWith('<h') || trimmed.startsWith('<ul') || trimmed.startsWith('<li>')) {
+                    return para;
+                }
+                return `<p>${para.replace(/\n/g, '<br>')}</p>`;
+            }).join('');
+
+            return html;
+        }
 
         function toggleExpander() {
             const exp = document.getElementById('howItWorks');
@@ -456,16 +616,62 @@
             document.getElementById('menuCheckin').classList.toggle('active', tabId === 'checkin');
             document.getElementById('menuJournal').classList.toggle('active', tabId === 'journal');
             document.getElementById('menuCalendar').classList.toggle('active', tabId === 'calendar');
+            document.getElementById('menuAnalytics').classList.toggle('active', tabId === 'analytics');
             document.getElementById('viewCheckin').style.display = tabId === 'checkin' ? 'block' : 'none';
             document.getElementById('viewJournal').style.display = tabId === 'journal' ? 'block' : 'none';
             document.getElementById('viewCalendar').style.display = tabId === 'calendar' ? 'block' : 'none';
-            
+            document.getElementById('viewAnalytics').style.display = tabId === 'analytics' ? 'block' : 'none';
+
             if (tabId === 'journal') {
                 loadJournalEntries();
             } else if (tabId === 'calendar') {
                 loadCalendarReminders();
             }
         }
+
+        function clickQuickQuery(q) {
+            document.getElementById('analyticsText').value = q;
+            runAnalyticsQuery();
+        }
+
+        async function runAnalyticsQuery() {
+            const input = document.getElementById('analyticsText');
+            const q = input.value.trim();
+            if (!q) {
+                alert('Please enter a query or select a suggested question!');
+                return;
+            }
+
+            const loader = document.getElementById('analyticsLoading');
+            const results = document.getElementById('analyticsResults');
+            
+            loader.style.display = 'block';
+            results.style.display = 'none';
+            loader.scrollIntoView({ behavior: 'smooth' });
+
+            try {
+                const response = await fetch('/api/analytics/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: q })
+                });
+
+                if (!response.ok) throw new Error('Query failed');
+                const data = await response.json();
+
+                // 1. Empathy statement
+                document.getElementById('synthesisText').innerHTML = formatMarkdown(data.response);
+
+                loader.style.display = 'none';
+                results.style.display = 'block';
+                results.scrollIntoView({ behavior: 'smooth' });
+
+            } catch (err) {
+                loader.style.display = 'none';
+                alert('Failed to execute analytics query. Please check that the back-end service is running.');
+            }
+        }
+
 
         function setMode(mode) {
             currentMode = mode;
@@ -499,19 +705,19 @@
             const textarea = document.getElementById('journalDirectText');
             const btn = document.getElementById('saveJournalBtn');
             const text = textarea.value.trim();
-            
+
             if (!text) {
                 alert('Please write something before syncing!');
                 return;
             }
-            
+
             btn.disabled = true;
             btn.textContent = 'Saving to Google Drive...';
-            
+
             // Show a brief sync cloud animation
             const statusCloud = document.querySelector('.google-doc-status-cloud');
             statusCloud.style.opacity = '0.5';
-            
+
             try {
                 // Submit to checkin pipeline so that AI analyzes and saves with full metadata!
                 const response = await fetch('/api/checkin', {
@@ -519,12 +725,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_input: text, stress_level: 'medium' })
                 });
-                
+
                 if (!response.ok) throw new Error('Failed to save reflection');
-                
+
                 textarea.value = '';
                 btn.textContent = 'Synced successfully!';
-                
+
                 // Play visual status update
                 statusCloud.innerHTML = `
                     <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="cloud-icon" style="color: #3b82f6; animation: spin 1s linear infinite;">
@@ -533,19 +739,19 @@
                     Saving...
                 `;
                 statusCloud.style.opacity = '1';
-                
+
                 await new Promise(r => setTimeout(r, 1200));
-                
+
                 statusCloud.innerHTML = `
                     <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" class="cloud-icon" style="color: #10b981;">
                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                     </svg>
                     Saved to Drive
                 `;
-                
+
                 btn.disabled = false;
                 btn.textContent = 'Sync reflection to Doc';
-                
+
                 // Reload entries
                 loadJournalEntries();
             } catch (err) {
@@ -559,15 +765,15 @@
         async function loadJournalEntries() {
             const entriesList = document.getElementById('googleDocEntriesList');
             entriesList.innerHTML = '<div style="text-align: center; padding: 3rem; color: #475569;">Opening Google Doc and reading entries...</div>';
-            
+
             try {
                 const res = await fetch('/api/journal');
                 if (!res.ok) throw new Error('Failed to load journal');
                 const data = await res.json();
-                
+
                 entriesList.innerHTML = '';
                 const entries = data.entries || [];
-                
+
                 if (entries.length === 0) {
                     entriesList.innerHTML = `
                         <div style="text-align: center; padding: 4rem 1.5rem; color: #64748b;">
@@ -577,12 +783,12 @@
                     `;
                     return;
                 }
-                
+
                 // Sort to show newest first inside the doc paper, like an ongoing log
                 entries.reverse().forEach(entry => {
                     const docEntry = document.createElement('div');
                     docEntry.className = 'google-doc-entry';
-                    
+
                     // Create floating comments section on the side from Trixie!
                     let commentHtml = '';
                     if (entry.emotion === 'stressed' || entry.emotion === 'overwhelmed' || entry.emotion === 'anxious') {
@@ -607,7 +813,7 @@
                             </div>
                         `;
                     }
-                    
+
                     docEntry.innerHTML = `
                         <div class="entry-header">
                             <span class="entry-date">📅 ${entry.timestamp}</span>
@@ -635,7 +841,7 @@
         /* ── Pipeline ────────────────────────────────────────────────── */
 
         async function runPipeline() {
-            const btn            = document.getElementById('submitBtn');
+            const btn = document.getElementById('submitBtn');
             const pipelineStatus = document.getElementById('pipelineStatus');
             const resultsSection = document.getElementById('resultsSection');
 
@@ -643,9 +849,9 @@
             resultsSection.style.display = 'none';
             pipelineStatus.style.display = 'block';
 
-            const step1      = document.getElementById('step1');
-            const step2      = document.getElementById('step2');
-            const step3      = document.getElementById('step3');
+            const step1 = document.getElementById('step1');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
             const step1State = document.getElementById('step1State');
             const step2State = document.getElementById('step2State');
             const step3State = document.getElementById('step3State');
@@ -659,6 +865,7 @@
 
             let userInput = '';
             let stressLevel = '';
+            let sleepHours = null;
 
             if (currentMode === 'chat') {
                 userInput = document.getElementById('chatText').value.trim();
@@ -667,13 +874,18 @@
                 const extra = document.getElementById('formCause').value.trim();
                 if (extra) userInput += ` ${extra}`;
                 stressLevel = selectedStress.toLowerCase();
+
+                const sleepVal = document.getElementById('formSleepHours').value.trim();
+                if (sleepVal) {
+                    sleepHours = parseFloat(sleepVal);
+                }
             }
 
             try {
                 const response = await fetch('/api/checkin', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_input: userInput, stress_level: stressLevel })
+                    body: JSON.stringify({ user_input: userInput, stress_level: stressLevel, sleep_hours: sleepHours })
                 });
 
                 if (!response.ok) throw new Error('Pipeline request failed');
@@ -696,6 +908,9 @@
                 const severityStr = result.severity.charAt(0).toUpperCase() + result.severity.slice(1);
                 document.getElementById('resSeverity').textContent = severityStr;
 
+                document.getElementById('resSleep').textContent =
+                    result.sleep_hours !== null && result.sleep_hours !== undefined ? result.sleep_hours + ' hrs' : 'N/A';
+
                 const causeStr = result.cause.replace('_', ' ');
                 document.getElementById('resCause').textContent =
                     'Root Cause: ' + causeStr.charAt(0).toUpperCase() + causeStr.slice(1);
@@ -707,7 +922,7 @@
                     const item = document.createElement('div');
                     item.className = 'rec-item';
                     const formatted = rec.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                         .replace(/\*(.*?)\*/g, '<em>$1</em>');
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>');
                     item.innerHTML = `<span class="rec-num">${idx + 1}.</span> ${formatted}`;
                     recsList.appendChild(item);
                 });
@@ -719,14 +934,14 @@
                     result.tool_results.forEach(toolRes => {
                         const card = document.createElement('div');
                         card.className = 'mcp-card';
-                        
+
                         let args = {};
                         if (toolRes.tool_name === 'get_breathing_exercise') args = { severity: result.severity };
                         else if (toolRes.tool_name === 'lookup_wellness_resources') args = { cause: result.cause };
                         else if (toolRes.tool_name === 'get_stress_tip') args = { cause: result.cause, emotion: result.emotion };
                         else if (toolRes.tool_name === 'save_journal_entry') args = { content: userInput, emotion: result.emotion, severity: result.severity, cause: result.cause };
                         else if (toolRes.tool_name === 'create_calendar_reminder') args = { activity: 'parsed', time: 'parsed', frequency: 'parsed' };
-                        
+
                         card.innerHTML = `
                             <div class="mcp-card-header">
                                 <span class="mcp-tool-badge">tool</span>
@@ -778,12 +993,12 @@
         async function loadCalendarReminders() {
             const container = document.getElementById('remindersEventsContainer');
             container.innerHTML = '<div class="calendar-loading" style="text-align: center; padding: 4rem; color: #64748b; font-style: italic;">Loading scheduled reminders...</div>';
-            
+
             try {
                 const res = await fetch('/api/reminders');
                 if (!res.ok) throw new Error('Failed to fetch reminders');
                 const data = await res.json();
-                
+
                 allReminders = data.reminders || [];
                 renderCalendarReminders();
             } catch (err) {
@@ -793,26 +1008,26 @@
 
         function filterCalendar(category) {
             activeCategoryFilter = category;
-            
+
             // Update active buttons in filter list
             const buttons = document.querySelectorAll('.category-filter');
             buttons.forEach(btn => {
                 btn.classList.toggle('active', btn.getAttribute('data-category') === category);
             });
-            
+
             renderCalendarReminders();
         }
 
         function renderCalendarReminders() {
             const container = document.getElementById('remindersEventsContainer');
             container.innerHTML = '';
-            
+
             // Filter by active category
             const filtered = allReminders.filter(rem => {
                 if (activeCategoryFilter === 'all') return true;
                 return rem.activity === activeCategoryFilter;
             });
-            
+
             if (filtered.length === 0) {
                 container.innerHTML = `
                     <div style="grid-column: 1 / -1; display: flex; align-items: center; justify-content: center; height: 100%; color: #64748b; font-style: italic; font-size: 0.95rem; padding: 4rem 0;">
@@ -821,28 +1036,28 @@
                 `;
                 return;
             }
-            
+
             filtered.forEach(rem => {
                 // Calculate position on the timeline
                 // Hour timeline goes from 06:00 to 22:00 (16 hours total)
                 const parts = rem.time.split(':');
                 const hour = parseInt(parts[0], 10);
                 const minute = parseInt(parts[1], 10);
-                
+
                 const startHour = 6;
                 const endHour = 23;
                 const totalHours = endHour - startHour;
-                
+
                 let decimalHour = hour + (minute / 60);
                 if (decimalHour < startHour) decimalHour = startHour;
                 if (decimalHour > endHour) decimalHour = endHour;
-                
+
                 const percentFromTop = ((decimalHour - startHour) / totalHours) * 94; // slightly offset from 100 to fit
-                
+
                 const card = document.createElement('div');
                 card.className = `reminder-event-card category-${rem.activity} ${rem.active ? 'active' : 'inactive'}`;
                 card.style.top = `calc(${percentFromTop}% + 6px)`;
-                
+
                 const activityIcons = {
                     meditation: '🧘',
                     hydration: '💧',
@@ -850,9 +1065,9 @@
                     journaling: '✍️',
                     exercise: '🏃'
                 };
-                
+
                 const icon = activityIcons[rem.activity] || '📅';
-                
+
                 card.innerHTML = `
                     <div class="event-icon">${icon}</div>
                     <div class="event-details">
@@ -873,7 +1088,7 @@
                         </button>
                     </div>
                 `;
-                
+
                 container.appendChild(card);
             });
         }
@@ -905,21 +1120,21 @@
             const activity = document.getElementById('calActivity').value;
             const time = document.getElementById('calTime').value;
             const frequency = document.getElementById('calFreq').value;
-            
+
             if (!time) {
                 alert('Please select a time!');
                 return;
             }
-            
+
             try {
                 const res = await fetch('/api/reminders', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ activity, time, frequency })
                 });
-                
+
                 if (!res.ok) throw new Error('Failed to create reminder');
-                
+
                 showCalendarModal(activity, time, frequency);
                 showToast(`Scheduled ${frequency} ${activity} at ${time}.`);
                 await loadCalendarReminders();
@@ -945,7 +1160,7 @@
             document.getElementById('modalValActivity').textContent = activity.charAt(0).toUpperCase() + activity.slice(1);
             document.getElementById('modalValTime').textContent = time;
             document.getElementById('modalValFreq').textContent = frequency.charAt(0).toUpperCase() + frequency.slice(1);
-            
+
             const modal = document.getElementById('calendarModal');
             modal.classList.add('show');
         }
@@ -966,10 +1181,10 @@
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const currentTimeStr = `${hours}:${minutes}`;
-            
+
             if (currentTimeStr === checkedTime) return;
             checkedTime = currentTimeStr;
-            
+
             allReminders.forEach(rem => {
                 if (rem.active && rem.time === currentTimeStr) {
                     triggerReminderNotification(rem);
@@ -979,12 +1194,12 @@
 
         function triggerReminderNotification(rem) {
             playWellnessChime();
-            
+
             const title = document.getElementById('liveAlertTitle');
             const icon = document.getElementById('liveAlertIcon');
             const msg = document.getElementById('liveAlertMessage');
             const primaryBtn = document.getElementById('liveAlertPrimaryBtn');
-            
+
             const activityTitles = {
                 meditation: '🧘 Time to Meditate!',
                 hydration: '💧 Time to Hydrate!',
@@ -992,7 +1207,7 @@
                 journaling: '✍️ Time to Journal!',
                 exercise: '🏃 Time to Move!'
             };
-            
+
             const activityIcons = {
                 meditation: '🧘',
                 hydration: '💧',
@@ -1000,7 +1215,7 @@
                 journaling: '✍️',
                 exercise: '🏃'
             };
-            
+
             const activityMessages = {
                 meditation: "Take a 5-minute pause to breathe deeply, relax your shoulders, and clear your mind.",
                 hydration: "Pour yourself a refreshing glass of water. Staying hydrated keeps your focus sharp!",
@@ -1008,14 +1223,14 @@
                 journaling: "Open your Google Docs Journal and write down three things you are grateful for today.",
                 exercise: "Stand up, stretch your body, and take a quick 5-minute walk to re-energize."
             };
-            
+
             title.textContent = activityTitles[rem.activity] || '🔔 Wellness Break!';
             icon.textContent = activityIcons[rem.activity] || '📅';
             msg.textContent = activityMessages[rem.activity] || "It's time for your scheduled wellness reminder.";
-            
+
             if (rem.activity === 'meditation') {
                 primaryBtn.textContent = 'Start Guided Breathing';
-                primaryBtn.onclick = function() {
+                primaryBtn.onclick = function () {
                     dismissLiveAlert();
                     switchTab('checkin');
                     setMode('form');
@@ -1024,7 +1239,7 @@
                 };
             } else if (rem.activity === 'journaling') {
                 primaryBtn.textContent = 'Open Journal Doc';
-                primaryBtn.onclick = function() {
+                primaryBtn.onclick = function () {
                     dismissLiveAlert();
                     switchTab('journal');
                 };
@@ -1032,7 +1247,7 @@
                 primaryBtn.textContent = 'Got it!';
                 primaryBtn.onclick = dismissLiveAlert;
             }
-            
+
             const modal = document.getElementById('liveAlertModal');
             modal.classList.add('show');
         }
@@ -1046,25 +1261,25 @@
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
                 const ctx = new AudioContext();
-                
+
                 const playNote = (freq, delay, duration) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    
+
                     osc.type = 'sine';
                     osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-                    
+
                     gain.gain.setValueAtTime(0, ctx.currentTime + delay);
                     gain.gain.linearRampToValueAtTime(0.12, ctx.currentTime + delay + 0.05);
                     gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + delay + duration);
-                    
+
                     osc.connect(gain);
                     gain.connect(ctx.destination);
-                    
+
                     osc.start(ctx.currentTime + delay);
                     osc.stop(ctx.currentTime + delay + duration);
                 };
-                
+
                 playNote(659.25, 0, 1.5);    // E5
                 playNote(880.00, 0.15, 1.5); // A5
                 playNote(1109.73, 0.3, 2.0); // C#6
@@ -1096,7 +1311,8 @@
                 <h3 class="calendar-modal-title">Reminder Scheduled!</h3>
             </div>
             <div class="calendar-modal-body">
-                <p class="calendar-modal-message" id="calendarModalMsg">Your wellness reminder has been successfully synced with Trixie's planner.</p>
+                <p class="calendar-modal-message" id="calendarModalMsg">Your wellness reminder has been successfully
+                    synced with Trixie's planner.</p>
                 <div class="calendar-modal-details">
                     <div class="modal-detail-item">
                         <span class="detail-label">Activity</span>
@@ -1127,7 +1343,8 @@
             </div>
             <div class="live-alert-body">
                 <div class="live-alert-graphic" id="liveAlertIcon">🧘</div>
-                <p class="live-alert-message" id="liveAlertMessage">It's time for your scheduled meditation reminder.</p>
+                <p class="live-alert-message" id="liveAlertMessage">It's time for your scheduled meditation reminder.
+                </p>
                 <p class="live-alert-quote">"Taking a short break today keeps stress away."</p>
             </div>
             <div class="live-alert-footer">
@@ -1137,4 +1354,5 @@
         </div>
     </div>
 </body>
+
 </html>

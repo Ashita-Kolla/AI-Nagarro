@@ -12,20 +12,18 @@ VALID_ACTIVITIES = ["meditation", "hydration", "sleep", "journaling", "exercise"
 
 def get_calendar_reminders() -> dict:
     """
-    Reads active reminders from wellness_calendar.json.
+    Reads active reminders from the SQLite database.
     """
-    if not os.path.exists(CALENDAR_FILE):
-        return {"status": "success", "reminders": []}
     try:
-        with open(CALENDAR_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            return {"status": "success", "reminders": data}
+        from database import get_reminders
+        reminders = get_reminders()
+        return {"status": "success", "reminders": reminders}
     except Exception as e:
         return {"status": "error", "message": f"Failed to read reminders: {str(e)}", "reminders": []}
 
 def save_reminders(reminders: list) -> bool:
     """
-    Saves reminders list to wellness_calendar.json.
+    Legacy helper (deprecated). Saves reminders list to wellness_calendar.json.
     """
     try:
         with open(CALENDAR_FILE, "w", encoding="utf-8") as f:
@@ -36,7 +34,7 @@ def save_reminders(reminders: list) -> bool:
 
 def create_calendar_reminder(activity: str, time: str, frequency: str = "daily") -> dict:
     """
-    Validates the wellness category, creates a reminder, and persists it.
+    Validates the wellness category, creates a reminder, and persists it to SQLite.
     """
     activity = activity.lower().strip()
     # Normalize activity
@@ -47,8 +45,6 @@ def create_calendar_reminder(activity: str, time: str, frequency: str = "daily")
             break
     
     if not matched_activity:
-        # If not matched directly, fallback to first valid, or treat as custom, but prompt says:
-        # "Allow users to schedule wellness-related reminders such as: meditation, hydration, sleep, journaling, exercise"
         matched_activity = "meditation"  # Default fallback
     
     # Normalize time (expected HH:MM format, if invalid fallback to 08:00)
@@ -69,20 +65,19 @@ def create_calendar_reminder(activity: str, time: str, frequency: str = "daily")
         else:
             time = "08:00"
 
-    reminder = {
-        "id": f"rem_{uuid.uuid4().hex[:8]}",
-        "activity": matched_activity,
-        "time": time,
-        "frequency": frequency,
-        "active": True,
-        "timestamp": datetime.now().isoformat()
-    }
+    reminder_id = f"rem_{uuid.uuid4().hex[:8]}"
+    timestamp = datetime.now().isoformat()
     
-    res = get_calendar_reminders()
-    reminders = res.get("reminders", [])
-    reminders.append(reminder)
-    
-    if save_reminders(reminders):
+    from database import create_reminder
+    if create_reminder(reminder_id, matched_activity, time, frequency, active=True, timestamp=timestamp):
+        reminder = {
+            "id": reminder_id,
+            "activity": matched_activity,
+            "time": time,
+            "frequency": frequency,
+            "active": True,
+            "timestamp": timestamp
+        }
         return {
             "status": "success",
             "tool_name": "create_calendar_reminder",
@@ -96,6 +91,7 @@ def create_calendar_reminder(activity: str, time: str, frequency: str = "daily")
             "message": "Failed to save the reminder to the persistent database.",
             "reminder": None
         }
+
 
 def parse_reminder_from_text(text: str) -> tuple[str, str, str]:
     """
@@ -171,28 +167,15 @@ def parse_reminder_from_text(text: str) -> tuple[str, str, str]:
 
 def toggle_calendar_reminder(reminder_id: str) -> dict:
     """
-    Toggles the active state of a reminder.
+    Toggles the active state of a reminder in SQLite.
     """
-    res = get_calendar_reminders()
-    reminders = res.get("reminders", [])
-    updated = False
-    for rem in reminders:
-        if rem["id"] == reminder_id:
-            rem["active"] = not rem["active"]
-            updated = True
-            break
-    if updated and save_reminders(reminders):
-        return {"status": "success", "message": "Reminder state toggled successfully."}
-    return {"status": "error", "message": "Reminder not found or failed to save."}
+    from database import toggle_reminder
+    return toggle_reminder(reminder_id)
 
 def delete_calendar_reminder(reminder_id: str) -> dict:
     """
-    Deletes a reminder by its ID.
+    Deletes a reminder by its ID in SQLite.
     """
-    res = get_calendar_reminders()
-    reminders = res.get("reminders", [])
-    filtered = [rem for rem in reminders if rem["id"] != reminder_id]
-    if len(filtered) < len(reminders):
-        if save_reminders(filtered):
-            return {"status": "success", "message": "Reminder deleted successfully."}
-    return {"status": "error", "message": "Reminder not found or failed to save."}
+    from database import delete_reminder
+    return delete_reminder(reminder_id)
+

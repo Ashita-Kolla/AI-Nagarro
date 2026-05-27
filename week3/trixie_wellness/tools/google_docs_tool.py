@@ -156,13 +156,14 @@ def save_journal_entry(content: str, emotion: str, severity: str, cause: str) ->
             docs_service.documents().batchUpdate(documentId=doc_id, body={'requests': append_request}).execute()
             
             # Save local copy as well to preserve immediate history lookup
+            entry_dict["doc_url"] = f"https://docs.google.com/document/d/{doc_id}/edit"
             _save_local_entry(entry_dict)
             
             return {
                 "tool_name": "save_journal_entry",
                 "status": "success",
                 "storage_type": "Google Docs (Cloud)",
-                "doc_url": f"https://docs.google.com/document/d/{doc_id}/edit",
+                "doc_url": entry_dict["doc_url"],
                 "entry": entry_dict
             }
         except Exception as e:
@@ -170,6 +171,7 @@ def save_journal_entry(content: str, emotion: str, severity: str, cause: str) ->
             pass
 
     # 2. Fallback to Local Persistent Mock Google Docs File
+    entry_dict["doc_url"] = MOCK_DOC_URL
     _save_local_entry(entry_dict)
     
     return {
@@ -197,19 +199,30 @@ def get_journal_history() -> dict:
 
 
 def _save_local_entry(entry: dict):
-    """Utility to append an entry to the local JSON Google Docs mock database."""
-    entries = _read_local_entries()
-    entries.append(entry)
-    with open(MOCK_DOC_FILE, "w", encoding="utf-8") as f:
-        json.dump(entries, f, indent=2, ensure_ascii=False)
+    """Utility to append an entry to the SQLite database journal_metadata table."""
+    try:
+        from database import save_journal_metadata
+        content = entry.get("content", "")
+        word_count = len(content.split())
+        doc_url = entry.get("doc_url", "")
+        save_journal_metadata(
+            emotion=entry.get("emotion", ""),
+            severity=entry.get("severity", ""),
+            cause=entry.get("cause", ""),
+            content=content,
+            word_count=word_count,
+            doc_url=doc_url,
+            timestamp=entry.get("timestamp")
+        )
+    except Exception as e:
+        print(f"Error saving local entry to SQLite: {e}")
 
 
 def _read_local_entries() -> list[dict]:
-    """Utility to read the local JSON Google Docs mock database."""
-    if not os.path.exists(MOCK_DOC_FILE):
-        return []
+    """Utility to read the local SQLite journal_metadata table."""
     try:
-        with open(MOCK_DOC_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
+        from database import get_journal_history as db_get_journal_history
+        return db_get_journal_history()
+    except Exception as e:
+        print(f"Error reading local entries from SQLite: {e}")
         return []
