@@ -7,8 +7,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from graph.workflow import run_pipeline
+from database import init_db
 
 app = FastAPI()
+
+# Initialize/verify database tables on startup
+init_db()
 
 import uuid
 import re

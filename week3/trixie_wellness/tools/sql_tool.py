@@ -26,40 +26,7 @@ Analyze the user's natural language question and convert it into a valid SQLite 
 Respond with ONLY the SQLite query inside a ```sql ... ``` block or as plain text. Do not provide any conversational text or explanation.
 
 Database Schema:
-1. Table 'mood_logs':
-   - id TEXT PRIMARY KEY
-   - user_input TEXT
-   - stress_level TEXT (values: 'low', 'medium', 'high')
-   - emotion TEXT (values: 'stressed', 'tired', 'anxious', 'overwhelmed', 'neutral', 'happy')
-   - severity TEXT (values: 'low', 'medium', 'high')
-   - cause TEXT (values: 'workload', 'meetings', 'personal', 'unclear')
-   - sleep_hours REAL
-   - timestamp TEXT (ISO 8601 format: YYYY-MM-DDTHH:MM:SS, e.g., '2026-05-27T13:37:52')
-
-2. Table 'journal_metadata':
-   - id INTEGER PRIMARY KEY AUTOINCREMENT
-   - emotion TEXT
-   - severity TEXT (values: 'low', 'medium', 'high')
-   - cause TEXT (values: 'workload', 'meetings', 'personal', 'unclear')
-   - content TEXT
-   - word_count INTEGER
-   - doc_url TEXT
-   - timestamp TEXT (format: YYYY-MM-DD HH:MM:SS, e.g., '2026-05-27 13:37:52')
-
-3. Table 'reminders':
-   - id TEXT PRIMARY KEY
-   - activity TEXT (values: 'meditation', 'hydration', 'sleep', 'journaling', 'exercise')
-   - time TEXT (format: HH:MM, e.g., '08:00')
-   - frequency TEXT
-   - active INTEGER (0 = inactive, 1 = active)
-   - timestamp TEXT (ISO 8601)
-
-4. Table 'reminder_history':
-   - id INTEGER PRIMARY KEY AUTOINCREMENT
-   - reminder_id TEXT
-   - activity TEXT
-   - action TEXT (values: 'created', 'toggled', 'deleted')
-   - timestamp TEXT (ISO 8601)
+{schema_context}
 
 SQLite Date Functions and Time Calculations:
 - SQLite does not have a dedicated DATETIME type. Dates are stored as strings.
@@ -145,6 +112,39 @@ Write the structured response now:"""
 sql_gen_prompt_template = PromptTemplate.from_template(SQL_GENERATION_TEMPLATE)
 synthesis_prompt_template = PromptTemplate.from_template(SYNTHESIS_TEMPLATE)
 
+def get_db_schema() -> str:
+    """Dynamically retrieves the schema of all user tables in the SQLite database."""
+    try:
+        if not os.path.exists(DB_PATH):
+            return "No database found."
+        
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        # Get list of all non-system tables
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';")
+        tables = [row["name"] for row in cursor.fetchall()]
+        
+        schema_text = []
+        for index, table in enumerate(tables, 1):
+            cursor.execute(f"PRAGMA table_info({table});")
+            columns = cursor.fetchall()
+            col_strings = []
+            for col in columns:
+                pk_suffix = " PRIMARY KEY" if col["pk"] else ""
+                not_null = " NOT NULL" if col["notnull"] else ""
+                dflt = f" DEFAULT {col['dflt_value']}" if col["dflt_value"] is not None else ""
+                col_strings.append(f"   - {col['name']} {col['type']}{pk_suffix}{not_null}{dflt}")
+            
+            table_schema = f"{index}. Table '{table}':\n" + "\n".join(col_strings)
+            schema_text.append(table_schema)
+            
+        conn.close()
+        return "\n\n".join(schema_text)
+    except Exception as e:
+        return f"Error retrieving dynamic schema: {e}"
+
 def clean_sql_query(raw_sql: str) -> str:
     """Helper to extract clean SQL from markdown or conversational LLM output."""
     sql_match = re.search(r"```sql\s*(.*?)\s*```", raw_sql, re.DOTALL | re.IGNORECASE)
@@ -193,7 +193,11 @@ def run_text_to_sql(question: str) -> dict:
     synthesizes a supportive wellness answer.
     """
     # Step 1: Prompt formatting for SQL Generation
-    gen_prompt_str = sql_gen_prompt_template.format(question=question)
+    schema_ctx = get_db_schema()
+    gen_prompt_str = sql_gen_prompt_template.format(
+        schema_context=schema_ctx,
+        question=question
+    )
     
     # Step 2: Call TinyLlama LLM
     try:
