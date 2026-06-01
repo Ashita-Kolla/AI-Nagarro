@@ -124,7 +124,7 @@ pip install -r requirements.txt
 
 > Note: torch installation may take a few minutes. If you have a CUDA GPU, install the CUDA-enabled build from pytorch.org for faster inference.
 
-### 3. Run the app
+### 3. Run the app locally
 
 ```bash
 # From inside the trixie_wellness/ directory:
@@ -134,6 +134,22 @@ python app.py
 Open in your browser: **http://127.0.0.1:8000**
 
 First run: TinyLlama-1.1B-Chat-v1.0 (~2.2 GB) downloads automatically from HuggingFace and is cached locally. Takes 1–5 minutes. Subsequent runs load in ~10–30 seconds.
+
+### 4. Run with Docker (Optional)
+
+You can run the entire application inside a Docker container. Ensure Docker is installed and running, then execute:
+
+```bash
+# Build the Docker image
+docker build -t trixie-wellness .
+
+# Run the container
+docker run -p 8000:8000 --env-file .env trixie-wellness
+```
+
+Open in your browser: **http://localhost:8000**
+
+*Note: You can copy `.env.example` to `.env` to customize environment variables before running.*
 
 ---
 
