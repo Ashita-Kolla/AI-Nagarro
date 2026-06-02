@@ -7,3 +7,4 @@ torch>=2.2.0
 sentencepiece>=0.1.99
 accelerate>=0.29.0
 python-dotenv>=1.0.0
+python-multipart
