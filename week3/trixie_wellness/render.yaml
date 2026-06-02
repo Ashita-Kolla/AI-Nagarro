@@ -2,6 +2,7 @@ services:
   - type: web
     name: trixie-wellness
     env: docker
+    rootDir: week3/trixie_wellness
     plan: free
     # -------------------------------------------------------------
     # Note on Data Persistence: 
