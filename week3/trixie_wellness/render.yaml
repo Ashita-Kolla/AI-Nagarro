@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: trixie-wellness
+    env: docker
+    plan: free
+    # -------------------------------------------------------------
+    # Note on Data Persistence: 
+    # Render's free tier does not support persistent disks. 
+    # If you want to keep your SQLite database between deployments, 
+    # upgrade 'plan' to 'starter' and uncomment the 'disk' section,
+    # along with the 'DB_PATH' environment variable below.
+    # -------------------------------------------------------------
+    # disk:
+    #   name: sqlite-data
+    #   mountPath: /data
+    #   sizeGB: 1
+    envVars:
+      - key: PORT
+        value: 8000
+      # - key: DB_PATH
+      #   value: /data/trixie_wellness.db
+      
+      # Add any API keys your app requires below, but keep sync: false
+      # so the actual values are not committed to your repo. You will 
+      # fill them out in the Render Dashboard.
+      # - key: OPENAI_API_KEY
+      #   sync: false
+      # - key: GOOGLE_API_KEY
+      #   sync: false

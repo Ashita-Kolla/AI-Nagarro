@@ -9,7 +9,7 @@ Trixie accepts a free-text description of how an employee feels (or a quick form
 ## What This Demonstrates
 
 | Concept | Implementation |
-|---------|----------------|
+|---------|----------------|5
 | AI Agent design | 3 agents with distinct roles and prompts |
 | Multi-agent workflows | LangGraph StateGraph orchestration |
 | LLM prompt engineering | TinyLlama-1.1B with structured JSON prompts |
@@ -150,6 +150,16 @@ docker run -p 8000:8000 --env-file .env trixie-wellness
 Open in your browser: **http://localhost:8000**
 
 *Note: You can copy `.env.example` to `.env` to customize environment variables before running.*
+
+### 5. Deploy to Render (Recommended)
+
+This project includes a `render.yaml` Blueprint to quickly deploy to [Render](https://render.com).
+
+1. Push your repository to GitHub/GitLab.
+2. Log in to Render and go to the **Blueprints** tab.
+3. Click **New Blueprint Instance** and connect your repository.
+4. Render will automatically read `render.yaml` and configure the application.
+5. *(Optional)* If you upgrade your service from `free` to `starter`, you can uncomment the disk configuration in `render.yaml` to ensure your SQLite DB persists between deployments!
 
 ---
 

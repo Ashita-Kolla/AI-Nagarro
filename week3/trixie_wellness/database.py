@@ -2,7 +2,8 @@ import os
 import sqlite3
 from datetime import datetime
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "trixie_wellness.db")
+# Allow overriding DB path via environment variable for cloud persistent storage
+DB_PATH = os.getenv("DB_PATH", os.path.join(os.path.dirname(os.path.abspath(__file__)), "trixie_wellness.db"))
 
 def get_db_connection():
     """Establish a connection to the SQLite database."""
