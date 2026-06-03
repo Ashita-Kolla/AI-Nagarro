@@ -14,7 +14,7 @@ def run_rag_agent(state: dict) -> dict:
     
     # 2. Retrieve relevant context from the selected vector store
     rag = get_rag()
-    context = rag.retrieve(domain, user_input, k=2)
+    context = rag.retrieve(domain, user_input, k=4)
     
     # Return updates to the state
     return {

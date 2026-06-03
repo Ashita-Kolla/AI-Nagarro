@@ -1,0 +1,13 @@
+timestamp,query_id,user_input,context_precision,context_recall,faithfulness,relevance,helpfulness,groundedness
+2026-06-03T11:04:07.319763,1,I am feeling extremely burned out from my workload.,1,3,3,4,4,4
+2026-06-03T11:08:41.756253,2,I can't sleep at night because of anxiety.,1,5,5,1,4,4
+2026-06-03T11:13:19.979481,3,I have back to back meetings all day and I'm exhausted.,1,3,3,1,1,4
+2026-06-03T11:18:05.083662,4,I am feeling really sad and depressed lately.,3,3,3,4,4,4
+2026-06-03T11:57:58.173609,1,I am feeling extremely burned out from my workload.,5,3,4,4,4,4
+2026-06-03T12:01:24.420571,2,I can't sleep at night because of anxiety.,1,1,4,1,1,4
+2026-06-03T12:05:45.209571,3,I have back to back meetings all day and I'm exhausted.,1,1,3,1,1,4
+2026-06-03T12:09:32.877142,4,I am feeling really sad and depressed lately.,1,1,4,4,4,4
+2026-06-03T12:24:22.735346,1,I am feeling extremely burned out from my workload.,5,5,4,4,4,4
+2026-06-03T13:09:38.193104,2,I can't sleep at night because of anxiety.,5,4,5,1,3,4
+2026-06-03T13:13:12.343753,3,I have back to back meetings all day and I'm exhausted.,5,3,5,1,1,4
+2026-06-03T13:16:43.519988,4,I am feeling really sad and depressed lately.,4,5,4,4,4,4

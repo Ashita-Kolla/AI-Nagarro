@@ -16,3 +16,4 @@ week3/trixie_wellness/rag/vector_stores/mental_health/index.faiss
 week3/trixie_wellness/rag/vector_stores/crisis_support/index.faiss
 week3/trixie_wellness/rag/__pycache__/vectorstore.cpython-312.pyc
 week3/trixie_wellness/rag/__pycache__/router.cpython-312.pyc
+week3/trixie_wellness/evaluation/__pycache__

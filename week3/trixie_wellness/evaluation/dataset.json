@@ -1,0 +1,26 @@
+[
+    {
+        "id": "1",
+        "user_input": "I am feeling extremely burned out from my workload.",
+        "expected_domain": "workplace_productivity",
+        "expected_theme": "acknowledge burnout and suggest workload management strategies"
+    },
+    {
+        "id": "2",
+        "user_input": "I can't sleep at night because of anxiety.",
+        "expected_domain": "mental_health",
+        "expected_theme": "provide sleep hygiene tips and relaxation techniques for anxiety"
+    },
+    {
+        "id": "3",
+        "user_input": "I have back to back meetings all day and I'm exhausted.",
+        "expected_domain": "workplace_productivity",
+        "expected_theme": "suggest taking micro-breaks and managing meeting schedules"
+    },
+    {
+        "id": "4",
+        "user_input": "I am feeling really sad and depressed lately.",
+        "expected_domain": "mental_health",
+        "expected_theme": "express empathy and suggest mental health resources or professional help"
+    }
+]

@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from database import init_db
 
 # Import routers
-from routers import chat, mood, journal, reminder, analytics, upload
+from routers import chat, mood, journal, reminder, analytics, upload, evaluation
 from rag.vectorstore import get_rag
 
 app = FastAPI(title="Trixie Wellness API")
@@ -26,6 +26,7 @@ app.include_router(journal.router)
 app.include_router(reminder.router)
 app.include_router(analytics.router)
 app.include_router(upload.router)
+app.include_router(evaluation.router)
 
 static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "static")
 os.makedirs(static_dir, exist_ok=True)

@@ -2,6 +2,7 @@ import os
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KNOWLEDGE_DIR = os.path.join(BASE_DIR, "rag", "knowledge")
@@ -32,13 +33,13 @@ class MultiDomainRAG:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
 
-        # Simple chunking by Markdown headers
-        sections = content.split("\n## ")
-        docs = []
-        for i, section in enumerate(sections):
-            if i > 0:
-                section = "## " + section
-            docs.append(Document(page_content=section.strip(), metadata={"domain": domain}))
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=1000,
+            chunk_overlap=200,
+            separators=["\n## ", "\n### ", "\n\n", "\n", " ", ""]
+        )
+        texts = text_splitter.split_text(content)
+        docs = [Document(page_content=t.strip(), metadata={"domain": domain}) for t in texts]
         return docs
 
     def _initialize_stores(self):
@@ -61,7 +62,7 @@ class MultiDomainRAG:
                 else:
                     self.stores[domain] = None
 
-    def retrieve(self, domain: str, query: str, k: int = 2) -> str:
+    def retrieve(self, domain: str, query: str, k: int = 4) -> str:
         """Retrieves top-k context for a given domain and query."""
         if domain not in self.stores or self.stores[domain] is None:
             return ""
