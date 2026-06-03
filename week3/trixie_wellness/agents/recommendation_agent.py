@@ -125,6 +125,8 @@ def run_recommendation_agent(state: dict) -> dict:
     cause        = state.get("cause", "unclear")
     cause_summary = state.get("cause_summary", "")
     user_input   = state.get("user_input", "")
+    rag_domain   = state.get("rag_domain", "")
+    rag_context  = state.get("rag_context", "")
 
     # ── Step 1: MCP tool invocation ─────────────────────────────────────────
     tool_results, tool_recs = _invoke_tools(cause, severity, emotion, user_input)
@@ -143,6 +145,9 @@ def run_recommendation_agent(state: dict) -> dict:
         for entry in journal_history[-3:]:
             history_context += f"- [{entry.get('timestamp')}] Emotion: {entry.get('emotion')}, Severity: {entry.get('severity')}, Cause: {entry.get('cause')}. Reflection: {entry.get('content')}\n"
         message += history_context
+
+    if rag_context:
+        message += f"\nRelevant Knowledge Base Context (Domain: {rag_domain}):\n{rag_context}\n"
         
     message += "\nPlease provide 3 wellness recommendations."
 

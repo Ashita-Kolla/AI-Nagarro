@@ -1,14 +1,14 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-router = APIRouter(prefix="/api/reminder", tags=["reminder"])
+router = APIRouter(prefix="/api/reminders", tags=["reminder"])
 
 class ReminderRequest(BaseModel):
     activity: str
     time: str
     frequency: str = "daily"
 
-@router.get("/")
+@router.get("")
 def get_reminders():
     try:
         from tools.calendar_tool import get_calendar_reminders
@@ -16,7 +16,7 @@ def get_reminders():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/")
+@router.post("")
 def create_reminder(req: ReminderRequest):
     try:
         from tools.calendar_tool import create_calendar_reminder

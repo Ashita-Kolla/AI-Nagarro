@@ -9,7 +9,7 @@ class JournalEntryRequest(BaseModel):
     severity: str = "low"
     cause: str = "unclear"
 
-@router.get("/")
+@router.get("")
 def get_journal():
     try:
         from tools.google_docs_tool import get_journal_history
@@ -17,7 +17,7 @@ def get_journal():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/")
+@router.post("")
 def save_journal(req: JournalEntryRequest):
     try:
         from tools.google_docs_tool import save_journal_entry

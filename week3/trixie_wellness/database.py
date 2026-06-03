@@ -95,6 +95,18 @@ def init_db():
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, mock_journals)
     
+    # 5. safety_logs
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS safety_logs (
+        id          INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_input  TEXT    NOT NULL,
+        risk_level  TEXT    NOT NULL,
+        flag_reason TEXT    NOT NULL,
+        action_taken TEXT   NOT NULL,
+        timestamp   TEXT    NOT NULL
+    )
+    """)
+    
     conn.commit()
     conn.close()
 
@@ -287,3 +299,25 @@ def delete_reminder(reminder_id: str) -> dict:
     except Exception as e:
         print(f"Error deleting reminder: {e}")
         return {"status": "error", "message": str(e)}
+
+# --- Safety Logs Operations ---
+
+def log_safety_incident(user_input: str, risk_level: str, flag_reason: str, action_taken: str, timestamp: str = None) -> bool:
+    if not timestamp:
+        timestamp = datetime.now().isoformat()
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO safety_logs (user_input, risk_level, flag_reason, action_taken, timestamp)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (user_input, risk_level, flag_reason, action_taken, timestamp)
+        )
+        conn.commit()
+        conn.close()
+        return True
+    except Exception as e:
+        print(f"Error logging safety incident: {e}")
+        return False

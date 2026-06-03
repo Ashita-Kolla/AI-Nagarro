@@ -9,11 +9,15 @@ from database import init_db
 
 # Import routers
 from routers import chat, mood, journal, reminder, analytics, upload
+from rag.vectorstore import get_rag
 
 app = FastAPI(title="Trixie Wellness API")
 
 # Initialize/verify database tables on startup
 init_db()
+
+# Initialize RAG vector stores
+get_rag()
 
 # Include routers
 app.include_router(chat.router)

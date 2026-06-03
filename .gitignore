@@ -11,3 +11,8 @@ week3/trixie_wellness/__pycache__/
 week3/trixie_wellness/tools/__pycache__/
 week3/trixie_wellness/credentials.json
 week3/trixie_wellness/routers/__pycache__/
+week3/trixie_wellness/rag/vector_stores/workplace_productivity/index.faiss
+week3/trixie_wellness/rag/vector_stores/mental_health/index.faiss
+week3/trixie_wellness/rag/vector_stores/crisis_support/index.faiss
+week3/trixie_wellness/rag/__pycache__/vectorstore.cpython-312.pyc
+week3/trixie_wellness/rag/__pycache__/router.cpython-312.pyc
