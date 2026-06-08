@@ -1,0 +1,38 @@
+[
+  {
+    "id": "pm-001",
+    "issue": "Project status request",
+    "symptoms": ["project update", "status report", "progress update"],
+    "steps": [
+      "Retrieve project metrics",
+      "Check milestone completion",
+      "Generate status summary",
+      "Share with requester"
+    ],
+    "escalate_if": "Project data unavailable"
+  },
+  {
+    "id": "pm-002",
+    "issue": "Task assignment",
+    "symptoms": ["assign task", "allocate work"],
+    "steps": [
+      "Identify available resources",
+      "Create task",
+      "Assign owner",
+      "Notify assignee"
+    ],
+    "escalate_if": "No suitable resource available"
+  },
+  {
+    "id": "pm-003",
+    "issue": "Requirement clarification",
+    "symptoms": ["unclear requirement", "need clarification"],
+    "steps": [
+      "Review requirement document",
+      "Identify ambiguities",
+      "Schedule clarification meeting",
+      "Update requirements"
+    ],
+    "escalate_if": "Business owner unavailable"
+  }
+]

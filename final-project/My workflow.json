@@ -1,0 +1,2062 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "service-desk",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -176,
+        544
+      ],
+      "id": "ee005406-a0f1-4f88-8534-0f1f30efdbce",
+      "name": "Webhook",
+      "webhookId": "60d0fe41-d325-4ec8-aa15-0b279b2c9290"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.body.message}}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are an enterprise service desk routing system.\n\nYour job is to classify user requests into one of the following agents:\n\nHR, IT, Finance, QA, PM, Escalation\n\nYou MUST always return valid JSON only. No markdown. No extra text.\n\n---\n\n# OUTPUT FORMAT (STRICT)\n{\n  \"intent\": \"\",\n  \"confidence\": 0.0 to 1.0,\n  \"agent\": \"\",\n  \"action_required\": true,\n  \"reason\": \"\"\n}\n\n---\n\n# AGENT RULES\n\nYou must assign exactly ONE agent:\n\n- HR → salary, payroll, leave, HR policies\n- IT → laptop, VPN, software, system access issues\n- Finance → invoice, billing, reimbursement, payments\n- QA → bugs, errors, system failures, broken features\n- PM → project status, requirements, delivery tracking\n\nDO NOT output \"Escalation\" as an agent.\nEscalation is NOT an agent.\nIt is handled by system logic only when confidence < 0.8.\n\n---\n\n# CRITICAL FALLBACK RULES\n\n- If confidence < 0.8 → agent MUST be \"Escalation\"\n- If the request is vague, ambiguous, or incomplete → \"Escalation\"\n- If multiple departments are involved → \"Escalation\"\n- If unsure at any point → \"Escalation\"\n- NEVER leave agent empty\n- NEVER output invalid agent names\n- NEVER guess when uncertain\n\n---\n\n# NORMALIZATION RULES\n\n- Fix minor spelling mistakes (e.g., \"Finanace\" → \"Finance\")\n- If correction is uncertain → Escalation\n- Ignore irrelevant words and extract intent carefully\n\n---\n\n# HARD CONSTRAINTS\n\n- agent MUST be exactly one of:\n  HR, IT, Finance, QA, PM, Escalation\n- confidence MUST be between 0 and 1\n- no empty fields for agent\n- no explanations outside JSON\n\n---\n\n# DECISION LOGIC\n\n1. Identify intent\n2. Map to correct agent\n3. If confidence < 0.8 → Escalation\n4. If unclear → Escalation\n5. Output final JSON only"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        48,
+        544
+      ],
+      "id": "de0c3f74-763d-44e5-82bf-0f247363bb48",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 500,
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        128,
+        768
+      ],
+      "id": "9d618c31-5db6-4c87-a22e-0415549b9634",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xMdSaATb179G2eqM",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.text;\n\ntry {\n  const parsed = JSON.parse(raw);\n\n  return {\n    json: parsed\n  };\n}\ncatch (e) {\n  return {\n    json: {\n      intent: \"unknown_intent\",\n      confidence: 0,\n      agent: \"Escalation\",\n      action_required: false,\n      reason: \"Invalid JSON from model\"\n    }\n  };\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        544
+      ],
+      "id": "c9826a4b-d98d-44e0-81ae-f91fa8f0ad64",
+      "name": "Parse JSON"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "036ccb9d-a6fb-4620-aba9-d78629311fe9",
+              "leftValue": "={{$json.confidence}}",
+              "rightValue": 0.8,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        544
+      ],
+      "id": "bbaff9b5-ea7b-4836-b2af-197d1ba56c2a",
+      "name": "Confidence Check"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"escalated\", \"reason\": \"={{$json.reason}}\", \"confidence\": \"={{$json.confidence}}\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        848,
+        656
+      ],
+      "id": "ba60f76a-8d61-4244-b676-f877212f736a",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.agent}}",
+                    "rightValue": "HR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "2fa85b69-f44e-4fd9-8254-73fc948dc8ff"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0ffae631-e95f-4c52-9b80-5381f5b62de2",
+                    "leftValue": "={{$json.agent}}",
+                    "rightValue": "IT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "IT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "416ca0dc-5d2d-4c27-9b96-6fb495e769d6",
+                    "leftValue": "={{$json.agent}}",
+                    "rightValue": "Finance",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Finance"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b66e7752-2f97-4c35-bc44-d9676bd1f285",
+                    "leftValue": "={{$json.agent}}",
+                    "rightValue": "QA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "QA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "460ec45b-6793-4f9e-a4ea-56aed37b331e",
+                    "leftValue": "={{$json.agent}}",
+                    "rightValue": "PM",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PM"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        848,
+        368
+      ],
+      "id": "9005df91-6453-4ba4-87ed-024b5b097236",
+      "name": "Agent Router"
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -912
+      ],
+      "id": "20fd8b92-05e4-4a00-8d17-1f9208eefe1d",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xMdSaATb179G2eqM",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -144
+      ],
+      "id": "c34ad355-c5f7-41ed-9b57-bc5522f5851a",
+      "name": "OpenRouter Chat Model2",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xMdSaATb179G2eqM",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        624
+      ],
+      "id": "9a8f7d23-4d5b-4a87-a56a-aa38472f7e50",
+      "name": "OpenRouter Chat Model3",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xMdSaATb179G2eqM",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        1392
+      ],
+      "id": "33bf449f-19ce-427a-af6d-08a550aecd65",
+      "name": "OpenRouter Chat Model4",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xMdSaATb179G2eqM",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "maxTokens": 500
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        2160
+      ],
+      "id": "b9495fe2-72ce-4961-a9f2-0819672ab111",
+      "name": "OpenRouter Chat Model5",
+      "credentials": {
+        "openRouterApi": {
+          "id": "xMdSaATb179G2eqM",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced HR operations agent at an enterprise company.\n\nUser intent: {{ $json.intent }}\nUser message: {{ $json.message ?? $(\"Webhook\").item.json.message }}\n\nCarefully read the user's message and decide the single best action.\n\nAVAILABLE ACTIONS:\n- create_ticket: User needs something investigated, approved, or resolved by HR staff\n- send_email: User needs information, a document, or a simple response right now\n- ask_clarification: The request is too vague to act on — you need more details\n- escalate: The matter is sensitive, legal, or outside normal HR scope\n\nUse your judgement. Do not follow rigid rules — reason about what the user actually needs.\n\nExamples of good reasoning:\n- \"Send me my payslip\" → they need a document now → send_email\n- \"My salary wasn't paid\" → needs investigation → create_ticket, high priority\n- \"I want to complain about my manager\" → sensitive matter → escalate\n- \"I need something from HR\" → too vague → ask_clarification\n- \"Can I take leave next week?\" → needs approval → create_ticket, medium priority\n- \"What is the leave policy?\" → just needs information → send_email\n\nReturn ONLY valid JSON — no markdown, no explanation:\n{\n  \"action\": \"create_ticket|send_email|ask_clarification|escalate\",\n  \"priority\": \"low|medium|high\",\n  \"summary\": \"one line description of the issue\",\n  \"email_subject\": \"subject line if action is send_email, else empty string\",\n  \"email_body\": \"professional email body if action is send_email, else empty string\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1072,
+        -1136
+      ],
+      "id": "e8cf7e94-4e3f-4468-8c33-487f34e8447d",
+      "name": "HR LLM Agent"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "create_ticket",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9183faf3-3f62-40d3-a529-1eb824b2d13f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_ticket"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e445d06b-66c0-4f06-b1cd-51900e7bf6e8",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "send_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "send_email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8138f6f7-abdf-4790-afba-8de26fd411b3",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "ask_clarification",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ask_clarification"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "da5a0c32-7e72-4390-a0e7-72ca43d4d424",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "escalate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "escalate"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        -1168
+      ],
+      "id": "730d1e43-44ad-4bc9-b751-49745b9bdd26",
+      "name": "HR Action Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced IT support agent at an enterprise company.\n\nUser intent: {{ $json.intent }}\nUser message: {{ $(\"Webhook\").item.json.message }}\n\nCarefully read the user's message and decide the single best action.\n\nAVAILABLE ACTIONS:\n- create_ticket: A technical issue needs investigation, troubleshooting, access changes, or implementation work\n- send_email: The user only needs information, instructions, documentation, or guidance\n- ask_clarification: The issue is too vague to act on\n- escalate: Security, compliance, critical outages, or situations outside normal IT support scope\n\nUse your judgement. Do not follow rigid rules — reason about what the user actually needs.\n\nExamples:\n- \"My VPN is not working\" → create_ticket\n- \"How do I connect to VPN?\" → send_email\n- \"Install Power BI on my laptop\" → create_ticket\n- \"Nothing works\" → ask_clarification\n- \"I think my account was hacked\" → escalate\n- \"What software can I install?\" → send_email\n\nReturn ONLY valid JSON:\n\n{\n  \"action\": \"create_ticket|send_email|ask_clarification|escalate\",\n  \"priority\": \"low|medium|high\",\n  \"summary\": \"\",\n  \"email_subject\": \"\",\n  \"email_body\": \"\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1072,
+        -368
+      ],
+      "id": "f7f21908-ac2c-434d-9b90-daf1172f996e",
+      "name": "IT LLM Agent"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "create_ticket",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "582e19ce-1128-409c-aa96-4a16f634db8f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_ticket"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3fd37b3d-9d9d-4b6d-a302-1490f37dca5a",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "send_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "send_email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0d5eb273-9933-422a-9dca-7e0ad9e418c1",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "ask_clarification",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ask_clarification"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a9c9d71a-5d29-45b9-94ec-666c3679f615",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "escalate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "escalate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        -400
+      ],
+      "id": "951404b8-de26-471b-bc02-aa4c4f1a9983",
+      "name": "IT Action Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced Finance operations agent at an enterprise company.\n\nUser intent: {{ $json.intent }}\nUser message: {{ $(\"Webhook\").item.json.message }}\n\nCarefully read the user's message and decide the single best action.\n\nAVAILABLE ACTIONS:\n- create_ticket: Requires review, approval, reimbursement processing, payment investigation, or finance team action\n- send_email: User needs a document, statement, invoice copy, policy information, or financial guidance\n- ask_clarification: Request is incomplete\n- escalate: Potential fraud, legal concerns, audit issues, or sensitive financial matters\n\nUse your judgement. Do not follow rigid rules — reason about what the user actually needs.\n\nExamples:\n- \"Where is my reimbursement?\" → create_ticket\n- \"Send me my invoice\" → send_email\n- \"I think someone submitted a fake invoice\" → escalate\n- \"Finance issue\" → ask_clarification\n- \"What is the reimbursement policy?\" → send_email\n\nReturn ONLY valid JSON:\n\n{\n  \"action\": \"create_ticket|send_email|ask_clarification|escalate\",\n  \"priority\": \"low|medium|high\",\n  \"summary\": \"\",\n  \"email_subject\": \"\",\n  \"email_body\": \"\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1072,
+        400
+      ],
+      "id": "fbecf219-5010-4401-98bd-8371112e02cf",
+      "name": "Finance LLM Agent"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "create_ticket",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "582e19ce-1128-409c-aa96-4a16f634db8f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_ticket"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3fd37b3d-9d9d-4b6d-a302-1490f37dca5a",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "send_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "send_email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0d5eb273-9933-422a-9dca-7e0ad9e418c1",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "ask_clarification",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ask_clarification"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a9c9d71a-5d29-45b9-94ec-666c3679f615",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "escalate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "escalate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        368
+      ],
+      "id": "ee705a4d-e065-41f9-8d1e-48f50e040619",
+      "name": "Finance Action Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "create_ticket",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "582e19ce-1128-409c-aa96-4a16f634db8f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_ticket"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3fd37b3d-9d9d-4b6d-a302-1490f37dca5a",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "send_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "send_email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0d5eb273-9933-422a-9dca-7e0ad9e418c1",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "ask_clarification",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ask_clarification"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a9c9d71a-5d29-45b9-94ec-666c3679f615",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "escalate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "escalate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        1136
+      ],
+      "id": "feccab4d-796a-444b-ba41-261a051f225d",
+      "name": "QA Action Switch"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "create_ticket",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "582e19ce-1128-409c-aa96-4a16f634db8f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "create_ticket"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3fd37b3d-9d9d-4b6d-a302-1490f37dca5a",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "send_email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "send_email"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0d5eb273-9933-422a-9dca-7e0ad9e418c1",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "ask_clarification",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ask_clarification"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a9c9d71a-5d29-45b9-94ec-666c3679f615",
+                    "leftValue": "={{$json.action}}",
+                    "rightValue": "escalate",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "escalate"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1648,
+        1904
+      ],
+      "id": "810d5269-6c9c-4966-9df8-0b59cea66cfb",
+      "name": "PM Action Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced Quality Assurance and Production Support agent.\n\nUser intent: {{ $json.intent }}\nUser message: {{ $(\"Webhook\").item.json.message }}\n\nCarefully read the user's message and decide the single best action.\n\nAVAILABLE ACTIONS:\n- create_ticket: A bug, defect, system failure, or production issue requires investigation\n- send_email: User only needs status information, documentation, known workarounds, or release information\n- ask_clarification: Not enough information to reproduce or investigate\n- escalate: Critical production outage, security risk, or severe business impact\n\nUse your judgement. Do not follow rigid rules — reason about what the user actually needs.\n\nExamples:\n- \"The application crashes when saving\" → create_ticket\n- \"What is the status of bug QA-123?\" → send_email\n- \"System is down for all users\" → escalate\n- \"The system is broken\" → ask_clarification\n- \"Do we have a workaround?\" → send_email\n\nReturn ONLY valid JSON:\n\n{\n  \"action\": \"create_ticket|send_email|ask_clarification|escalate\",\n  \"priority\": \"low|medium|high\",\n  \"summary\": \"\",\n  \"email_subject\": \"\",\n  \"email_body\": \"\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1072,
+        1168
+      ],
+      "id": "cb4898ce-6b97-4177-9218-cd70193e446b",
+      "name": "QA LLM Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an experienced Project Management agent.\n\nUser intent: {{ $json.intent }}\nUser message: {{ $(\"Webhook\").item.json.message }}\n\nCarefully read the user's message and decide the single best action.\n\nAVAILABLE ACTIONS:\n- create_ticket: Work needs analysis, requirement gathering, planning, follow-up, or stakeholder action\n- send_email: User only needs project information, status updates, timelines, documentation, or requirement explanations\n- ask_clarification: Request is unclear\n- escalate: Major project risk, executive concern, contractual issue, or critical delivery problem\n\nUse your judgement. Do not follow rigid rules — reason about what the user actually needs.\n\nExamples:\n- \"What is the status of Project Alpha?\" → send_email\n- \"We need a new reporting dashboard\" → create_ticket\n- \"The requirements are unclear\" → create_ticket\n- \"Project issue\" → ask_clarification\n- \"Client is threatening legal action\" → escalate\n\nReturn ONLY valid JSON:\n\n{\n  \"action\": \"create_ticket|send_email|ask_clarification|escalate\",\n  \"priority\": \"low|medium|high\",\n  \"summary\": \"\",\n  \"email_subject\": \"\",\n  \"email_body\": \"\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1072,
+        1936
+      ],
+      "id": "b6cc5f53-4d66-4a04-bfcb-012706e33161",
+      "name": "PM LLM Agent"
+    },
+    {
+      "parameters": {
+        "sendTo": "ashitakolla7@gmail.com",
+        "subject": "={{$json.email_subject}}",
+        "message": "=<h2>Service Desk Update</h2>  <p>{{$json.email_body}}</p>  <hr>  <p><strong>Priority:</strong> {{$json.priority}}</p> <p><strong>Summary:</strong> {{$json.summary}}</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        -1216
+      ],
+      "id": "444cd387-a0f3-465d-8601-e98aa8364346",
+      "name": "Send a message",
+      "webhookId": "138df9b8-5828-4956-8202-23dc4a41bbe2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pQ2taqLyPealanKU",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.text;\n\ntry {\n  const parsed = JSON.parse(raw);\n  return { json: parsed };\n}\ncatch (e) {\n  return {\n    json: {\n      action: \"escalate\",\n      priority: \"high\",\n      summary: \"Invalid JSON from HR agent\",\n      email_subject: \"\",\n      email_body: \"\"\n    }\n  };\n}"
+      },
+      "id": "395e02d1-601c-4342-891a-8dbbb93ed187",
+      "name": "Parse HR JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        -1136
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"HR\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "bd71bbca-8cb0-404a-b1db-b3cb35f2694a",
+      "name": "HR Create Ticket Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        -1408
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"status\": \"completed\",\n  \"action\": \"send_email\",\n  \"message\": \"Email sent successfully\"\n}",
+        "options": {}
+      },
+      "id": "19530489-2cdf-4fef-870b-bccd5c5bebec",
+      "name": "HR Email Sent",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2096,
+        -1216
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {}
+      },
+      "id": "f722af64-181b-41fa-9cde-7bc9211fdb00",
+      "name": "HR Email Success Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2320,
+        -1216
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"HR\", \"message\": \"={{$json.summary}}\" }",
+        "options": {}
+      },
+      "id": "f8fba78e-6e08-4932-8690-c2087df9ba1b",
+      "name": "HR Clarification Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        -1024
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"escalated\", \"department\": \"HR\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "cde9b1bd-e0fe-404b-a7d5-a73bd0c978f5",
+      "name": "HR Escalation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        -832
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.text;\n\ntry {\n  const parsed = JSON.parse(raw);\n  return { json: parsed };\n}\ncatch (e) {\n  return {\n    json: {\n      action: \"escalate\",\n      priority: \"high\",\n      summary: \"Invalid JSON from IT agent\",\n      email_subject: \"\",\n      email_body: \"\"\n    }\n  };\n}"
+      },
+      "id": "7fd5fe94-197e-48a9-99c6-ac9cc30359b9",
+      "name": "Parse IT JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        -368
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"IT\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "be67aed4-307f-421e-aa8a-10d372ccab18",
+      "name": "IT Create Ticket Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        -640
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "ashitakolla7@gmail.com",
+        "subject": "={{$json.email_subject}}",
+        "message": "=<h2>IT Support Update</h2>  <p>{{$json.email_body}}</p>  <hr>  <p><strong>Priority:</strong> {{$json.priority}}</p> <p><strong>Summary:</strong> {{$json.summary}}</p>",
+        "options": {}
+      },
+      "id": "21ad447c-95d3-44d9-9481-c809c7b380fb",
+      "name": "IT Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        -448
+      ],
+      "webhookId": "864972d6-ae09-4c51-9c9f-9c8bd6cb29fb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pQ2taqLyPealanKU",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"email_sent\", \"department\": \"IT\" }",
+        "options": {}
+      },
+      "id": "900e524a-3895-4798-8453-0e32f04ced05",
+      "name": "IT Email Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2096,
+        -448
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"IT\", \"message\": \"={{$json.summary}}\" }",
+        "options": {}
+      },
+      "id": "1ade3dc7-3b20-4322-a58b-5f97824f00d8",
+      "name": "IT Clarification Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        -256
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"escalated\", \"department\": \"IT\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "79614b67-1700-4d1c-bd48-af81ca5f4cc2",
+      "name": "IT Escalation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        -64
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.text;\n\ntry {\n  const parsed = JSON.parse(raw);\n  return { json: parsed };\n}\ncatch (e) {\n  return {\n    json: {\n      action: \"escalate\",\n      priority: \"high\",\n      summary: \"Invalid JSON from Finance agent\",\n      email_subject: \"\",\n      email_body: \"\"\n    }\n  };\n}"
+      },
+      "id": "d396456c-3826-4667-8f16-c9c39a6d9fe0",
+      "name": "Parse Finance JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"Finance\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "8b40f8bd-12ea-40c3-ab9f-f51c988839a8",
+      "name": "Finance Create Ticket Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        128
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "ashitakolla7@gmail.com",
+        "subject": "={{$json.email_subject}}",
+        "message": "=<h2>Finance Update</h2>  <p>{{$json.email_body}}</p>  <hr>  <p><strong>Priority:</strong> {{$json.priority}}</p> <p><strong>Summary:</strong> {{$json.summary}}</p>",
+        "options": {}
+      },
+      "id": "62fbc16f-5976-4bf8-ae01-183a3750e2c6",
+      "name": "Finance Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        320
+      ],
+      "webhookId": "ca9b232d-242b-4d09-80b1-adab7a3cd1b1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pQ2taqLyPealanKU",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"email_sent\", \"department\": \"Finance\" }",
+        "options": {}
+      },
+      "id": "12178dad-8530-4754-bfce-972155ad606f",
+      "name": "Finance Email Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2096,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"Finance\", \"message\": \"={{$json.summary}}\" }",
+        "options": {}
+      },
+      "id": "dfda8370-4a8a-4039-9943-7ffffe1e6ac4",
+      "name": "Finance Clarification Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        512
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"escalated\", \"department\": \"Finance\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "d737494e-f2e8-4883-8f45-4181862e8793",
+      "name": "Finance Escalation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.text;\n\ntry {\n  const parsed = JSON.parse(raw);\n  return { json: parsed };\n}\ncatch (e) {\n  return {\n    json: {\n      action: \"escalate\",\n      priority: \"high\",\n      summary: \"Invalid JSON from QA agent\",\n      email_subject: \"\",\n      email_body: \"\"\n    }\n  };\n}"
+      },
+      "id": "bb442126-c0d1-4711-b69d-ba748f84205d",
+      "name": "Parse QA JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        1168
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"QA\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "476ef87d-b305-4e9a-be27-83deee3ba6e3",
+      "name": "QA Create Ticket Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "ashitakolla7@gmail.com",
+        "subject": "={{$json.email_subject}}",
+        "message": "=<h2>QA Update</h2>  <p>{{$json.email_body}}</p>  <hr>  <p><strong>Priority:</strong> {{$json.priority}}</p> <p><strong>Summary:</strong> {{$json.summary}}</p>",
+        "options": {}
+      },
+      "id": "b125f513-b456-4800-b296-8f11d13aa108",
+      "name": "QA Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        1088
+      ],
+      "webhookId": "0460c9fe-edc8-4cc7-8b44-84c15b73606a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pQ2taqLyPealanKU",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"email_sent\", \"department\": \"QA\" }",
+        "options": {}
+      },
+      "id": "48c160d5-f6da-4562-b727-7bd0aca16495",
+      "name": "QA Email Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2096,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"QA\", \"message\": \"={{$json.summary}}\" }",
+        "options": {}
+      },
+      "id": "1c742f8a-62d3-4c65-a736-3a8949da434f",
+      "name": "QA Clarification Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        1280
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"escalated\", \"department\": \"QA\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "fee3e406-db05-40a4-b4a7-9b6202349a85",
+      "name": "QA Escalation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        1472
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const raw = $json.text;\n\ntry {\n  const parsed = JSON.parse(raw);\n  return { json: parsed };\n}\ncatch (e) {\n  return {\n    json: {\n      action: \"escalate\",\n      priority: \"high\",\n      summary: \"Invalid JSON from PM agent\",\n      email_subject: \"\",\n      email_body: \"\"\n    }\n  };\n}"
+      },
+      "id": "9d09d7a3-14b5-495c-8844-932e17c2844f",
+      "name": "Parse PM JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        1936
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"PM\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "e8e78995-46de-4fb9-8b4c-63dfb63e82a4",
+      "name": "PM Create Ticket Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        1664
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "ashitakolla7@gmail.com",
+        "subject": "={{$json.email_subject}}",
+        "message": "=<h2>PM Update</h2>  <p>{{$json.email_body}}</p>  <hr>  <p><strong>Priority:</strong> {{$json.priority}}</p> <p><strong>Summary:</strong> {{$json.summary}}</p>",
+        "options": {}
+      },
+      "id": "07e96dcb-90fe-4efa-9cef-a5372cee4f13",
+      "name": "PM Send Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        1856
+      ],
+      "webhookId": "36467ea5-ac44-4da0-9c80-9e00f4d3a565",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "pQ2taqLyPealanKU",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"email_sent\", \"department\": \"PM\" }",
+        "options": {}
+      },
+      "id": "03ecfcfb-5073-4691-b4c1-5de884903dc7",
+      "name": "PM Email Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2096,
+        1856
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"PM\", \"message\": \"={{$json.summary}}\" }",
+        "options": {}
+      },
+      "id": "8015ca94-32d5-49f0-9b2b-0060fe699eac",
+      "name": "PM Clarification Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        2048
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"status\": \"escalated\", \"department\": \"PM\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "options": {}
+      },
+      "id": "3ac61f81-99c3-4e6c-b55e-c0b0eaed03ea",
+      "name": "PM Escalation Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1872,
+        2240
+      ]
+    },
+    {
+      "parameters": {
+        "project": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "issueType": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.jira",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        -1552
+      ],
+      "id": "a918f24c-3cd5-45ca-94b4-a3f516393236",
+      "name": "Create an issue"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse JSON": {
+      "main": [
+        [
+          {
+            "node": "Confidence Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confidence Check": {
+      "main": [
+        [
+          {
+            "node": "Agent Router",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agent Router": {
+      "main": [
+        [
+          {
+            "node": "HR LLM Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IT LLM Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance LLM Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QA LLM Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PM LLM Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "HR LLM Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "IT LLM Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Finance LLM Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "QA LLM Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "PM LLM Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HR LLM Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse HR JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT LLM Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse IT JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance LLM Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse Finance JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QA LLM Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse QA JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PM LLM Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse PM JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HR Action Switch": {
+      "main": [
+        [
+          {
+            "node": "HR Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HR Clarification Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HR Escalation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "HR Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse HR JSON": {
+      "main": [
+        [
+          {
+            "node": "HR Action Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HR Email Sent": {
+      "main": [
+        [
+          {
+            "node": "HR Email Success Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse IT JSON": {
+      "main": [
+        [
+          {
+            "node": "IT Action Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT Action Switch": {
+      "main": [
+        [
+          {
+            "node": "IT Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IT Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IT Clarification Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IT Escalation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IT Send Email": {
+      "main": [
+        [
+          {
+            "node": "IT Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Finance JSON": {
+      "main": [
+        [
+          {
+            "node": "Finance Action Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance Action Switch": {
+      "main": [
+        [
+          {
+            "node": "Finance Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance Clarification Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance Escalation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance Send Email": {
+      "main": [
+        [
+          {
+            "node": "Finance Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse QA JSON": {
+      "main": [
+        [
+          {
+            "node": "QA Action Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QA Action Switch": {
+      "main": [
+        [
+          {
+            "node": "QA Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QA Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QA Clarification Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QA Escalation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QA Send Email": {
+      "main": [
+        [
+          {
+            "node": "QA Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse PM JSON": {
+      "main": [
+        [
+          {
+            "node": "PM Action Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PM Action Switch": {
+      "main": [
+        [
+          {
+            "node": "PM Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PM Send Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PM Clarification Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PM Escalation Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PM Send Email": {
+      "main": [
+        [
+          {
+            "node": "PM Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "34755685-5bbc-4020-a883-040e5c463929",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "324936d6ae3451a78b92b2da43067e9645b4f7aac4cd00b1c435a0ea0fd0af0b"
+  },
+  "nodeGroups": [],
+  "id": "lZS6HmT3n1NtIqpe",
+  "tags": []
+}

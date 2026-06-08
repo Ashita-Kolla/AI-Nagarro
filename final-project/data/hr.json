@@ -1,0 +1,37 @@
+[
+  {
+    "id": "hr-001",
+    "issue": "Salary not credited",
+    "symptoms": ["salary missing", "pay not received", "salary issue"],
+    "steps": [
+      "Verify payroll date",
+      "Check registered bank account",
+      "Review payroll records",
+      "Create payroll investigation case"
+    ],
+    "escalate_if": "Salary still missing after payroll verification"
+  },
+  {
+    "id": "hr-002",
+    "issue": "Payslip request",
+    "symptoms": ["need payslip", "salary slip", "download payslip"],
+    "steps": [
+      "Verify employee identity",
+      "Retrieve latest payslip",
+      "Send via email"
+    ],
+    "escalate_if": "Payslip unavailable in system"
+  },
+  {
+    "id": "hr-003",
+    "issue": "Leave request",
+    "symptoms": ["vacation request", "annual leave", "sick leave"],
+    "steps": [
+      "Check leave balance",
+      "Validate requested dates",
+      "Submit manager approval request",
+      "Update leave records"
+    ],
+    "escalate_if": "Leave balance insufficient"
+  }
+]

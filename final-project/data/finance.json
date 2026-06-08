@@ -1,0 +1,37 @@
+[
+  {
+    "id": "fin-001",
+    "issue": "Invoice generation",
+    "symptoms": ["create invoice", "generate invoice", "billing request"],
+    "steps": [
+      "Collect customer details",
+      "Validate billing information",
+      "Generate invoice",
+      "Send invoice via email"
+    ],
+    "escalate_if": "Customer information incomplete"
+  },
+  {
+    "id": "fin-002",
+    "issue": "Reimbursement request",
+    "symptoms": ["expense claim", "reimbursement pending"],
+    "steps": [
+      "Verify receipts",
+      "Validate policy compliance",
+      "Approve reimbursement",
+      "Schedule payment"
+    ],
+    "escalate_if": "Required documentation missing"
+  },
+  {
+    "id": "fin-003",
+    "issue": "Payment status inquiry",
+    "symptoms": ["payment pending", "where is my payment"],
+    "steps": [
+      "Check payment records",
+      "Verify payment schedule",
+      "Provide status update"
+    ],
+    "escalate_if": "Payment discrepancy detected"
+  }
+]

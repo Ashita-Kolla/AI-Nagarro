@@ -1,0 +1,38 @@
+[
+  {
+    "id": "qa-001",
+    "issue": "Bug report",
+    "symptoms": ["application bug", "unexpected behavior", "error"],
+    "steps": [
+      "Capture issue description",
+      "Collect screenshots",
+      "Record reproduction steps",
+      "Create bug ticket"
+    ],
+    "escalate_if": "Critical production issue"
+  },
+  {
+    "id": "qa-002",
+    "issue": "System crash",
+    "symptoms": ["system crash", "application closed unexpectedly"],
+    "steps": [
+      "Collect logs",
+      "Identify crash conditions",
+      "Create high-priority bug",
+      "Notify development team"
+    ],
+    "escalate_if": "Affects multiple users"
+  },
+  {
+    "id": "qa-003",
+    "issue": "Testing request",
+    "symptoms": ["test feature", "validate release"],
+    "steps": [
+      "Review requirements",
+      "Create test plan",
+      "Execute test cases",
+      "Generate report"
+    ],
+    "escalate_if": "Requirements unclear"
+  }
+]

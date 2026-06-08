@@ -1,0 +1,39 @@
+[
+  {
+    "id": "it-001",
+    "issue": "VPN not connecting",
+    "symptoms": ["can't connect to VPN", "VPN fails", "VPN error"],
+    "steps": [
+      "Restart the VPN client completely",
+      "Check your internet connection",
+      "Disconnect and reconnect VPN",
+      "Clear VPN cache",
+      "Run ipconfig /flushdns"
+    ],
+    "escalate_if": "Still failing after all steps"
+  },
+  {
+    "id": "it-002",
+    "issue": "Laptop won't turn on",
+    "symptoms": ["laptop dead", "won't start", "black screen"],
+    "steps": [
+      "Hold power button for 10 seconds",
+      "Check charger and power connection",
+      "Remove external devices",
+      "Attempt safe mode boot"
+    ],
+    "escalate_if": "No response after troubleshooting"
+  },
+  {
+    "id": "it-003",
+    "issue": "Software installation request",
+    "symptoms": ["need software", "install application", "missing software"],
+    "steps": [
+      "Verify software approval status",
+      "Check license availability",
+      "Submit installation request",
+      "Schedule installation"
+    ],
+    "escalate_if": "Software requires management approval"
+  }
+]
