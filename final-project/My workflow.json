@@ -1067,7 +1067,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"HR\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"ticket_created\", \"department\": \"HR\", \"summary\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "bd71bbca-8cb0-404a-b1db-b3cb35f2694a",
@@ -1112,7 +1112,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"HR\", \"message\": \"={{$json.summary}}\" }",
+        "responseBody": "={{ { \"status\": \"clarification_needed\", \"department\": \"HR\", \"message\": $json.summary } }}",
         "options": {}
       },
       "id": "f8fba78e-6e08-4932-8690-c2087df9ba1b",
@@ -1127,7 +1127,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"escalated\", \"department\": \"HR\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"escalated\", \"department\": \"HR\", \"reason\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "cde9b1bd-e0fe-404b-a7d5-a73bd0c978f5",
@@ -1156,7 +1156,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"IT\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"ticket_created\", \"department\": \"IT\", \"summary\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "be67aed4-307f-421e-aa8a-10d372ccab18",
@@ -1209,7 +1209,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"IT\", \"message\": \"={{$json.summary}}\" }",
+        "responseBody": "={{ { \"status\": \"clarification_needed\", \"department\": \"IT\", \"message\": $json.summary } }}",
         "options": {}
       },
       "id": "1ade3dc7-3b20-4322-a58b-5f97824f00d8",
@@ -1224,7 +1224,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"escalated\", \"department\": \"IT\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"escalated\", \"department\": \"IT\", \"reason\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "79614b67-1700-4d1c-bd48-af81ca5f4cc2",
@@ -1253,7 +1253,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"Finance\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"ticket_created\", \"department\": \"Finance\", \"summary\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "8b40f8bd-12ea-40c3-ab9f-f51c988839a8",
@@ -1306,7 +1306,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"Finance\", \"message\": \"={{$json.summary}}\" }",
+        "responseBody": "={{ { \"status\": \"clarification_needed\", \"department\": \"Finance\", \"message\": $json.summary } }}",
         "options": {}
       },
       "id": "dfda8370-4a8a-4039-9943-7ffffe1e6ac4",
@@ -1321,7 +1321,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"escalated\", \"department\": \"Finance\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"escalated\", \"department\": \"Finance\", \"reason\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "d737494e-f2e8-4883-8f45-4181862e8793",
@@ -1350,7 +1350,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"QA\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"ticket_created\", \"department\": \"QA\", \"summary\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "476ef87d-b305-4e9a-be27-83deee3ba6e3",
@@ -1403,7 +1403,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"QA\", \"message\": \"={{$json.summary}}\" }",
+        "responseBody": "={{ { \"status\": \"clarification_needed\", \"department\": \"QA\", \"message\": $json.summary } }}",
         "options": {}
       },
       "id": "1c742f8a-62d3-4c65-a736-3a8949da434f",
@@ -1418,7 +1418,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"escalated\", \"department\": \"QA\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"escalated\", \"department\": \"QA\", \"reason\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "fee3e406-db05-40a4-b4a7-9b6202349a85",
@@ -1447,7 +1447,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"ticket_created\", \"department\": \"PM\", \"summary\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"ticket_created\", \"department\": \"PM\", \"summary\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "e8e78995-46de-4fb9-8b4c-63dfb63e82a4",
@@ -1500,7 +1500,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"clarification_needed\", \"department\": \"PM\", \"message\": \"={{$json.summary}}\" }",
+        "responseBody": "={{ { \"status\": \"clarification_needed\", \"department\": \"PM\", \"message\": $json.summary } }}",
         "options": {}
       },
       "id": "8015ca94-32d5-49f0-9b2b-0060fe699eac",
@@ -1515,7 +1515,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "{ \"status\": \"escalated\", \"department\": \"PM\", \"reason\": \"={{$json.summary}}\", \"priority\": \"={{$json.priority}}\" }",
+        "responseBody": "={{ { \"status\": \"escalated\", \"department\": \"PM\", \"reason\": $json.summary, \"priority\": $json.priority } }}",
         "options": {}
       },
       "id": "3ac61f81-99c3-4e6c-b55e-c0b0eaed03ea",
@@ -1549,6 +1549,547 @@
       ],
       "id": "a918f24c-3cd5-45ca-94b4-a3f516393236",
       "name": "Create an issue"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b7a6493c-968a-465a-ad01-a62448813aa2",
+              "leftValue": "={{$json.body.context?.awaiting_confirmation || false}}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "507679c7-765f-47ef-8ae9-835264599924",
+      "name": "Check Follow-up",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -50,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4c0f6537-7a85-4542-8d6b-7e85b43f1ea5",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "fixed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "45f48998-cb0d-4f9c-9d47-a441838bb453",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "resolved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "98baccb4-10e2-49e2-a661-ff88ed9d7433",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "working now",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              },
+              "renameOutput": true,
+              "outputKey": "Fixed"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8d485d90-9e67-4bfe-b897-00213d5f9e34",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "still broken",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "eed8d6ae-d1d8-4f2e-9572-ed37b299879e",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "didn't work",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "b9a50105-5e5b-4ea7-924a-87ba8a009310",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "not fixed",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "f6673dd7-c2ac-458a-8934-4f602d2df6ec",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "more to do",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "094e9e9a-3203-4906-a497-d2803e4718f1",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "not working",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  },
+                  {
+                    "id": "b16c5b73-c13e-48a1-b661-9c4864b300f9",
+                    "leftValue": "={{$json.body.message}}",
+                    "rightValue": "still not working",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "or"
+              },
+              "renameOutput": true,
+              "outputKey": "Broken"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3bd0e065-4234-4699-81f1-24c915e74b30",
+      "name": "Handle Follow-up",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        150,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"completed\", \"message\": \"Request closed successfully. No ticket was created.\" }",
+        "options": {}
+      },
+      "id": "60b2ac71-4e22-47a8-86dd-ed6cf5c7263e",
+      "name": "Close Request Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        350,
+        50
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0d887903-10cb-455e-99f5-b5629080fe03",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "HR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c5e0c133-4051-4e9d-8be2-b5aee4f35fab",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "IT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "IT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d5b29db3-0764-4d6c-b564-196bd038ecc6",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "Finance",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Finance"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "fd034e92-e77b-4a4a-abfa-c6a9a3740e4e",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "QA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "QA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "370f86bc-e2fe-4774-9692-622ed2b0928f",
+                    "leftValue": "={{$json.department}}",
+                    "rightValue": "PM",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PM"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "39451936-80cc-4157-9087-637fd3c5ba6f",
+      "name": "Proceed Ticket Router",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        350,
+        250
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: {\n  action: 'create_ticket',\n  priority: $json.body.context.priority || 'medium',\n  summary: $json.body.context.summary || $json.body.context.issue || 'Escalated from KB',\n  department: $json.body.context.department\n} };"
+      },
+      "id": "85358431-a7e9-469e-a118-f91f6fb563cf",
+      "name": "Prepare Proceed Ticket",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        150,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "\n// Embedded Knowledge Base (auto-generated by embed_kb.py)\nconst kb = [\n  {\n    \"id\": \"fin-001\",\n    \"issue\": \"Invoice generation\",\n    \"symptoms\": [\n      \"create invoice\",\n      \"generate invoice\",\n      \"billing request\",\n      \"send bill\"\n    ],\n    \"steps\": [\n      \"Collect customer details\",\n      \"Validate billing information\",\n      \"Generate invoice in ERP system\",\n      \"Send invoice via email\"\n    ],\n    \"escalate_if\": \"Customer information incomplete\",\n    \"domain\": \"FINANCE\"\n  },\n  {\n    \"id\": \"fin-002\",\n    \"issue\": \"Reimbursement request\",\n    \"symptoms\": [\n      \"expense claim\",\n      \"reimbursement pending\",\n      \"reimbursement\",\n      \"travel expense\",\n      \"travel reimbursement\",\n      \"out of pocket\",\n      \"need reimbursement\",\n      \"expenses not paid\",\n      \"travel\",\n      \"expense refund\"\n    ],\n    \"steps\": [\n      \"Upload receipts to the Expense Portal\",\n      \"Validate policy compliance for limits\",\n      \"Submit for manager approval\",\n      \"Wait for next payment cycle\"\n    ],\n    \"escalate_if\": \"Required documentation missing\",\n    \"domain\": \"FINANCE\"\n  },\n  {\n    \"id\": \"fin-003\",\n    \"issue\": \"Payment status inquiry\",\n    \"symptoms\": [\n      \"payment pending\",\n      \"where is my payment\",\n      \"vendor payment\",\n      \"invoice paid\"\n    ],\n    \"steps\": [\n      \"Check payment records in ERP\",\n      \"Verify payment schedule (Net 30/60)\",\n      \"Provide status update to vendor\"\n    ],\n    \"escalate_if\": \"Payment discrepancy detected\",\n    \"domain\": \"FINANCE\"\n  },\n  {\n    \"id\": \"fin-004\",\n    \"issue\": \"Corporate credit card\",\n    \"symptoms\": [\n      \"new credit card\",\n      \"corporate card\",\n      \"card limit\",\n      \"lost card\"\n    ],\n    \"steps\": [\n      \"Fill out the corporate card request form\",\n      \"Obtain VP approval\",\n      \"Submit to Finance operations\",\n      \"Card will be mailed in 7-10 days\"\n    ],\n    \"escalate_if\": \"Card lost or stolen (report immediately)\",\n    \"domain\": \"FINANCE\"\n  },\n  {\n    \"id\": \"fin-005\",\n    \"issue\": \"Budget approval\",\n    \"symptoms\": [\n      \"budget approval\",\n      \"spend limit\",\n      \"capex\",\n      \"opex\"\n    ],\n    \"steps\": [\n      \"Review department budget allocation\",\n      \"Verify requested spend against remaining budget\",\n      \"Route to Finance Director for sign-off\"\n    ],\n    \"escalate_if\": \"Budget limit exceeded\",\n    \"domain\": \"FINANCE\"\n  },\n  {\n    \"id\": \"fin-006\",\n    \"issue\": \"Vendor payment delay\",\n    \"symptoms\": [\n      \"vendor not paid\",\n      \"supplier payment overdue\",\n      \"payment delayed\",\n      \"outstanding invoice\",\n      \"unpaid vendor\",\n      \"supplier not paid\",\n      \"supplier has not been paid\",\n      \"vendor overdue\",\n      \"payment overdue\",\n      \"supplier\"\n    ],\n    \"steps\": [\n      \"Check the vendor's invoice status in the ERP system\",\n      \"Verify payment terms and due date\",\n      \"Confirm bank account details are correct in the vendor master\",\n      \"Initiate an urgent payment run if past due date\",\n      \"Notify the vendor of the updated payment timeline\"\n    ],\n    \"escalate_if\": \"Vendor threatens to suspend services\",\n    \"domain\": \"FINANCE\"\n  },\n  {\n    \"id\": \"hr-001\",\n    \"issue\": \"Salary not credited\",\n    \"symptoms\": [\n      \"salary missing\",\n      \"salary not received\",\n      \"salary not credited\",\n      \"pay not received\",\n      \"salary issue\",\n      \"no pay\",\n      \"paycheck missing\",\n      \"haven't got salary\",\n      \"did not receive salary\",\n      \"salary\",\n      \"got my salary\"\n    ],\n    \"steps\": [\n      \"Verify today is the exact payroll date\",\n      \"Check registered bank account in HR portal\",\n      \"Review payroll records\",\n      \"Create payroll investigation case\"\n    ],\n    \"escalate_if\": \"Salary still missing after payroll verification\",\n    \"domain\": \"HR\"\n  },\n  {\n    \"id\": \"hr-002\",\n    \"issue\": \"Payslip request\",\n    \"symptoms\": [\n      \"need payslip\",\n      \"payslip not available\",\n      \"salary slip\",\n      \"download payslip\",\n      \"view paystub\",\n      \"payslip\",\n      \"paystub\",\n      \"salary document\"\n    ],\n    \"steps\": [\n      \"Log in to the HR Self-Service Portal\",\n      \"Navigate to the 'Compensation' tab\",\n      \"Select the desired month and click 'Download PDF'\"\n    ],\n    \"escalate_if\": \"Payslip unavailable in system\",\n    \"domain\": \"HR\"\n  },\n  {\n    \"id\": \"hr-003\",\n    \"issue\": \"Leave request\",\n    \"symptoms\": [\n      \"vacation request\",\n      \"annual leave\",\n      \"sick leave\",\n      \"pto\",\n      \"time off\"\n    ],\n    \"steps\": [\n      \"Check leave balance in the portal\",\n      \"Select requested dates in the calendar\",\n      \"Submit manager approval request\",\n      \"Update leave records\"\n    ],\n    \"escalate_if\": \"Leave balance insufficient\",\n    \"domain\": \"HR\"\n  },\n  {\n    \"id\": \"hr-004\",\n    \"issue\": \"Benefits and Insurance\",\n    \"symptoms\": [\n      \"health insurance\",\n      \"dental\",\n      \"benefits\",\n      \"enrollment\",\n      \"401k\"\n    ],\n    \"steps\": [\n      \"Go to the Benefits portal\",\n      \"Check active enrollments\",\n      \"Review open enrollment period guidelines\",\n      \"Contact provider for direct queries\"\n    ],\n    \"escalate_if\": \"Enrollment period missed due to technical error\",\n    \"domain\": \"HR\"\n  },\n  {\n    \"id\": \"hr-005\",\n    \"issue\": \"Performance review\",\n    \"symptoms\": [\n      \"performance review\",\n      \"appraisal\",\n      \"feedback cycle\",\n      \"goals\"\n    ],\n    \"steps\": [\n      \"Access the Performance Management system\",\n      \"Complete your self-evaluation\",\n      \"Schedule a 1-on-1 with your manager\",\n      \"Sign off on the final review\"\n    ],\n    \"escalate_if\": \"Manager is on long-term leave\",\n    \"domain\": \"HR\"\n  },\n  {\n    \"id\": \"hr-006\",\n    \"issue\": \"Workplace harassment or conflict\",\n    \"symptoms\": [\n      \"harassment\",\n      \"conflict\",\n      \"toxic workplace\",\n      \"report manager\",\n      \"dispute\"\n    ],\n    \"steps\": [\n      \"File a confidential report via the Employee Relations portal\",\n      \"HR Business Partner will contact you within 24 hours\",\n      \"Mediation or formal investigation will be initiated\"\n    ],\n    \"escalate_if\": \"Immediate safety concern\",\n    \"domain\": \"HR\"\n  },\n  {\n    \"id\": \"it-001\",\n    \"issue\": \"VPN not connecting\",\n    \"symptoms\": [\n      \"vpn\",\n      \"can't connect to vpn\",\n      \"vpn fails\",\n      \"vpn error\",\n      \"vpn broken\",\n      \"remote access\"\n    ],\n    \"steps\": [\n      \"Restart the VPN client completely\",\n      \"Check your internet connection\",\n      \"Disconnect and reconnect VPN\",\n      \"Clear VPN cache\",\n      \"Run ipconfig /flushdns\"\n    ],\n    \"escalate_if\": \"Still failing after all steps\",\n    \"domain\": \"IT\"\n  },\n  {\n    \"id\": \"it-002\",\n    \"issue\": \"Laptop won't turn on\",\n    \"symptoms\": [\n      \"laptop dead\",\n      \"won't start\",\n      \"black screen\",\n      \"no power\",\n      \"battery dead\"\n    ],\n    \"steps\": [\n      \"Hold power button for 10 seconds\",\n      \"Check charger and power connection\",\n      \"Remove external devices\",\n      \"Attempt safe mode boot\"\n    ],\n    \"escalate_if\": \"No response after troubleshooting\",\n    \"domain\": \"IT\"\n  },\n  {\n    \"id\": \"it-003\",\n    \"issue\": \"Software installation request\",\n    \"symptoms\": [\n      \"need software\",\n      \"install application\",\n      \"missing software\",\n      \"install docker\",\n      \"install office\",\n      \"admin rights\"\n    ],\n    \"steps\": [\n      \"Verify software approval status\",\n      \"Check license availability\",\n      \"Submit installation request via portal\",\n      \"Schedule installation\"\n    ],\n    \"escalate_if\": \"Software requires management approval\",\n    \"domain\": \"IT\"\n  },\n  {\n    \"id\": \"it-004\",\n    \"issue\": \"Account locked\",\n    \"symptoms\": [\n      \"account locked\",\n      \"password reset\",\n      \"forgot password\",\n      \"login failed\",\n      \"can't login\"\n    ],\n    \"steps\": [\n      \"Go to the self-service password reset portal\",\n      \"Enter your employee ID and answer security questions\",\n      \"Reset your password\",\n      \"Wait 5 minutes for sync\"\n    ],\n    \"escalate_if\": \"Self-service portal fails\",\n    \"domain\": \"IT\"\n  },\n  {\n    \"id\": \"it-005\",\n    \"issue\": \"Hardware request\",\n    \"symptoms\": [\n      \"broken mouse\",\n      \"new monitor\",\n      \"keyboard broken\",\n      \"headset\",\n      \"docking station\"\n    ],\n    \"steps\": [\n      \"Fill out the hardware request form on the intranet\",\n      \"Wait for manager approval\",\n      \"Hardware will be shipped within 3-5 business days\"\n    ],\n    \"escalate_if\": \"Urgent replacement needed\",\n    \"domain\": \"IT\"\n  },\n  {\n    \"id\": \"it-006\",\n    \"issue\": \"Blue screen\",\n    \"symptoms\": [\n      \"blue screen\",\n      \"bsod\",\n      \"system crash\",\n      \"windows crashed\"\n    ],\n    \"steps\": [\n      \"Take a photo of the error code on the blue screen\",\n      \"Hold the power button to force shutdown\",\n      \"Turn the laptop back on\",\n      \"Check for Windows updates\"\n    ],\n    \"escalate_if\": \"Blue screen happens repeatedly\",\n    \"domain\": \"IT\"\n  },\n  {\n    \"id\": \"pm-001\",\n    \"issue\": \"Project status request\",\n    \"symptoms\": [\n      \"project update\",\n      \"status report\",\n      \"progress update\",\n      \"timeline\"\n    ],\n    \"steps\": [\n      \"Retrieve project metrics from the dashboard\",\n      \"Check milestone completion status\",\n      \"Generate weekly status summary\",\n      \"Share PDF report with requester\"\n    ],\n    \"escalate_if\": \"Project data unavailable or corrupt\",\n    \"domain\": \"PM\"\n  },\n  {\n    \"id\": \"pm-002\",\n    \"issue\": \"Resource allocation\",\n    \"symptoms\": [\n      \"assign task\",\n      \"allocate work\",\n      \"need developer\",\n      \"resource shortage\"\n    ],\n    \"steps\": [\n      \"Review current team capacity map\",\n      \"Identify available resources with matching skills\",\n      \"Re-prioritize lower impact tasks if necessary\",\n      \"Assign owner to the task\"\n    ],\n    \"escalate_if\": \"No suitable resource available globally\",\n    \"domain\": \"PM\"\n  },\n  {\n    \"id\": \"pm-003\",\n    \"issue\": \"Requirement clarification\",\n    \"symptoms\": [\n      \"unclear requirement\",\n      \"need clarification\",\n      \"scope definition\"\n    ],\n    \"steps\": [\n      \"Review requirement document (PRD)\",\n      \"Identify ambiguities and edge cases\",\n      \"Schedule clarification meeting with product owner\",\n      \"Update requirements and notify team\"\n    ],\n    \"escalate_if\": \"Business owner unavailable for > 3 days\",\n    \"domain\": \"PM\"\n  },\n  {\n    \"id\": \"pm-004\",\n    \"issue\": \"Scope creep\",\n    \"symptoms\": [\n      \"scope creep\",\n      \"change request\",\n      \"new feature added\",\n      \"timeline impact\",\n      \"scope is changing\",\n      \"scope change\",\n      \"requirement change\",\n      \"scope\",\n      \"changing requirements\",\n      \"feature added\",\n      \"project scope\"\n    ],\n    \"steps\": [\n      \"Document the new requested changes\",\n      \"Estimate the impact on timeline and budget\",\n      \"Submit formal Change Request to stakeholders\",\n      \"Wait for approval before starting work\"\n    ],\n    \"escalate_if\": \"Client refuses to adjust timeline\",\n    \"domain\": \"PM\"\n  },\n  {\n    \"id\": \"pm-005\",\n    \"issue\": \"Risk escalation\",\n    \"symptoms\": [\n      \"project risk\",\n      \"blocker\",\n      \"critical delay\",\n      \"dependency failed\"\n    ],\n    \"steps\": [\n      \"Log the risk in the project risk register\",\n      \"Assess probability and impact (High/Med/Low)\",\n      \"Formulate a mitigation plan\",\n      \"Notify the project sponsor immediately\"\n    ],\n    \"escalate_if\": \"Risk materializes into an issue\",\n    \"domain\": \"PM\"\n  },\n  {\n    \"id\": \"pm-006\",\n    \"issue\": \"Stakeholder meeting scheduling\",\n    \"symptoms\": [\n      \"schedule meeting\",\n      \"stakeholder call\",\n      \"book a meeting\",\n      \"align with stakeholders\",\n      \"set up a call\",\n      \"meeting invite\"\n    ],\n    \"steps\": [\n      \"Identify all required attendees and their time zones\",\n      \"Check calendar availability using the scheduling tool\",\n      \"Create and send the calendar invite with an agenda\",\n      \"Share pre-read materials at least 24 hours before\",\n      \"Send a reminder the day before the meeting\"\n    ],\n    \"escalate_if\": \"Key decision-maker is unavailable for more than 1 week\",\n    \"domain\": \"PM\"\n  },\n  {\n    \"id\": \"qa-001\",\n    \"issue\": \"Bug report\",\n    \"symptoms\": [\n      \"application bug\",\n      \"unexpected behavior\",\n      \"error\",\n      \"broken feature\",\n      \"glitch\"\n    ],\n    \"steps\": [\n      \"Capture issue description\",\n      \"Collect screenshots and browser console logs\",\n      \"Record step-by-step reproduction instructions\",\n      \"Create bug ticket in Jira\"\n    ],\n    \"escalate_if\": \"Critical production issue\",\n    \"domain\": \"QA\"\n  },\n  {\n    \"id\": \"qa-002\",\n    \"issue\": \"Test data request\",\n    \"symptoms\": [\n      \"need test data\",\n      \"dummy accounts\",\n      \"mock data\",\n      \"sandbox data\"\n    ],\n    \"steps\": [\n      \"Identify required data parameters\",\n      \"Run the mock data generation script\",\n      \"Verify data loads in the sandbox environment\",\n      \"Provide data set IDs to requester\"\n    ],\n    \"escalate_if\": \"Script fails to generate valid data\",\n    \"domain\": \"QA\"\n  },\n  {\n    \"id\": \"qa-003\",\n    \"issue\": \"Environment down\",\n    \"symptoms\": [\n      \"test environment down\",\n      \"staging broken\",\n      \"can't access uat\",\n      \"server is down\",\n      \"test server is down\",\n      \"staging server down\",\n      \"environment unavailable\",\n      \"staging not working\"\n    ],\n    \"steps\": [\n      \"Check environment health dashboard\",\n      \"Restart the staging server instances\",\n      \"Clear the environment cache\",\n      \"Notify the DevOps team if unresolved\"\n    ],\n    \"escalate_if\": \"Environment remains down after 30 mins\",\n    \"domain\": \"QA\"\n  },\n  {\n    \"id\": \"qa-004\",\n    \"issue\": \"Automation failure\",\n    \"symptoms\": [\n      \"automation script failed\",\n      \"cypress tests failing\",\n      \"ci/cd pipeline red\"\n    ],\n    \"steps\": [\n      \"Review the CI/CD pipeline logs\",\n      \"Check for flakiness or network timeouts\",\n      \"Run the specific failing test locally\",\n      \"Update selectors if UI changed\"\n    ],\n    \"escalate_if\": \"Core functionality is actually broken\",\n    \"domain\": \"QA\"\n  },\n  {\n    \"id\": \"qa-005\",\n    \"issue\": \"Release sign-off\",\n    \"symptoms\": [\n      \"release sign-off\",\n      \"production deployment\",\n      \"qa approval\"\n    ],\n    \"steps\": [\n      \"Review all test run results for the release branch\",\n      \"Verify no open Sev-1 or Sev-2 bugs\",\n      \"Generate the QA summary report\",\n      \"Provide formal sign-off in the release channel\"\n    ],\n    \"escalate_if\": \"Blocking bugs remain open\",\n    \"domain\": \"QA\"\n  },\n  {\n    \"id\": \"qa-006\",\n    \"issue\": \"Production bug reported\",\n    \"symptoms\": [\n      \"bug in production\",\n      \"prod is broken\",\n      \"live site error\",\n      \"customer reported bug\",\n      \"critical bug\",\n      \"p1 bug\"\n    ],\n    \"steps\": [\n      \"Confirm reproduction on production environment\",\n      \"Assess severity and customer impact\",\n      \"Create a Sev-1 Jira ticket and notify the on-call engineer\",\n      \"Implement hotfix or roll back the last deployment\",\n      \"Post a status update in the #incidents channel\"\n    ],\n    \"escalate_if\": \"Revenue or data loss is occurring\",\n    \"domain\": \"QA\"\n  }\n];\n\nconst query = $('Webhook').item.json.body.message.toLowerCase();\nconst currentDepartment = $('Agent Router').item.json.agent || $json.department || 'IT';\n\n// --- Improved Similarity Algorithm ---\n// Stop-word filtering: remove common filler words so short but important\n// acronyms like \"vpn\", \"bug\", \"pay\" are NOT excluded.\nconst stopWords = ['my', 'is', 'not', 'the', 'a', 'an', 'in', 'on', 'i',\n  'to', 'for', 'of', 'and', 'with', 'it', 'this', 'have', 'has', 'at',\n  'we', 'are', 'was', 'be', 'by', 'do', 'its', 'no', 'or', 'so', 'if',\n  'but', 'how', 'why', 'what', 'when', 'me', 'please', 'help'];\n\n// Tokenize: split on non-alphanumeric chars, keep all lengths (allows \"vpn\", \"bug\" etc.)\nconst queryTokens = query.split(/[^a-z0-9]+/).filter(t => t.length > 0 && !stopWords.includes(t));\nconst totalMeaningfulKeywords = queryTokens.length || 1;\n\nlet bestMatch = null;\nlet maxScore = 0;\n\nfor (const doc of kb) {\n  if (doc.domain !== currentDepartment && currentDepartment !== 'Escalation') continue;\n\n  let score = 0;\n  let matchingKeywords = 0;\n\n  const docIssue = doc.issue.toLowerCase();\n  const docSymptoms = (doc.symptoms || []).map(s => s.toLowerCase());\n  const docText = docIssue + ' ' + docSymptoms.join(' ');\n\n  // --- Jaccard/Overlap Score ---\n  // Score = matching meaningful keywords / total meaningful keywords in query\n  for (const t of queryTokens) {\n    if (docText.includes(t)) {\n      matchingKeywords += 1;\n    }\n  }\n  score = matchingKeywords / totalMeaningfulKeywords;\n\n  // --- Symptom Phrase Weighting ---\n  // Bonus if user's exact phrase matches a known symptom\n  for (const symptom of docSymptoms) {\n    if (query.includes(symptom)) {\n      score += 0.5;\n    }\n  }\n\n  // --- Exact Match Bonus ---\n  if (docText.includes(query) || query.includes(docIssue)) {\n    score += 0.8;\n  }\n\n  if (score > 1.0) score = 0.99;\n\n  if (score > maxScore) {\n    maxScore = score;\n    bestMatch = doc;\n  }\n}\n\nreturn {\n  json: {\n    score: maxScore,\n    issue: bestMatch ? bestMatch.issue : null,\n    steps: bestMatch ? bestMatch.steps : [],\n    domain: bestMatch ? bestMatch.domain : currentDepartment,\n    original_action: $json\n  }\n};\n"
+      },
+      "id": "9e35421e-e348-4be4-9089-4531ad7eb3af",
+      "name": "Knowledge Resolver Vector Search",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "41a3d07b-6671-49e6-870f-ee28029adaab",
+              "leftValue": "={{$json.score}}",
+              "rightValue": 0.75,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e80673dd-189e-4be0-8f8b-5fea8e87f305",
+      "name": "KB Match Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2200,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"kb_solution\", \"message\": \"I found a possible solution:\", \"steps\": $json.steps, \"awaiting_confirmation\": true, \"issue\": $json.issue, \"department\": $json.domain, \"summary\": $json.original_action.summary, \"priority\": $json.original_action.priority } }}",
+        "options": {}
+      },
+      "id": "77fbffaa-929c-48e8-976b-639504d6471f",
+      "name": "KB Solution Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2400,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "789ac243-44cc-44db-a36d-a7558cfaaf71",
+                    "leftValue": "={{$json.domain}}",
+                    "rightValue": "HR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HR"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c9ebc454-15b8-4c62-886c-305156430279",
+                    "leftValue": "={{$json.domain}}",
+                    "rightValue": "IT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "IT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9b083460-7d4e-4b52-8861-4f7661666149",
+                    "leftValue": "={{$json.domain}}",
+                    "rightValue": "Finance",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Finance"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7220c7d6-6210-4786-9eae-03148574f56c",
+                    "leftValue": "={{$json.domain}}",
+                    "rightValue": "QA",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "QA"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5a0db8da-b205-446a-9819-6e79b19f0357",
+                    "leftValue": "={{$json.domain}}",
+                    "rightValue": "PM",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PM"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "89ba455d-4843-473c-a507-b93a02ed9621",
+      "name": "No KB - Route to Ticket",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2400,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "return { json: { ...$json.original_action, department: $json.domain } };"
+      },
+      "id": "26b4bb0c-464c-46be-9a49-05fed2ae8e45",
+      "name": "Restore Ticket Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2600,
+        600
+      ]
     }
   ],
   "pinData": {},
@@ -1579,7 +2120,7 @@
       "main": [
         [
           {
-            "node": "Basic LLM Chain",
+            "node": "Check Follow-up",
             "type": "main",
             "index": 0
           }
@@ -1768,7 +2309,7 @@
       "main": [
         [
           {
-            "node": "HR Create Ticket Response",
+            "node": "Knowledge Resolver Vector Search",
             "type": "main",
             "index": 0
           }
@@ -1844,7 +2385,7 @@
       "main": [
         [
           {
-            "node": "IT Create Ticket Response",
+            "node": "Knowledge Resolver Vector Search",
             "type": "main",
             "index": 0
           }
@@ -1898,7 +2439,7 @@
       "main": [
         [
           {
-            "node": "Finance Create Ticket Response",
+            "node": "Knowledge Resolver Vector Search",
             "type": "main",
             "index": 0
           }
@@ -1952,7 +2493,7 @@
       "main": [
         [
           {
-            "node": "QA Create Ticket Response",
+            "node": "Knowledge Resolver Vector Search",
             "type": "main",
             "index": 0
           }
@@ -2006,7 +2547,7 @@
       "main": [
         [
           {
-            "node": "PM Create Ticket Response",
+            "node": "Knowledge Resolver Vector Search",
             "type": "main",
             "index": 0
           }
@@ -2039,6 +2580,171 @@
         [
           {
             "node": "PM Email Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Handle Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Handle Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Close Request Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Proceed Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Proceed Ticket": {
+      "main": [
+        [
+          {
+            "node": "Proceed Ticket Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Proceed Ticket Router": {
+      "main": [
+        [
+          {
+            "node": "HR Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "IT Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QA Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PM Create Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Resolver Vector Search": {
+      "main": [
+        [
+          {
+            "node": "KB Match Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "KB Match Found?": {
+      "main": [
+        [
+          {
+            "node": "KB Solution Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No KB - Route to Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No KB - Route to Ticket": {
+      "main": [
+        [
+          {
+            "node": "Restore Ticket Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restore Ticket Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restore Ticket Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restore Ticket Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Restore Ticket Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restore Ticket Data": {
+      "main": [
+        [
+          {
+            "node": "Proceed Ticket Router",
             "type": "main",
             "index": 0
           }

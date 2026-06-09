@@ -2,37 +2,74 @@
   {
     "id": "pm-001",
     "issue": "Project status request",
-    "symptoms": ["project update", "status report", "progress update"],
+    "symptoms": ["project update", "status report", "progress update", "timeline"],
     "steps": [
-      "Retrieve project metrics",
-      "Check milestone completion",
-      "Generate status summary",
-      "Share with requester"
+      "Retrieve project metrics from the dashboard",
+      "Check milestone completion status",
+      "Generate weekly status summary",
+      "Share PDF report with requester"
     ],
-    "escalate_if": "Project data unavailable"
+    "escalate_if": "Project data unavailable or corrupt"
   },
   {
     "id": "pm-002",
-    "issue": "Task assignment",
-    "symptoms": ["assign task", "allocate work"],
+    "issue": "Resource allocation",
+    "symptoms": ["assign task", "allocate work", "need developer", "resource shortage"],
     "steps": [
-      "Identify available resources",
-      "Create task",
-      "Assign owner",
-      "Notify assignee"
+      "Review current team capacity map",
+      "Identify available resources with matching skills",
+      "Re-prioritize lower impact tasks if necessary",
+      "Assign owner to the task"
     ],
-    "escalate_if": "No suitable resource available"
+    "escalate_if": "No suitable resource available globally"
   },
   {
     "id": "pm-003",
     "issue": "Requirement clarification",
-    "symptoms": ["unclear requirement", "need clarification"],
+    "symptoms": ["unclear requirement", "need clarification", "scope definition"],
     "steps": [
-      "Review requirement document",
-      "Identify ambiguities",
-      "Schedule clarification meeting",
-      "Update requirements"
+      "Review requirement document (PRD)",
+      "Identify ambiguities and edge cases",
+      "Schedule clarification meeting with product owner",
+      "Update requirements and notify team"
     ],
-    "escalate_if": "Business owner unavailable"
+    "escalate_if": "Business owner unavailable for > 3 days"
+  },
+  {
+    "id": "pm-004",
+    "issue": "Scope creep",
+    "symptoms": ["scope creep", "change request", "new feature added", "timeline impact", "scope is changing", "scope change", "requirement change", "scope", "changing requirements", "feature added", "project scope"],
+    "steps": [
+      "Document the new requested changes",
+      "Estimate the impact on timeline and budget",
+      "Submit formal Change Request to stakeholders",
+      "Wait for approval before starting work"
+    ],
+    "escalate_if": "Client refuses to adjust timeline"
+  },
+  {
+    "id": "pm-005",
+    "issue": "Risk escalation",
+    "symptoms": ["project risk", "blocker", "critical delay", "dependency failed"],
+    "steps": [
+      "Log the risk in the project risk register",
+      "Assess probability and impact (High/Med/Low)",
+      "Formulate a mitigation plan",
+      "Notify the project sponsor immediately"
+    ],
+    "escalate_if": "Risk materializes into an issue"
+  },
+  {
+    "id": "pm-006",
+    "issue": "Stakeholder meeting scheduling",
+    "symptoms": ["schedule meeting", "stakeholder call", "book a meeting", "align with stakeholders", "set up a call", "meeting invite"],
+    "steps": [
+      "Identify all required attendees and their time zones",
+      "Check calendar availability using the scheduling tool",
+      "Create and send the calendar invite with an agenda",
+      "Share pre-read materials at least 24 hours before",
+      "Send a reminder the day before the meeting"
+    ],
+    "escalate_if": "Key decision-maker is unavailable for more than 1 week"
   }
 ]

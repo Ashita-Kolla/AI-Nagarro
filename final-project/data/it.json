@@ -2,7 +2,7 @@
   {
     "id": "it-001",
     "issue": "VPN not connecting",
-    "symptoms": ["can't connect to VPN", "VPN fails", "VPN error"],
+    "symptoms": ["vpn", "can't connect to vpn", "vpn fails", "vpn error", "vpn broken", "remote access"],
     "steps": [
       "Restart the VPN client completely",
       "Check your internet connection",
@@ -15,7 +15,7 @@
   {
     "id": "it-002",
     "issue": "Laptop won't turn on",
-    "symptoms": ["laptop dead", "won't start", "black screen"],
+    "symptoms": ["laptop dead", "won't start", "black screen", "no power", "battery dead"],
     "steps": [
       "Hold power button for 10 seconds",
       "Check charger and power connection",
@@ -27,13 +27,48 @@
   {
     "id": "it-003",
     "issue": "Software installation request",
-    "symptoms": ["need software", "install application", "missing software"],
+    "symptoms": ["need software", "install application", "missing software", "install docker", "install office", "admin rights"],
     "steps": [
       "Verify software approval status",
       "Check license availability",
-      "Submit installation request",
+      "Submit installation request via portal",
       "Schedule installation"
     ],
     "escalate_if": "Software requires management approval"
+  },
+  {
+    "id": "it-004",
+    "issue": "Account locked",
+    "symptoms": ["account locked", "password reset", "forgot password", "login failed", "can't login"],
+    "steps": [
+      "Go to the self-service password reset portal",
+      "Enter your employee ID and answer security questions",
+      "Reset your password",
+      "Wait 5 minutes for sync"
+    ],
+    "escalate_if": "Self-service portal fails"
+  },
+  {
+    "id": "it-005",
+    "issue": "Hardware request",
+    "symptoms": ["broken mouse", "new monitor", "keyboard broken", "headset", "docking station"],
+    "steps": [
+      "Fill out the hardware request form on the intranet",
+      "Wait for manager approval",
+      "Hardware will be shipped within 3-5 business days"
+    ],
+    "escalate_if": "Urgent replacement needed"
+  },
+  {
+    "id": "it-006",
+    "issue": "Blue screen",
+    "symptoms": ["blue screen", "bsod", "system crash", "windows crashed"],
+    "steps": [
+      "Take a photo of the error code on the blue screen",
+      "Hold the power button to force shutdown",
+      "Turn the laptop back on",
+      "Check for Windows updates"
+    ],
+    "escalate_if": "Blue screen happens repeatedly"
   }
 ]

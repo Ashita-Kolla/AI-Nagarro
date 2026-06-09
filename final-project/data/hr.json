@@ -2,10 +2,10 @@
   {
     "id": "hr-001",
     "issue": "Salary not credited",
-    "symptoms": ["salary missing", "pay not received", "salary issue"],
+    "symptoms": ["salary missing", "salary not received", "salary not credited", "pay not received", "salary issue", "no pay", "paycheck missing", "haven't got salary", "did not receive salary", "salary", "got my salary"],
     "steps": [
-      "Verify payroll date",
-      "Check registered bank account",
+      "Verify today is the exact payroll date",
+      "Check registered bank account in HR portal",
       "Review payroll records",
       "Create payroll investigation case"
     ],
@@ -14,24 +14,59 @@
   {
     "id": "hr-002",
     "issue": "Payslip request",
-    "symptoms": ["need payslip", "salary slip", "download payslip"],
+    "symptoms": ["need payslip", "payslip not available", "salary slip", "download payslip", "view paystub", "payslip", "paystub", "salary document"],
     "steps": [
-      "Verify employee identity",
-      "Retrieve latest payslip",
-      "Send via email"
+      "Log in to the HR Self-Service Portal",
+      "Navigate to the 'Compensation' tab",
+      "Select the desired month and click 'Download PDF'"
     ],
     "escalate_if": "Payslip unavailable in system"
   },
   {
     "id": "hr-003",
     "issue": "Leave request",
-    "symptoms": ["vacation request", "annual leave", "sick leave"],
+    "symptoms": ["vacation request", "annual leave", "sick leave", "pto", "time off"],
     "steps": [
-      "Check leave balance",
-      "Validate requested dates",
+      "Check leave balance in the portal",
+      "Select requested dates in the calendar",
       "Submit manager approval request",
       "Update leave records"
     ],
     "escalate_if": "Leave balance insufficient"
+  },
+  {
+    "id": "hr-004",
+    "issue": "Benefits and Insurance",
+    "symptoms": ["health insurance", "dental", "benefits", "enrollment", "401k"],
+    "steps": [
+      "Go to the Benefits portal",
+      "Check active enrollments",
+      "Review open enrollment period guidelines",
+      "Contact provider for direct queries"
+    ],
+    "escalate_if": "Enrollment period missed due to technical error"
+  },
+  {
+    "id": "hr-005",
+    "issue": "Performance review",
+    "symptoms": ["performance review", "appraisal", "feedback cycle", "goals"],
+    "steps": [
+      "Access the Performance Management system",
+      "Complete your self-evaluation",
+      "Schedule a 1-on-1 with your manager",
+      "Sign off on the final review"
+    ],
+    "escalate_if": "Manager is on long-term leave"
+  },
+  {
+    "id": "hr-006",
+    "issue": "Workplace harassment or conflict",
+    "symptoms": ["harassment", "conflict", "toxic workplace", "report manager", "dispute"],
+    "steps": [
+      "File a confidential report via the Employee Relations portal",
+      "HR Business Partner will contact you within 24 hours",
+      "Mediation or formal investigation will be initiated"
+    ],
+    "escalate_if": "Immediate safety concern"
   }
 ]

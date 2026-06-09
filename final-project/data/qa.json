@@ -2,37 +2,74 @@
   {
     "id": "qa-001",
     "issue": "Bug report",
-    "symptoms": ["application bug", "unexpected behavior", "error"],
+    "symptoms": ["application bug", "unexpected behavior", "error", "broken feature", "glitch"],
     "steps": [
       "Capture issue description",
-      "Collect screenshots",
-      "Record reproduction steps",
-      "Create bug ticket"
+      "Collect screenshots and browser console logs",
+      "Record step-by-step reproduction instructions",
+      "Create bug ticket in Jira"
     ],
     "escalate_if": "Critical production issue"
   },
   {
     "id": "qa-002",
-    "issue": "System crash",
-    "symptoms": ["system crash", "application closed unexpectedly"],
+    "issue": "Test data request",
+    "symptoms": ["need test data", "dummy accounts", "mock data", "sandbox data"],
     "steps": [
-      "Collect logs",
-      "Identify crash conditions",
-      "Create high-priority bug",
-      "Notify development team"
+      "Identify required data parameters",
+      "Run the mock data generation script",
+      "Verify data loads in the sandbox environment",
+      "Provide data set IDs to requester"
     ],
-    "escalate_if": "Affects multiple users"
+    "escalate_if": "Script fails to generate valid data"
   },
   {
     "id": "qa-003",
-    "issue": "Testing request",
-    "symptoms": ["test feature", "validate release"],
+    "issue": "Environment down",
+    "symptoms": ["test environment down", "staging broken", "can't access uat", "server is down", "test server is down", "staging server down", "environment unavailable", "staging not working"],
     "steps": [
-      "Review requirements",
-      "Create test plan",
-      "Execute test cases",
-      "Generate report"
+      "Check environment health dashboard",
+      "Restart the staging server instances",
+      "Clear the environment cache",
+      "Notify the DevOps team if unresolved"
     ],
-    "escalate_if": "Requirements unclear"
+    "escalate_if": "Environment remains down after 30 mins"
+  },
+  {
+    "id": "qa-004",
+    "issue": "Automation failure",
+    "symptoms": ["automation script failed", "cypress tests failing", "ci/cd pipeline red"],
+    "steps": [
+      "Review the CI/CD pipeline logs",
+      "Check for flakiness or network timeouts",
+      "Run the specific failing test locally",
+      "Update selectors if UI changed"
+    ],
+    "escalate_if": "Core functionality is actually broken"
+  },
+  {
+    "id": "qa-005",
+    "issue": "Release sign-off",
+    "symptoms": ["release sign-off", "production deployment", "qa approval"],
+    "steps": [
+      "Review all test run results for the release branch",
+      "Verify no open Sev-1 or Sev-2 bugs",
+      "Generate the QA summary report",
+      "Provide formal sign-off in the release channel"
+    ],
+    "escalate_if": "Blocking bugs remain open"
+  },
+  {
+    "id": "qa-006",
+    "issue": "Production bug reported",
+    "symptoms": ["bug in production", "prod is broken", "live site error", "customer reported bug", "critical bug", "p1 bug"],
+    "steps": [
+      "Confirm reproduction on production environment",
+      "Assess severity and customer impact",
+      "Create a Sev-1 Jira ticket and notify the on-call engineer",
+      "Implement hotfix or roll back the last deployment",
+      "Post a status update in the #incidents channel"
+    ],
+    "escalate_if": "Revenue or data loss is occurring"
   }
 ]

@@ -2,11 +2,11 @@
   {
     "id": "fin-001",
     "issue": "Invoice generation",
-    "symptoms": ["create invoice", "generate invoice", "billing request"],
+    "symptoms": ["create invoice", "generate invoice", "billing request", "send bill"],
     "steps": [
       "Collect customer details",
       "Validate billing information",
-      "Generate invoice",
+      "Generate invoice in ERP system",
       "Send invoice via email"
     ],
     "escalate_if": "Customer information incomplete"
@@ -14,24 +14,60 @@
   {
     "id": "fin-002",
     "issue": "Reimbursement request",
-    "symptoms": ["expense claim", "reimbursement pending"],
+    "symptoms": ["expense claim", "reimbursement pending", "reimbursement", "travel expense", "travel reimbursement", "out of pocket", "need reimbursement", "expenses not paid", "travel", "expense refund"],
     "steps": [
-      "Verify receipts",
-      "Validate policy compliance",
-      "Approve reimbursement",
-      "Schedule payment"
+      "Upload receipts to the Expense Portal",
+      "Validate policy compliance for limits",
+      "Submit for manager approval",
+      "Wait for next payment cycle"
     ],
     "escalate_if": "Required documentation missing"
   },
   {
     "id": "fin-003",
     "issue": "Payment status inquiry",
-    "symptoms": ["payment pending", "where is my payment"],
+    "symptoms": ["payment pending", "where is my payment", "vendor payment", "invoice paid"],
     "steps": [
-      "Check payment records",
-      "Verify payment schedule",
-      "Provide status update"
+      "Check payment records in ERP",
+      "Verify payment schedule (Net 30/60)",
+      "Provide status update to vendor"
     ],
     "escalate_if": "Payment discrepancy detected"
+  },
+  {
+    "id": "fin-004",
+    "issue": "Corporate credit card",
+    "symptoms": ["new credit card", "corporate card", "card limit", "lost card"],
+    "steps": [
+      "Fill out the corporate card request form",
+      "Obtain VP approval",
+      "Submit to Finance operations",
+      "Card will be mailed in 7-10 days"
+    ],
+    "escalate_if": "Card lost or stolen (report immediately)"
+  },
+  {
+    "id": "fin-005",
+    "issue": "Budget approval",
+    "symptoms": ["budget approval", "spend limit", "capex", "opex"],
+    "steps": [
+      "Review department budget allocation",
+      "Verify requested spend against remaining budget",
+      "Route to Finance Director for sign-off"
+    ],
+    "escalate_if": "Budget limit exceeded"
+  },
+  {
+    "id": "fin-006",
+    "issue": "Vendor payment delay",
+    "symptoms": ["vendor not paid", "supplier payment overdue", "payment delayed", "outstanding invoice", "unpaid vendor", "supplier not paid", "supplier has not been paid", "vendor overdue", "payment overdue", "supplier"],
+    "steps": [
+      "Check the vendor's invoice status in the ERP system",
+      "Verify payment terms and due date",
+      "Confirm bank account details are correct in the vendor master",
+      "Initiate an urgent payment run if past due date",
+      "Notify the vendor of the updated payment timeline"
+    ],
+    "escalate_if": "Vendor threatens to suspend services"
   }
 ]
