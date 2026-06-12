@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management Operations Manual | Nagarro Knowledge Base</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: #bfdbfe;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --red-100: #fee2e2;
+            --red-700: #b91c1c;
+            --red-border: #fca5a5;
+            --green-100: #dcfce7;
+            --green-700: #15803d;
+            --amber-100: #fef3c7;
+            --amber-700: #b45309;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--slate-700);
+            background: var(--slate-50);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: var(--slate-900);
+            color: white;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-brand {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-brand::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+        .topbar-meta {
+            color: var(--slate-400);
+        }
+
+        /* LAYOUT */
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        /* TOC SIDEBAR */
+        .toc {
+            position: sticky;
+            top: 72px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 13px;
+        }
+        .toc-title {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-500);
+            margin-bottom: 12px;
+        }
+        .toc a {
+            display: block;
+            color: var(--slate-500);
+            text-decoration: none;
+            padding: 4px 0;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            margin-left: -10px;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .toc a:hover {
+            color: var(--blue);
+            border-left-color: var(--blue);
+        }
+        .toc a.toc-h3 {
+            padding-left: 20px;
+            margin-left: -10px;
+            font-size: 12px;
+            color: var(--slate-400);
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--slate-900) 0%, #1e3a5f 100%);
+            padding: 48px 48px 40px;
+            color: white;
+        }
+        .doc-header h1 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            line-height: 1.25;
+        }
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 16px;
+        }
+        .doc-meta span { display: flex; align-items: center; gap: 6px; }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .doc-body {
+            padding: 48px;
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin: 48px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+            scroll-margin-top: 80px;
+        }
+        h2:first-of-type { margin-top: 0; }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin: 32px 0 12px;
+            scroll-margin-top: 80px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--blue);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        p {
+            margin: 0 0 16px;
+            color: var(--slate-700);
+        }
+
+        strong {
+            color: var(--slate-900);
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 0 0 20px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 8px; color: var(--slate-700); }
+        li::marker { color: var(--blue); }
+
+        /* NUMBERED STEPS */
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+        }
+        .steps li::before {
+            content: counter(step);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 14px;
+        }
+        thead tr {
+            background: var(--slate-900);
+            color: white;
+        }
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tbody tr { border-bottom: 1px solid var(--slate-200); }
+        tbody tr:nth-child(even) { background: var(--slate-50); }
+        tbody tr:hover { background: var(--blue-light); }
+        td {
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        /* ESCALATION / CALLOUT BOXES */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 24px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+        .callout.red {
+            background: var(--red-100);
+            border: 1px solid var(--red-border);
+            color: var(--red-700);
+        }
+        .callout.amber {
+            background: var(--amber-100);
+            border: 1px solid #fcd34d;
+            color: var(--amber-700);
+        }
+        .callout.blue {
+            background: var(--blue-light);
+            border: 1px solid var(--blue-border);
+            color: #1e40af;
+        }
+        .callout.green {
+            background: var(--green-100);
+            border: 1px solid #86efac;
+            color: var(--green-700);
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--slate-200);
+            margin: 48px 0;
+        }
+
+        /* OVERVIEW BLOCK */
+        .overview-block {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            padding: 20px 24px;
+            margin: 0 0 40px;
+            font-size: 14.5px;
+            color: #1e3a5f;
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 64px;
+            padding: 24px 0 0;
+            border-top: 1px solid var(--slate-200);
+            font-size: 12px;
+            color: var(--slate-400);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .toc { position: static; }
+            .doc-header { padding: 32px; }
+            .doc-body { padding: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="topbar-brand" href="#">Nagarro Knowledge Base</a>
+        <span class="topbar-meta">Internal Use Only — Confidential</span>
+    </div>
+    <div class="layout">
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#overview" class="">Overview</a>
+<a href="#project-status-reporting" class="">1. Project Status Reporting</a>
+<a href="#overview" class="toc-h3">1.1 Overview</a>
+<a href="#required-reporting-cadence" class="toc-h3">1.2 Required Reporting Cadence</a>
+<a href="#weekly-status-report-structure" class="toc-h3">1.3 Weekly Status Report Structure</a>
+<a href="#generating-the-status-report" class="toc-h3">1.4 Generating the Status Report</a>
+<a href="#escalation-policy" class="toc-h3">1.5 Escalation Policy</a>
+<a href="#resource-allocation" class="">2. Resource Allocation</a>
+<a href="#overview" class="toc-h3">2.1 Overview</a>
+<a href="#staffing-a-new-project" class="toc-h3">2.2 Staffing a New Project</a>
+<a href="#managing-resource-changes-mid-project" class="toc-h3">2.3 Managing Resource Changes Mid-Project</a>
+<a href="#escalation-policy" class="toc-h3">2.4 Escalation Policy</a>
+<a href="#requirement-clarification" class="">3. Requirement Clarification</a>
+<a href="#overview" class="toc-h3">3.1 Overview</a>
+<a href="#requirements-baseline-process" class="toc-h3">3.2 Requirements Baseline Process</a>
+<a href="#living-requirements-in-agile-projects" class="toc-h3">3.3 Living Requirements in Agile Projects</a>
+<a href="#escalation-policy" class="toc-h3">3.4 Escalation Policy</a>
+<a href="#scope-creep-management" class="">4. Scope Creep Management</a>
+<a href="#overview" class="toc-h3">4.1 Overview</a>
+<a href="#identifying-scope-creep" class="toc-h3">4.2 Identifying Scope Creep</a>
+<a href="#the-change-control-process" class="toc-h3">4.3 The Change Control Process</a>
+<a href="#escalation-policy" class="toc-h3">4.4 Escalation Policy</a>
+<a href="#risk-escalation" class="">5. Risk Escalation</a>
+<a href="#risk-management-framework" class="toc-h3">5.1 Risk Management Framework</a>
+<a href="#risk-categories" class="toc-h3">5.2 Risk Categories</a>
+<a href="#risk-assessment-and-response" class="toc-h3">5.3 Risk Assessment and Response</a>
+<a href="#escalation-thresholds" class="toc-h3">5.4 Escalation Thresholds</a>
+<a href="#escalation-policy" class="toc-h3">5.5 Escalation Policy</a>
+<a href="#stakeholder-meeting-scheduling" class="">6. Stakeholder Meeting Scheduling</a>
+<a href="#overview" class="toc-h3">6.1 Overview</a>
+<a href="#planning-a-stakeholder-meeting" class="toc-h3">6.2 Planning a Stakeholder Meeting</a>
+<a href="#running-the-meeting" class="toc-h3">6.3 Running the Meeting</a>
+<a href="#post-meeting-follow-up" class="toc-h3">6.4 Post-Meeting Follow-Up</a>
+<a href="#escalation-policy" class="toc-h3">6.5 Escalation Policy</a>
+        </nav>
+        <article class="content">
+            <div class="doc-header">
+                <h1>Project Management Operations Manual</h1><div class="doc-meta"><span>📋 Document Owner: Project Management Office (PMO)</span><span>📋 Last Updated: June 2026</span><span>📋 Version: 2.8</span><span>📋 Classification: Internal Use Only</span></div><div style="margin-top:16px;display:flex;gap:8px"><span class="doc-badge">2.8</span><span class="doc-badge">Internal Use Only</span></div>
+            </div>
+            <div class="doc-body">
+                
+<h2 id="overview">Overview</h2>
+
+<div class="overview-block">This manual serves as the definitive guide for project management practices at Nagarro. It is intended for Project Managers, Delivery Leads, Scrum Masters, and senior contributors working on client-facing or internal projects. All processes described here are aligned with the Nagarro Delivery Framework (NDF) and industry best practices (PMBOK, Agile/Scrum, SAFe).</div>
+
+<p>For PMO support: <strong>pmo@nagarro.com</strong> | PM Community Slack: <strong>#pm-community</strong></p>
+
+<hr>
+
+<h2 id="project-status-reporting">1. Project Status Reporting</h2>
+
+<h3 id="overview">1.1 Overview</h3>
+
+<p>Regular, transparent status reporting is a cornerstone of Nagarro's delivery culture. Status reports maintain stakeholder confidence, surface risks early, and provide a formal record of project performance. All active client engagements must produce a Weekly Status Report (WSR) unless the client explicitly waives this requirement in writing.</p>
+
+<h3 id="required-reporting-cadence">1.2 Required Reporting Cadence</h3>
+
+<table><thead><tr><th>Report Type</th><th>Frequency</th><th>Audience</th></tr></thead><tbody><tr><td>Weekly Status Report (WSR)</td><td>Every Friday by 4 PM</td><td>Client + Internal leadership</td></tr><tr><td>Monthly Executive Summary</td><td>Last working day of month</td><td>C-suite + Account Manager</td></tr><tr><td>Milestone Report</td><td>On milestone completion</td><td>Client stakeholders</td></tr><tr><td>Risk Register Update</td><td>Bi-weekly</td><td>Delivery Head + PMO</td></tr><tr><td>Financial Report</td><td>Monthly</td><td>Finance BP + Account Manager</td></tr></tbody></table>
+
+<h3 id="weekly-status-report-structure">1.3 Weekly Status Report Structure</h3>
+
+<p>Every WSR must follow the Nagarro standard template and include:</p>
+
+<p><strong>Section 1 – Executive Summary (2–3 sentences)</strong> A concise, client-friendly summary of the week's progress. Avoid technical jargon. Focus on business outcomes delivered.</p>
+
+<p><strong>Section 2 – RAG Status</strong> Rate the project across three dimensions using Red/Amber/Green:</p>
+<ul><li><strong>Schedule:</strong> Are we on track against the approved project plan?</li><li><strong>Budget:</strong> Is actual spend within 5% of the planned budget?</li><li><strong>Quality:</strong> Are defect rates and test pass rates within acceptable thresholds?</li></ul>
+
+<p><strong>Section 3 – Accomplishments This Week</strong> Bulleted list of completed deliverables, milestones achieved, and decisions made.</p>
+
+<p><strong>Section 4 – Planned for Next Week</strong> Clear list of what will be delivered in the next reporting period, with owners named.</p>
+
+<p><strong>Section 5 – Risks and Issues</strong> Any new or updated risks, along with the current mitigation strategy. Do not omit risks from the WSR — it protects both Nagarro and the client.</p>
+
+<p><strong>Section 6 – Decisions Required</strong> Any pending decisions from the client that are blocking progress. Include the deadline by which the decision is needed.</p>
+
+<h3 id="generating-the-status-report">1.4 Generating the Status Report</h3>
+
+<p><strong>Step 1 – Access the Project Hub</strong> Navigate to Project Hub → [Your Project] → Reports → New Status Report. The system auto-populates metrics from Jira (velocity, bug counts), Time & Expense (budget utilisation), and the project schedule.</p>
+
+<p><strong>Step 2 – Review and edit the draft</strong> Review auto-populated data for accuracy. The Jira sync may lag by 2 hours — refresh if needed. Add narrative context that the data alone cannot convey.</p>
+
+<p><strong>Step 3 – Internal review</strong> Share the draft with your Delivery Head for review at least 2 hours before the client-facing deadline.</p>
+
+<p><strong>Step 4 – Distribute</strong> Use the Project Hub's distribution feature to send to the configured recipient list. Do not send project reports from personal email or as raw attachments — use the portal to maintain a version history.</p>
+
+<h3 id="escalation-policy">1.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a project turns Red on Schedule or Budget, you must notify your Delivery Head and Account Manager immediately — do not wait for the next WSR. A recovery plan must be drafted within 48 hours of a Red status being declared.</div></div>
+
+<hr>
+
+<h2 id="resource-allocation">2. Resource Allocation</h2>
+
+<h3 id="overview">2.1 Overview</h3>
+
+<p>Effective resource allocation ensures the right people with the right skills are working on the right activities at the right time. At Nagarro, resource management is a collaborative responsibility between Project Managers, Resource Managers, and the PMO.</p>
+
+<h3 id="staffing-a-new-project">2.2 Staffing a New Project</h3>
+
+<p><strong>Step 1 – Raise a Resource Request</strong> Once a SOW is signed and a project code is created, raise a Resource Request in the Resource Management System (RMS) at rms.nagarro.com. Provide:</p>
+<ul><li>Required skill sets and seniority levels</li><li>Number of resources needed</li><li>Start date and expected duration</li><li>Preferred location/timezone (if applicable)</li></ul>
+
+<p><strong>Step 2 – Resource Manager review</strong> The Resource Manager will match your requirements against the internal availability pool within 3 business days. You will receive a list of proposed candidates with skill profiles.</p>
+
+<p><strong>Step 3 – Profile review and selection</strong> Review proposed profiles. You may request brief 30-minute introductory calls with candidates. Selection must be communicated within 2 business days.</p>
+
+<p><strong>Step 4 – Onboarding initiation</strong> Once selected, the Resource Manager initiates the project onboarding process: system access, induction, project documentation sharing, and team introductions.</p>
+
+<h3 id="managing-resource-changes-mid-project">2.3 Managing Resource Changes Mid-Project</h3>
+
+<p>Requesting a resource change mid-project requires careful management to avoid delivery disruption:</p>
+
+<ul><li><strong>Planned rotation:</strong> Submit a Change Request in RMS at least 4 weeks in advance. The outgoing resource must complete a knowledge transfer document before departure.</li><li><strong>Unplanned departure (illness, resignation):</strong> Notify the Resource Manager immediately. An interim replacement will be identified within 3 business days. Document the risk in your Risk Register.</li><li><strong>Skill gap identified:</strong> If a resource's skills are insufficient for project needs, discuss with your Delivery Head before initiating any formal process. Training, pairing, or role adjustment may resolve the issue without a full replacement.</li></ul>
+
+<h3 id="escalation-policy">2.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a critical skill gap cannot be filled from the internal pool within 5 business days, the Resource Manager will escalate to the Global Resource Allocation Committee, which may engage contractors or partner organisations as a fallback.</div></div>
+
+<hr>
+
+<h2 id="requirement-clarification">3. Requirement Clarification</h2>
+
+<h3 id="overview">3.1 Overview</h3>
+
+<p>Ambiguous or incomplete requirements are among the leading causes of project overruns and client dissatisfaction. Nagarro's delivery methodology mandates formal requirement validation before any development work begins, and a structured change process for any modifications thereafter.</p>
+
+<h3 id="requirements-baseline-process">3.2 Requirements Baseline Process</h3>
+
+<p><strong>Step 1 – Review the PRD/BRD</strong> Thoroughly review the Product Requirements Document (PRD) or Business Requirements Document (BRD) provided by the client. Log all assumptions and questions in the Requirements Tracker.</p>
+
+<p><strong>Step 2 – Identify ambiguities and gaps</strong> Analyse the document for:</p>
+<ul><li>Missing acceptance criteria</li><li>Conflicting requirements between sections</li><li>Undefined edge cases or error handling</li><li>Unclear ownership or sign-off authority</li></ul>
+
+<p><strong>Step 3 – Requirements Clarification Session</strong> Schedule a focused 1–2 hour session with the client's product owner and key SMEs. Use the prepared question log as the agenda. Document all answers in real-time and share the meeting minutes within 24 hours for client confirmation.</p>
+
+<p><strong>Step 4 – Update and baseline the requirements</strong> Incorporate all clarifications into the PRD. Have the client formally sign off on the updated document. This signed version becomes the "baseline" — any future changes are subject to the Change Management process.</p>
+
+<h3 id="living-requirements-in-agile-projects">3.3 Living Requirements in Agile Projects</h3>
+
+<p>For Agile/Scrum engagements, requirements evolve through the product backlog. Best practices:</p>
+<ul><li>Every User Story must have a Definition of Ready (DoR) before sprint planning: clear acceptance criteria, estimated by the team, dependencies identified</li><li>Ensure the product backlog is groomed at least 2 sprints ahead</li><li>Any story that cannot be refined due to missing information should be flagged as a blocker with the client PO immediately</li></ul>
+
+<h3 id="escalation-policy">3.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If the client's product owner is unavailable for clarification for more than 3 business days and this is blocking sprint work, escalate via the Account Manager. The delay must be logged as a risk in the project Risk Register.</div></div>
+
+<hr>
+
+<h2 id="scope-creep-management">4. Scope Creep Management</h2>
+
+<h3 id="overview">4.1 Overview</h3>
+
+<p>Scope creep is the gradual expansion of a project's scope beyond the original agreement, often without corresponding adjustments to timeline, budget, or resources. It is one of the most common reasons projects fail to deliver on time or on budget. Proactive scope management is a critical project management skill.</p>
+
+<h3 id="identifying-scope-creep">4.2 Identifying Scope Creep</h3>
+
+<p>Scope creep can be subtle. Watch for:</p>
+<ul><li>Client casually mentioning "can you also add..." or "while you're at it..."</li><li>New requirements appearing in sprint planning that were not in the original PRD</li><li>The team working on features not covered by any approved User Story</li><li>Timeline slipping without any formally logged change requests</li></ul>
+
+<h3 id="the-change-control-process">4.3 The Change Control Process</h3>
+
+<p><strong>Step 1 – Document the change request</strong> When a new requirement or scope addition is identified, capture it formally using the Change Request (CR) Template in the Project Hub. Include a clear description of what is being requested, why it is needed, and who is requesting it.</p>
+
+<p><strong>Step 2 – Impact analysis</strong> Estimate the impact of the change on:</p>
+<ul><li><strong>Schedule:</strong> How many additional days/sprints will this require?</li><li><strong>Budget:</strong> What is the cost in person-days at the agreed rate card?</li><li><strong>Quality:</strong> Does this change introduce risk to existing functionality?</li><li><strong>Resources:</strong> Does this require skills not currently on the team?</li></ul>
+
+<p><strong>Step 3 – Client presentation and approval</strong> Present the CR and its impact analysis to the client stakeholder. Do not begin work on the change until formal written approval (email confirmation is acceptable) is received.</p>
+
+<p><strong>Step 4 – Update project documents</strong> Once approved, update the SOW amendment (if commercial impact), project plan, and product backlog. Notify all team members of the change.</p>
+
+<h3 id="escalation-policy">4.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a client insists on proceeding with an unapproved change or refuses to acknowledge scope additions, escalate immediately to the Delivery Head and Account Manager. Do not allow the team to begin work on unapproved changes.</div></div>
+
+<hr>
+
+<h2 id="risk-escalation">5. Risk Escalation</h2>
+
+<h3 id="risk-management-framework">5.1 Risk Management Framework</h3>
+
+<p>Nagarro follows a structured risk management approach based on a 5×5 probability-impact matrix. All project risks must be logged in the Risk Register from project initiation and reviewed at least bi-weekly.</p>
+
+<h3 id="risk-categories">5.2 Risk Categories</h3>
+
+<ul><li><strong>Schedule Risk:</strong> Threats to the delivery timeline (e.g., dependency delays, underestimation)</li><li><strong>Budget Risk:</strong> Threats to financial performance (e.g., scope creep, FX fluctuation)</li><li><strong>Resource Risk:</strong> Threats to team continuity (e.g., attrition, skill gaps)</li><li><strong>Technical Risk:</strong> Threats from technical complexity, third-party APIs, or legacy systems</li><li><strong>Client Risk:</strong> Threats from client-side factors (e.g., delayed approvals, change in sponsor)</li><li><strong>Compliance Risk:</strong> Regulatory, data privacy, or contractual compliance threats</li></ul>
+
+<h3 id="risk-assessment-and-response">5.3 Risk Assessment and Response</h3>
+
+<p><strong>Step 1 – Log the risk</strong> In Project Hub → Risk Register → Add Risk. Assign an ID, description, category, owner, and initial probability/impact scores.</p>
+
+<p><strong>Step 2 – Score the risk</strong> Rate Probability (1=Very Low to 5=Almost Certain) and Impact (1=Negligible to 5=Critical). The Risk Score = Probability × Impact. Scores of 15+ are High risks requiring immediate escalation.</p>
+
+<p><strong>Step 3 – Define a response strategy</strong> Choose one of four strategies:</p>
+<ul><li><strong>Avoid:</strong> Eliminate the cause of the risk (change approach)</li><li><strong>Mitigate:</strong> Take actions to reduce probability or impact</li><li><strong>Transfer:</strong> Shift the risk to a third party (e.g., insurance, contractual clause)</li><li><strong>Accept:</strong> Acknowledge the risk and prepare a contingency plan</li></ul>
+
+<p><strong>Step 4 – Monitor and update</strong> Review the Risk Register every 2 weeks during the project team meeting. Update status, probability, and impact as the project progresses.</p>
+
+<h3 id="escalation-thresholds">5.4 Escalation Thresholds</h3>
+
+<table><thead><tr><th>Risk Score</th><th>Action Required</th></tr></thead><tbody><tr><td>1–6 (Low)</td><td>Monitor; update bi-weekly</td></tr><tr><td>7–14 (Medium)</td><td>Active mitigation plan; PM owns</td></tr><tr><td>15–19 (High)</td><td>Immediate escalation to Delivery Head</td></tr><tr><td>20–25 (Critical)</td><td>Escalation to VP + Client escalation; daily tracking</td></tr></tbody></table>
+
+<h3 id="escalation-policy">5.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> Any risk that materialises into an active issue causing project impact must be reported to the Delivery Head and Account Manager within 24 hours. An emergency response call must be scheduled within 48 hours.</div></div>
+
+<hr>
+
+<h2 id="stakeholder-meeting-scheduling">6. Stakeholder Meeting Scheduling</h2>
+
+<h3 id="overview">6.1 Overview</h3>
+
+<p>Effective meetings are purposeful, time-bound, and result in clear action items. Nagarro's meeting culture emphasises quality over quantity. This section covers how to schedule, prepare, and run stakeholder-level meetings for maximum effectiveness.</p>
+
+<h3 id="planning-a-stakeholder-meeting">6.2 Planning a Stakeholder Meeting</h3>
+
+<p><strong>Step 1 – Define the objective</strong> Before scheduling any meeting, answer: What decision needs to be made? What information needs to be shared? Could this be resolved via email? If no clear objective can be stated, do not call a meeting.</p>
+
+<p><strong>Step 2 – Identify required attendees</strong> Only invite people who are essential to the meeting's objective. Every unnecessary attendee reduces the meeting's efficiency and increases the collective cost in person-hours. Separate "Required" from "Optional" in your invite.</p>
+
+<p><strong>Step 3 – Check availability</strong> Use the Scheduling Assistant in Microsoft Outlook or Google Calendar to find a time when all required attendees are free. For international attendees, use a Time Zone Converter to ensure you do not schedule at unsociable hours for any participant.</p>
+
+<p><strong>Step 4 – Create and send the calendar invite</strong> The invite must include:</p>
+<ul><li><strong>Meeting title:</strong> Clear and specific (e.g., "Project Alpha — Q2 Milestone Review" not "Meeting")</li><li><strong>Duration:</strong> Be realistic but concise. Default to 30 or 45 minutes rather than 60</li><li><strong>Agenda:</strong> Attach a bullet-point agenda with time allocations for each item</li><li><strong>Pre-read materials:</strong> Share at least 24 hours before the meeting</li><li><strong>Video call link:</strong> Always include a conference link even for in-person meetings in case of remote participants</li><li><strong>Dial-in details:</strong> For clients who prefer phone</li></ul>
+
+<p><strong>Step 5 – Send a reminder</strong> Send a brief reminder email the day before with the agenda and any materials. This significantly improves attendance and preparation quality.</p>
+
+<h3 id="running-the-meeting">6.3 Running the Meeting</h3>
+
+<ul><li>Start on time. Do not wait more than 2–3 minutes for latecomers.</li><li>Designate a note-taker if you are facilitating.</li><li>Keep to the agenda. Park off-topic discussions in a "Parking Lot" for follow-up.</li><li>Close each agenda item with a clear decision or action item (who, what, when).</li><li>End 5 minutes early to allow transition time between meetings.</li></ul>
+
+<h3 id="post-meeting-follow-up">6.4 Post-Meeting Follow-Up</h3>
+
+<p>Within 24 hours of the meeting, distribute the meeting minutes via the Project Hub → Meeting Minutes → New. The minutes must capture:</p>
+<ul><li>Attendees</li><li>Key decisions made</li><li>Action items with owners and due dates</li><li>Parking lot items</li></ul>
+
+<p>All action item owners should acknowledge receipt. Track open actions in the Project Hub until closed.</p>
+
+<h3 id="escalation-policy">6.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a key decision-maker is repeatedly unavailable or meetings are consistently unproductive, raise this as a Client Risk in the Risk Register and escalate to the Account Manager. Persistent unavailability of the client sponsor is a high-severity risk to delivery.</div></div>
+
+                <div class="doc-footer">
+                    <span>Nagarro Internal Knowledge Base</span>
+                    <span>Classification: Internal Use Only</span>
+                </div>
+            </div>
+        </article>
+    </div>
+</body>
+</html>

@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Support Operations Manual | Nagarro Knowledge Base</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: #bfdbfe;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --red-100: #fee2e2;
+            --red-700: #b91c1c;
+            --red-border: #fca5a5;
+            --green-100: #dcfce7;
+            --green-700: #15803d;
+            --amber-100: #fef3c7;
+            --amber-700: #b45309;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--slate-700);
+            background: var(--slate-50);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: var(--slate-900);
+            color: white;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-brand {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-brand::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+        .topbar-meta {
+            color: var(--slate-400);
+        }
+
+        /* LAYOUT */
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        /* TOC SIDEBAR */
+        .toc {
+            position: sticky;
+            top: 72px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 13px;
+        }
+        .toc-title {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-500);
+            margin-bottom: 12px;
+        }
+        .toc a {
+            display: block;
+            color: var(--slate-500);
+            text-decoration: none;
+            padding: 4px 0;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            margin-left: -10px;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .toc a:hover {
+            color: var(--blue);
+            border-left-color: var(--blue);
+        }
+        .toc a.toc-h3 {
+            padding-left: 20px;
+            margin-left: -10px;
+            font-size: 12px;
+            color: var(--slate-400);
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--slate-900) 0%, #1e3a5f 100%);
+            padding: 48px 48px 40px;
+            color: white;
+        }
+        .doc-header h1 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            line-height: 1.25;
+        }
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 16px;
+        }
+        .doc-meta span { display: flex; align-items: center; gap: 6px; }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .doc-body {
+            padding: 48px;
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin: 48px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+            scroll-margin-top: 80px;
+        }
+        h2:first-of-type { margin-top: 0; }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin: 32px 0 12px;
+            scroll-margin-top: 80px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--blue);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        p {
+            margin: 0 0 16px;
+            color: var(--slate-700);
+        }
+
+        strong {
+            color: var(--slate-900);
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 0 0 20px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 8px; color: var(--slate-700); }
+        li::marker { color: var(--blue); }
+
+        /* NUMBERED STEPS */
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+        }
+        .steps li::before {
+            content: counter(step);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 14px;
+        }
+        thead tr {
+            background: var(--slate-900);
+            color: white;
+        }
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tbody tr { border-bottom: 1px solid var(--slate-200); }
+        tbody tr:nth-child(even) { background: var(--slate-50); }
+        tbody tr:hover { background: var(--blue-light); }
+        td {
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        /* ESCALATION / CALLOUT BOXES */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 24px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+        .callout.red {
+            background: var(--red-100);
+            border: 1px solid var(--red-border);
+            color: var(--red-700);
+        }
+        .callout.amber {
+            background: var(--amber-100);
+            border: 1px solid #fcd34d;
+            color: var(--amber-700);
+        }
+        .callout.blue {
+            background: var(--blue-light);
+            border: 1px solid var(--blue-border);
+            color: #1e40af;
+        }
+        .callout.green {
+            background: var(--green-100);
+            border: 1px solid #86efac;
+            color: var(--green-700);
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--slate-200);
+            margin: 48px 0;
+        }
+
+        /* OVERVIEW BLOCK */
+        .overview-block {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            padding: 20px 24px;
+            margin: 0 0 40px;
+            font-size: 14.5px;
+            color: #1e3a5f;
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 64px;
+            padding: 24px 0 0;
+            border-top: 1px solid var(--slate-200);
+            font-size: 12px;
+            color: var(--slate-400);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .toc { position: static; }
+            .doc-header { padding: 32px; }
+            .doc-body { padding: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="topbar-brand" href="#">Nagarro Knowledge Base</a>
+        <span class="topbar-meta">Internal Use Only — Confidential</span>
+    </div>
+    <div class="layout">
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#overview" class="">Overview</a>
+<a href="#password-reset" class="">1. Password Reset</a>
+<a href="#overview" class="toc-h3">1.1 Overview</a>
+<a href="#self-service-password-reset" class="toc-h3">1.2 Self-Service Password Reset</a>
+<a href="#account-lockout" class="toc-h3">1.3 Account Lockout</a>
+<a href="#mfa-device-management" class="toc-h3">1.4 MFA Device Management</a>
+<a href="#escalation-policy" class="toc-h3">1.5 Escalation Policy</a>
+<a href="#vpn-issues" class="">2. VPN Issues</a>
+<a href="#overview" class="toc-h3">2.1 Overview</a>
+<a href="#system-requirements" class="toc-h3">2.2 System Requirements</a>
+<a href="#common-vpn-issues-and-solutions" class="toc-h3">2.3 Common VPN Issues and Solutions</a>
+<a href="#vpn-client-installation" class="toc-h3">2.4 VPN Client Installation</a>
+<a href="#escalation-policy" class="toc-h3">2.5 Escalation Policy</a>
+<a href="#software-installation" class="">3. Software Installation</a>
+<a href="#overview" class="toc-h3">3.1 Overview</a>
+<a href="#approved-software-catalogue" class="toc-h3">3.2 Approved Software Catalogue</a>
+<a href="#self-service-installation-approved-software" class="toc-h3">3.3 Self-Service Installation (Approved Software)</a>
+<a href="#non-standard-software-request" class="toc-h3">3.4 Non-Standard Software Request</a>
+<a href="#escalation-policy" class="toc-h3">3.5 Escalation Policy</a>
+<a href="#wifi-connectivity" class="">4. WiFi Connectivity</a>
+<a href="#nagarro-network-infrastructure" class="toc-h3">4.1 Nagarro Network Infrastructure</a>
+<a href="#troubleshooting-wifi-issues" class="toc-h3">4.2 Troubleshooting WiFi Issues</a>
+<a href="#home-network-for-remote-work" class="toc-h3">4.3 Home Network for Remote Work</a>
+<a href="#escalation-policy" class="toc-h3">4.4 Escalation Policy</a>
+<a href="#hardware-request" class="">5. Hardware Request</a>
+<a href="#standard-hardware-entitlements" class="toc-h3">5.1 Standard Hardware Entitlements</a>
+<a href="#requesting-new-or-replacement-hardware" class="toc-h3">5.2 Requesting New or Replacement Hardware</a>
+<a href="#returning-hardware" class="toc-h3">5.3 Returning Hardware</a>
+<a href="#escalation-policy" class="toc-h3">5.4 Escalation Policy</a>
+<a href="#blue-screen-bsod-system-crash" class="">6. Blue Screen (BSOD) / System Crash</a>
+<a href="#overview" class="toc-h3">6.1 Overview</a>
+<a href="#immediate-steps" class="toc-h3">6.2 Immediate Steps</a>
+<a href="#prevention" class="toc-h3">6.3 Prevention</a>
+<a href="#escalation-policy" class="toc-h3">6.4 Escalation Policy</a>
+        </nav>
+        <article class="content">
+            <div class="doc-header">
+                <h1>IT Support Operations Manual</h1><div class="doc-meta"><span>📋 Document Owner: IT Operations & Infrastructure Team</span><span>📋 Last Updated: June 2026</span><span>📋 Version: 5.0</span><span>📋 Classification: Internal Use Only</span></div><div style="margin-top:16px;display:flex;gap:8px"><span class="doc-badge">5.0</span><span class="doc-badge">Internal Use Only</span></div>
+            </div>
+            <div class="doc-body">
+                
+<h2 id="overview">Overview</h2>
+
+<div class="overview-block">This manual is the primary reference for all IT-related support requests, self-service procedures, and escalation paths at Nagarro. It covers the most common issues employees encounter with hardware, software, network connectivity, and access management. Following the procedures in this document will ensure the fastest possible resolution of your IT issues.</div>
+
+<p>For critical production incidents, contact the IT Service Desk immediately: <strong>+1 800 NAGARRO</strong> | <strong>it-helpdesk@nagarro.com</strong> | Ticket Portal: <strong>it.nagarro.com</strong></p>
+
+<p style="margin:2px 0;font-size:13px;color:#64748b"><strong>SLA Overview:</strong></p>
+<ul><li>Priority 1 (Critical): 1-hour response, 4-hour resolution</li><li>Priority 2 (High): 4-hour response, 8-hour resolution</li><li>Priority 3 (Medium): 8-hour response, 2-day resolution</li><li>Priority 4 (Low): 24-hour response, 5-day resolution</li></ul>
+
+<hr>
+
+<h2 id="password-reset">1. Password Reset</h2>
+
+<h3 id="overview">1.1 Overview</h3>
+
+<p>Account access issues are among the most common IT requests. Nagarro uses a Single Sign-On (SSO) system powered by Okta, which means a single set of credentials provides access to all integrated applications including email, Jira, Confluence, HR Portal, ERP, and VPN.</p>
+
+<p>Passwords expire every <strong>90 days</strong>. You will receive reminder emails at 14 days, 7 days, and 1 day before expiry. Resetting your password promptly prevents account lockout.</p>
+
+<h3 id="self-service-password-reset">1.2 Self-Service Password Reset</h3>
+
+<p><strong>Step 1 – Navigate to the password reset portal</strong> Open a browser and go to <strong>password.nagarro.com</strong> (accessible without VPN). Click <strong>"Forgot Password / Reset Password"</strong>.</p>
+
+<p><strong>Step 2 – Verify your identity</strong> You will be prompted to verify via one of the following:</p>
+<ul><li><strong>Authenticator App (Okta Verify):</strong> Approve the push notification on your mobile device.</li><li><strong>SMS OTP:</strong> A 6-digit code will be sent to your registered mobile number.</li><li><strong>Security Questions:</strong> Answer 2 of your 3 pre-set security questions.</li></ul>
+
+<p><strong>Step 3 – Set your new password</strong> Your new password must meet the following requirements:</p>
+<ul><li>Minimum 12 characters</li><li>At least 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character</li><li>Cannot be the same as your last 10 passwords</li><li>Cannot contain your name or employee ID</li></ul>
+
+<p><strong>Step 4 – Re-authenticate all active sessions</strong> After resetting, you will be signed out of all active sessions. Re-login to all applications using your new credentials. If your VPN client doesn't accept the new password immediately, wait 5 minutes and try again.</p>
+
+<h3 id="account-lockout">1.3 Account Lockout</h3>
+
+<p>Your account will be locked after <strong>5 consecutive failed login attempts</strong>. To unlock:</p>
+
+<ol><li>Go to password.nagarro.com and click "Unlock Account"</li><li>Verify your identity using MFA (as above)</li><li>Your account will be unlocked instantly</li></ol>
+
+<p>If MFA is also unavailable (e.g., lost phone), contact the IT Service Desk with your employee ID and a photo ID for identity verification.</p>
+
+<h3 id="mfa-device-management">1.4 MFA Device Management</h3>
+
+<p>To add, remove, or replace an MFA device:</p>
+<ol><li>Log in to accounts.nagarro.com</li><li>Navigate to Security → Authenticators</li><li>Add a new authenticator or remove an existing one</li></ol>
+
+<p>If you lose your MFA device before adding a backup, contact the IT Service Desk — they will perform identity verification and temporarily disable MFA for one login to allow you to set up a new device.</p>
+
+<h3 id="escalation-policy">1.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If the self-service reset portal fails or your account cannot be unlocked via self-service, contact the IT Service Desk immediately (Priority 2). Do not share your credentials with anyone, including IT staff — legitimate IT will never ask for your password.</div></div>
+
+<hr>
+
+<h2 id="vpn-issues">2. VPN Issues</h2>
+
+<h3 id="overview">2.1 Overview</h3>
+
+<p>Nagarro uses <strong>GlobalProtect VPN</strong> (Palo Alto Networks) for secure remote access to internal systems, development environments, and corporate applications. VPN connectivity is required for all remote work involving access to sensitive systems or internal tools.</p>
+
+<h3 id="system-requirements">2.2 System Requirements</h3>
+
+<table><thead><tr><th>OS</th><th>Minimum Version</th></tr></thead><tbody><tr><td>Windows</td><td>Windows 10 version 1909 or later</td></tr><tr><td>macOS</td><td>macOS 11 (Big Sur) or later</td></tr><tr><td>Linux</td><td>Ubuntu 20.04 LTS or later</td></tr></tbody></table>
+
+<h3 id="common-vpn-issues-and-solutions">2.3 Common VPN Issues and Solutions</h3>
+
+<p><strong>Issue: VPN client will not connect — "Gateway not responding"</strong></p>
+<ol><li>Check your internet connection by opening a public website (e.g., google.com)</li><li>Restart your router if on home WiFi</li><li>Disable any third-party firewall or antivirus temporarily to test</li><li>Try connecting via mobile hotspot to isolate a network-level block</li><li>Restart the GlobalProtect service: Task Manager → Services → PanGPS → Restart</li></ol>
+
+<p><strong>Issue: VPN connects but cannot access internal sites</strong></p>
+<ol><li>Disconnect and reconnect the VPN</li><li>Flush DNS cache: Open Command Prompt as Administrator → <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">ipconfig /flushdns</code></li><li>Try accessing by IP address instead of hostname to rule out DNS issues</li><li>Check if a specific service is down via the IT Status Page (status.nagarro.com)</li></ol>
+
+<p><strong>Issue: VPN certificate expired</strong> This requires IT intervention. Do not attempt to install certificates manually. Contact the IT Service Desk with your device serial number. A technician will remotely push the updated certificate.</p>
+
+<p><strong>Issue: VPN disconnects repeatedly</strong></p>
+<ol><li>Disable auto-sleep settings for your network adapter: Control Panel → Device Manager → Network Adapters → Right-click your adapter → Power Management → Uncheck "Allow the computer to turn off this device to save power"</li><li>Set VPN reconnect timer: GlobalProtect Settings → Advanced → Connection → Enable "Auto-reconnect"</li><li>If on corporate WiFi, try switching to a different access point</li></ol>
+
+<h3 id="vpn-client-installation">2.4 VPN Client Installation</h3>
+
+<p>For new devices or after OS reinstalls:</p>
+<ol><li>Navigate to <strong>vpn-download.nagarro.com</strong> (internal network or MDM-managed device)</li><li>Download the GlobalProtect installer for your OS</li><li>Install and enter the gateway address: <strong>vpn.nagarro.com</strong></li><li>Log in with your corporate SSO credentials</li><li>Approve the MFA prompt</li></ol>
+
+<h3 id="escalation-policy">2.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If VPN is completely inaccessible and you need to work remotely on a business-critical task, contact the IT Service Desk (Priority 1). Temporary access via a jump server can be provisioned within 2 hours.</div></div>
+
+<hr>
+
+<h2 id="software-installation">3. Software Installation</h2>
+
+<h3 id="overview">3.1 Overview</h3>
+
+<p>Nagarro manages software through a centralised MDM (Mobile Device Management) system using <strong>Microsoft Intune</strong> (Windows) and <strong>Jamf Pro</strong> (macOS). Standard software is pre-approved and available via the Software Centre. Non-standard software requires a formal request and approval.</p>
+
+<h3 id="approved-software-catalogue">3.2 Approved Software Catalogue</h3>
+
+<p>The following software is pre-approved and available for self-installation via Software Centre without additional approval:</p>
+
+<ul><li><strong>Development:</strong> VS Code, IntelliJ IDEA CE, Git, Node.js, Python, Docker Desktop</li><li><strong>Productivity:</strong> Microsoft 365 (Office), Slack, Zoom, Google Chrome, Firefox</li><li><strong>Collaboration:</strong> Confluence, Jira, Miro, Figma (viewer)</li><li><strong>Security:</strong> Antivirus (auto-deployed), LastPass</li></ul>
+
+<h3 id="self-service-installation-approved-software">3.3 Self-Service Installation (Approved Software)</h3>
+
+<p><strong>Step 1 – Open Software Centre</strong> Windows: Start Menu → Microsoft Intune Company Portal macOS: Applications → Managed Software Centre</p>
+
+<p><strong>Step 2 – Browse or search</strong> Find the application in the catalogue. Click <strong>Install</strong>. The software will be downloaded and installed silently in the background — no administrator password required.</p>
+
+<p><strong>Step 3 – Confirm installation</strong> Most installations complete within 15 minutes. You may need to restart the application or your machine afterward.</p>
+
+<h3 id="non-standard-software-request">3.4 Non-Standard Software Request</h3>
+
+<p>For software not in the approved catalogue:</p>
+
+<p><strong>Step 1 – Submit a Software Request</strong> IT Portal → Software Requests → New Request. Provide the software name, version, vendor, business justification, and estimated number of users.</p>
+
+<p><strong>Step 2 – Security and compliance review</strong> The IT Security team will review the software for licensing compliance, data handling, and security vulnerabilities. This takes 3–5 business days.</p>
+
+<p><strong>Step 3 – Manager approval</strong> If the security review passes, your manager will be asked to formally approve the business need.</p>
+
+<p><strong>Step 4 – Deployment</strong> Approved software is added to the managed catalogue and deployed to your device within 2 business days.</p>
+
+<h3 id="escalation-policy">3.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a software request has been pending for more than 10 business days without update, escalate to your IT Business Partner. Emergency software requests for client-critical needs can be expedited to 24-hour processing — flag this clearly in the request.</div></div>
+
+<hr>
+
+<h2 id="wifi-connectivity">4. WiFi Connectivity</h2>
+
+<h3 id="nagarro-network-infrastructure">4.1 Nagarro Network Infrastructure</h3>
+
+<p>Nagarro offices use enterprise-grade WiFi with three available networks:</p>
+
+<table><thead><tr><th>Network Name</th><th>Purpose</th><th>Authentication</th></tr></thead><tbody><tr><td>NagarroNet</td><td>Primary corporate network for work devices</td><td>SSO (Okta)</td></tr><tr><td>NagarroGuest</td><td>Visitor and personal device internet access</td><td>Daily access code</td></tr><tr><td>NagarroIOT</td><td>Smart devices, printers, AV equipment</td><td>Auto-provisioned</td></tr></tbody></table>
+
+<p><strong>All work-related activity must use NagarroNet.</strong> Using personal hotspots for work activity involving sensitive data is a security policy violation.</p>
+
+<h3 id="troubleshooting-wifi-issues">4.2 Troubleshooting WiFi Issues</h3>
+
+<p><strong>Issue: Cannot see NagarroNet in the WiFi list</strong></p>
+<ol><li>Toggle your device's WiFi off and on</li><li>Move closer to an access point (AP). Office maps showing AP locations are in the IT portal</li><li>Forget all saved Nagarro networks and rediscover them</li><li>Restart your device's network adapter: Right-click WiFi icon → Network troubleshooter</li></ol>
+
+<p><strong>Issue: Connected to NagarroNet but no internet</strong></p>
+<ol><li>Disconnect and reconnect</li><li>Open a command prompt: <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">ping 8.8.8.8</code> — if you get replies, the issue is DNS; run <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">ipconfig /flushdns</code></li><li>Check the IT Status Page for network outage announcements</li><li>Try a different physical location in the office</li></ol>
+
+<p><strong>Issue: Slow WiFi speeds</strong></p>
+<ol><li>Run a speed test at fast.com while connected to NagarroNet</li><li>Check how many devices you are connected to (most people only need 1–2)</li><li>Avoid streaming personal media on the corporate network</li><li>High congestion areas: Move away from large meeting rooms or auditoriums during peak hours</li></ol>
+
+<p><strong>Issue: Repeatedly dropping connection</strong></p>
+<ol><li>Forget NagarroNet and reconnect with fresh credentials</li><li>Update your device's WiFi driver (Device Manager → Network Adapters → Update Driver)</li><li>Check if your device's power-saving mode is aggressively turning off the WiFi adapter</li></ol>
+
+<h3 id="home-network-for-remote-work">4.3 Home Network for Remote Work</h3>
+
+<p>For reliable remote work:</p>
+<ul><li>Use a wired ethernet connection where possible</li><li>Minimum requirement: 25 Mbps download / 10 Mbps upload</li><li>If your home internet is insufficient, Nagarro provides a monthly mobile data stipend — apply via HR Portal → Benefits → Remote Work Allowance</li></ul>
+
+<h3 id="escalation-policy">4.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> Report complete network outages at an office location as Priority 1 immediately. Widespread outages will trigger Nagarro's Business Continuity Plan with backup connectivity solutions deployed within 2 hours.</div></div>
+
+<hr>
+
+<h2 id="hardware-request">5. Hardware Request</h2>
+
+<h3 id="standard-hardware-entitlements">5.1 Standard Hardware Entitlements</h3>
+
+<p>Every Nagarro employee is entitled to a standard hardware kit based on their role. The following table outlines the standard kit:</p>
+
+<table><thead><tr><th>Role Category</th><th>Standard Kit</th></tr></thead><tbody><tr><td>Developer / Engineer</td><td>15" laptop, external monitor (24"), keyboard, mouse, headset</td></tr><tr><td>Designer</td><td>15" laptop, 27" 4K display, stylus tablet</td></tr><tr><td>Manager / Lead</td><td>14" laptop, monitor, keyboard, mouse</td></tr><tr><td>Remote Worker</td><td>Same as above + desk stand, webcam, and ring light</td></tr></tbody></table>
+
+<p>Upgrades beyond the standard kit require business justification and manager approval.</p>
+
+<h3 id="requesting-new-or-replacement-hardware">5.2 Requesting New or Replacement Hardware</h3>
+
+<p><strong>Step 1 – Submit a Hardware Request</strong> IT Portal → Hardware Requests → New Request. Select whether this is for a New Joiner, Replacement (damaged/end-of-life), or Upgrade.</p>
+
+<p><strong>Step 2 – Justification</strong> For upgrades or non-standard items, provide a clear business justification. "I prefer a different keyboard" is not sufficient — "The existing keyboard causes repetitive strain injury (RSI) symptoms" with a medical note is acceptable.</p>
+
+<p><strong>Step 3 – Manager approval</strong> For items valued above $500, manager approval is automatically requested.</p>
+
+<p><strong>Step 4 – Procurement and delivery</strong> Standard items are dispatched from the IT equipment inventory within 2 business days. Non-stock items require 5–10 business days for procurement. All hardware is delivered to your registered office address unless otherwise specified.</p>
+
+<h3 id="returning-hardware">5.3 Returning Hardware</h3>
+
+<p>Hardware must be returned upon offboarding or when replacing an item. Unreturned assets will be deducted from the final paycheck. Use the pre-paid return label provided in the offboarding email. Ensure all data is wiped from personal storage devices before return.</p>
+
+<h3 id="escalation-policy">5.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> For urgent hardware failures that prevent you from working (e.g., laptop completely dead), contact the IT Service Desk as a Priority 2 request. A loaner device can typically be arranged within 4 hours at major office locations.</div></div>
+
+<hr>
+
+<h2 id="blue-screen-bsod-system-crash">6. Blue Screen (BSOD) / System Crash</h2>
+
+<h3 id="overview">6.1 Overview</h3>
+
+<p>A Blue Screen of Death (BSOD) on Windows indicates a critical system error — usually a driver conflict, hardware failure, or corrupted system file. A single BSOD is often not cause for major concern, but repeated crashes require immediate investigation.</p>
+
+<h3 id="immediate-steps">6.2 Immediate Steps</h3>
+
+<p><strong>Step 1 – Photograph the error screen</strong> Before the machine restarts, photograph the error code and hex value shown (e.g., <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">DRIVER_IRQL_NOT_LESS_OR_EQUAL 0x000000D1</code>). This is essential for diagnostics.</p>
+
+<p><strong>Step 2 – Allow automatic restart</strong> Modern Windows will restart automatically after a BSOD. If it does not restart within 2 minutes, hold the power button for 5 seconds to force shutdown, then restart.</p>
+
+<p><strong>Step 3 – Check for immediate recurrence</strong> If the system crashes again within 10 minutes of restart, do not continue attempting to use it. Proceed to escalation immediately.</p>
+
+<p><strong>Step 4 – Run Windows Memory Diagnostic</strong> Start → Search → "Windows Memory Diagnostic" → Restart now and check for problems. A failing RAM module is a common cause of BSODs.</p>
+
+<p><strong>Step 5 – Check for recent changes</strong> Think: did the crash start after a Windows Update, new driver installation, or new peripheral? If so, roll back the specific change:</p>
+<ul><li>Windows Update: Settings → Update & Security → View Update History → Uninstall Updates</li><li>Driver: Device Manager → Right-click device → Properties → Driver → Roll Back</li></ul>
+
+<p><strong>Step 6 – Export crash dump logs</strong> Open Event Viewer (search in Start menu) → Windows Logs → System → Filter by Error and Critical. Export the last 10 entries and attach to your IT support ticket.</p>
+
+<h3 id="prevention">6.3 Prevention</h3>
+
+<ul><li>Keep Windows updated (Updates are pushed automatically on NagarroNet overnight)</li><li>Never install unsigned or cracked software on corporate devices</li><li>Avoid physically moving the laptop while the hard drive is actively writing data</li><li>Use surge protectors for power</li></ul>
+
+<h3 id="escalation-policy">6.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a BSOD occurs more than twice within a 7-day period, or if the machine fails to boot after a crash, raise an urgent IT support ticket (Priority 2). The device may require OS reinstall or hardware replacement.</div></div>
+
+                <div class="doc-footer">
+                    <span>Nagarro Internal Knowledge Base</span>
+                    <span>Classification: Internal Use Only</span>
+                </div>
+            </div>
+        </article>
+    </div>
+</body>
+</html>

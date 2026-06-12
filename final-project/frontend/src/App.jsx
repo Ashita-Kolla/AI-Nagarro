@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, Loader2, PlusCircle, MessageSquare, AlertCircle, CheckCircle2, Ticket, Bot, User, LayoutDashboard, Settings, HelpCircle, Activity, BarChart3, Clock, ChevronRight } from 'lucide-react';
+import { Send, Loader2, PlusCircle, MessageSquare, AlertCircle, CheckCircle2, Ticket, Bot, User, LayoutDashboard, Settings, HelpCircle, Activity, BarChart3, Clock, ChevronRight, FileText, ExternalLink } from 'lucide-react';
 
 const DEPARTMENT_COLORS = {
   HR: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
@@ -301,6 +301,19 @@ export default function App() {
                 ))}
               </ul>
             </div>
+          )}
+          {msg.reference_link && (
+            <p className="text-sm text-slate-400 mt-3">
+              For more details, refer to:{' '}
+              <a
+                href={msg.reference_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline underline-offset-2 transition-colors"
+              >
+                {msg.reference_link.split('/').pop().replace('.html', '').replace(/_/g, ' ')}
+              </a>
+            </p>
           )}
 
           <div className="mt-5 pt-4 border-t border-slate-700/50">

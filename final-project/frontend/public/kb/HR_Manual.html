@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Operations Manual | Nagarro Knowledge Base</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: #bfdbfe;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --red-100: #fee2e2;
+            --red-700: #b91c1c;
+            --red-border: #fca5a5;
+            --green-100: #dcfce7;
+            --green-700: #15803d;
+            --amber-100: #fef3c7;
+            --amber-700: #b45309;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--slate-700);
+            background: var(--slate-50);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: var(--slate-900);
+            color: white;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-brand {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-brand::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+        .topbar-meta {
+            color: var(--slate-400);
+        }
+
+        /* LAYOUT */
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        /* TOC SIDEBAR */
+        .toc {
+            position: sticky;
+            top: 72px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 13px;
+        }
+        .toc-title {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-500);
+            margin-bottom: 12px;
+        }
+        .toc a {
+            display: block;
+            color: var(--slate-500);
+            text-decoration: none;
+            padding: 4px 0;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            margin-left: -10px;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .toc a:hover {
+            color: var(--blue);
+            border-left-color: var(--blue);
+        }
+        .toc a.toc-h3 {
+            padding-left: 20px;
+            margin-left: -10px;
+            font-size: 12px;
+            color: var(--slate-400);
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--slate-900) 0%, #1e3a5f 100%);
+            padding: 48px 48px 40px;
+            color: white;
+        }
+        .doc-header h1 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            line-height: 1.25;
+        }
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 16px;
+        }
+        .doc-meta span { display: flex; align-items: center; gap: 6px; }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .doc-body {
+            padding: 48px;
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin: 48px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+            scroll-margin-top: 80px;
+        }
+        h2:first-of-type { margin-top: 0; }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin: 32px 0 12px;
+            scroll-margin-top: 80px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--blue);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        p {
+            margin: 0 0 16px;
+            color: var(--slate-700);
+        }
+
+        strong {
+            color: var(--slate-900);
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 0 0 20px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 8px; color: var(--slate-700); }
+        li::marker { color: var(--blue); }
+
+        /* NUMBERED STEPS */
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+        }
+        .steps li::before {
+            content: counter(step);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 14px;
+        }
+        thead tr {
+            background: var(--slate-900);
+            color: white;
+        }
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tbody tr { border-bottom: 1px solid var(--slate-200); }
+        tbody tr:nth-child(even) { background: var(--slate-50); }
+        tbody tr:hover { background: var(--blue-light); }
+        td {
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        /* ESCALATION / CALLOUT BOXES */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 24px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+        .callout.red {
+            background: var(--red-100);
+            border: 1px solid var(--red-border);
+            color: var(--red-700);
+        }
+        .callout.amber {
+            background: var(--amber-100);
+            border: 1px solid #fcd34d;
+            color: var(--amber-700);
+        }
+        .callout.blue {
+            background: var(--blue-light);
+            border: 1px solid var(--blue-border);
+            color: #1e40af;
+        }
+        .callout.green {
+            background: var(--green-100);
+            border: 1px solid #86efac;
+            color: var(--green-700);
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--slate-200);
+            margin: 48px 0;
+        }
+
+        /* OVERVIEW BLOCK */
+        .overview-block {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            padding: 20px 24px;
+            margin: 0 0 40px;
+            font-size: 14.5px;
+            color: #1e3a5f;
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 64px;
+            padding: 24px 0 0;
+            border-top: 1px solid var(--slate-200);
+            font-size: 12px;
+            color: var(--slate-400);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .toc { position: static; }
+            .doc-header { padding: 32px; }
+            .doc-body { padding: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="topbar-brand" href="#">Nagarro Knowledge Base</a>
+        <span class="topbar-meta">Internal Use Only — Confidential</span>
+    </div>
+    <div class="layout">
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#overview" class="">Overview</a>
+<a href="#salary-not-credited" class="">1. Salary Not Credited</a>
+<a href="#overview" class="toc-h3">1.1 Overview</a>
+<a href="#common-causes" class="toc-h3">1.2 Common Causes</a>
+<a href="#resolution-steps" class="toc-h3">1.3 Resolution Steps</a>
+<a href="#escalation-policy" class="toc-h3">1.4 Escalation Policy</a>
+<a href="#payslip-request" class="">2. Payslip Request</a>
+<a href="#overview" class="toc-h3">2.1 Overview</a>
+<a href="#accessing-your-payslip" class="toc-h3">2.2 Accessing Your Payslip</a>
+<a href="#understanding-your-payslip" class="toc-h3">2.3 Understanding Your Payslip</a>
+<a href="#escalation-policy" class="toc-h3">2.4 Escalation Policy</a>
+<a href="#leave-request" class="">3. Leave Request</a>
+<a href="#leave-policy-overview" class="toc-h3">3.1 Leave Policy Overview</a>
+<a href="#types-of-leave" class="toc-h3">3.2 Types of Leave</a>
+<a href="#how-to-apply-for-leave" class="toc-h3">3.3 How to Apply for Leave</a>
+<a href="#special-leave-considerations" class="toc-h3">3.4 Special Leave Considerations</a>
+<a href="#escalation-policy" class="toc-h3">3.5 Escalation Policy</a>
+<a href="#benefits-and-insurance" class="">4. Benefits and Insurance</a>
+<a href="#overview" class="toc-h3">4.1 Overview</a>
+<a href="#health-insurance" class="toc-h3">4.2 Health Insurance</a>
+<a href="#dental-and-vision" class="toc-h3">4.3 Dental and Vision</a>
+<a href="#provident-fund-pf-and-retirement" class="toc-h3">4.4 Provident Fund (PF) and Retirement</a>
+<a href="#professional-development-budget" class="toc-h3">4.5 Professional Development Budget</a>
+<a href="#escalation-policy" class="toc-h3">4.6 Escalation Policy</a>
+<a href="#performance-review" class="">5. Performance Review</a>
+<a href="#overview" class="toc-h3">5.1 Overview</a>
+<a href="#review-cycle-timeline" class="toc-h3">5.2 Review Cycle Timeline</a>
+<a href="#the-review-process" class="toc-h3">5.3 The Review Process</a>
+<a href="#rating-definitions" class="toc-h3">5.4 Rating Definitions</a>
+<a href="#escalation-policy" class="toc-h3">5.5 Escalation Policy</a>
+<a href="#workplace-harassment-or-conflict" class="">6. Workplace Harassment or Conflict</a>
+<a href="#zero-tolerance-policy" class="toc-h3">6.1 Zero Tolerance Policy</a>
+<a href="#what-constitutes-harassment" class="toc-h3">6.2 What Constitutes Harassment</a>
+<a href="#reporting-process" class="toc-h3">6.3 Reporting Process</a>
+<a href="#escalation-policy" class="toc-h3">6.4 Escalation Policy</a>
+        </nav>
+        <article class="content">
+            <div class="doc-header">
+                <h1>HR Operations Manual</h1><div class="doc-meta"><span>📋 Document Owner: Human Resources Department</span><span>📋 Last Updated: June 2026</span><span>📋 Version: 4.1</span><span>📋 Classification: Internal Use Only</span></div><div style="margin-top:16px;display:flex;gap:8px"><span class="doc-badge">4.1</span><span class="doc-badge">Internal Use Only</span></div>
+            </div>
+            <div class="doc-body">
+                
+<h2 id="overview">Overview</h2>
+
+<div class="overview-block">This manual is the authoritative reference for all Human Resources processes at Nagarro. It covers the full employee lifecycle — from leave management and payroll to performance reviews and workplace conduct policies. All Nagarro employees are expected to familiarise themselves with this document. HR Business Partners are available at hr-help@nagarro.com for personalised guidance.</div>
+
+<hr>
+
+<h2 id="salary-not-credited">1. Salary Not Credited</h2>
+
+<h3 id="overview">1.1 Overview</h3>
+
+<p>Nagarro processes payroll on the <strong>last working day of each month</strong> for permanent employees. Contract employees follow the schedule specified in their engagement letter. If your salary has not been credited by midnight on the payroll date, this section explains the steps to investigate and resolve the issue.</p>
+
+<h3 id="common-causes">1.2 Common Causes</h3>
+
+<ul><li>Bank account details on record are incorrect or outdated</li><li>A recent bank account change was submitted after the payroll cutoff (10th of the month)</li><li>Payroll was processed but bank is experiencing a settlement delay (typically 1–2 business days)</li><li>An administrative hold was placed on your account (e.g., pending tax documentation)</li></ul>
+
+<h3 id="resolution-steps">1.3 Resolution Steps</h3>
+
+<p><strong>Step 1 – Confirm the payroll date</strong> Log in to the HR Self-Service Portal → Payroll → Pay Schedule. Confirm the official payroll date for the current month. Allow until end of business (6 PM local time) on the payroll date before escalating.</p>
+
+<p><strong>Step 2 – Verify your bank account details</strong> Go to HR Portal → My Profile → Bank Details. Confirm the IBAN/account number and bank name are correct. If there is an error, update your details immediately and notify Payroll at payroll@nagarro.com with the subject "Urgent: Bank Detail Update – [Employee ID]".</p>
+
+<p><strong>Step 3 – Check for payroll notifications</strong> Search your corporate email inbox for communications from payroll@nagarro.com. There may be a pending action required from you (e.g., form submission, tax declaration).</p>
+
+<p><strong>Step 4 – Contact Payroll</strong> If the above steps don't reveal the issue, raise a query via the HR Portal → Support Tickets → Payroll Query. Include your employee ID, the expected salary amount, and your bank details reference number.</p>
+
+<p><strong>Step 5 – Await resolution</strong> Payroll investigations are resolved within 2 business days. Emergency salary advances may be requested if the delay causes significant hardship — speak to your HR Business Partner directly.</p>
+
+<h3 id="escalation-policy">1.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If salary is not received within 3 business days of the official payroll date, or if the payroll team is unresponsive, escalate to your HR Business Partner and CC the Payroll Manager at payroll-manager@nagarro.com.</div></div>
+
+<hr>
+
+<h2 id="payslip-request">2. Payslip Request</h2>
+
+<h3 id="overview">2.1 Overview</h3>
+
+<p>Your payslip is a legally required document issued each month detailing your gross pay, deductions, tax withheld, and net pay. Payslips are available digitally on the HR Self-Service Portal from the 1st of the following month. Historical payslips from the last 3 years are also accessible.</p>
+
+<h3 id="accessing-your-payslip">2.2 Accessing Your Payslip</h3>
+
+<p><strong>Step 1 – Log in to the HR Self-Service Portal</strong> Visit hr-portal.nagarro.com and sign in with your corporate SSO credentials.</p>
+
+<p><strong>Step 2 – Navigate to Payslips</strong> From the main menu, select <strong>My Profile → Compensation → Payslips</strong>. A list of all available payslips, sorted by month and year, will be displayed.</p>
+
+<p><strong>Step 3 – Download your payslip</strong> Click on the month you need and select <strong>Download PDF</strong>. The PDF is password-protected by default. Your password is your 8-digit employee ID.</p>
+
+<p><strong>Step 4 – For third-party requests (e.g., loan applications)</strong> If a bank or government body requires an official stamped payslip, raise a formal request via HR Portal → Document Requests → Stamped Payslip. The HR team will prepare the document within 3 business days.</p>
+
+<h3 id="understanding-your-payslip">2.3 Understanding Your Payslip</h3>
+
+<p>Your payslip contains the following sections:</p>
+
+<table><thead><tr><th>Section</th><th>Description</th></tr></thead><tbody><tr><td>Gross Salary</td><td>Your total pay before deductions</td></tr><tr><td>Income Tax (TDS)</td><td>Tax withheld at source as per your tax declaration</td></tr><tr><td>Provident Fund (PF)</td><td>Statutory retirement contribution</td></tr><tr><td>Professional Tax</td><td>State-level tax where applicable</td></tr><tr><td>Allowances</td><td>HRA, travel, and other approved allowances</td></tr><tr><td>Net Pay</td><td>Amount credited to your bank account</td></tr></tbody></table>
+
+<h3 id="escalation-policy">2.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a payslip is missing or shows incorrect figures, raise a ticket via HR Portal → Payroll Issues. Incorrect payslip data must be reported within 30 days of the pay date for corrections to be processed in the next payroll cycle.</div></div>
+
+<hr>
+
+<h2 id="leave-request">3. Leave Request</h2>
+
+<h3 id="leave-policy-overview">3.1 Leave Policy Overview</h3>
+
+<p>Nagarro offers a comprehensive leave package designed to support employee wellbeing, work-life balance, and personal obligations. Leave entitlements vary by employment type, seniority level, and local labour regulations. Always check your leave balance in the HR portal before applying.</p>
+
+<h3 id="types-of-leave">3.2 Types of Leave</h3>
+
+<table><thead><tr><th>Leave Type</th><th>Annual Entitlement</th><th>Notes</th></tr></thead><tbody><tr><td>Annual Leave (PTO)</td><td>20 days</td><td>Carries over max 5 days to next year</td></tr><tr><td>Sick Leave</td><td>10 days</td><td>No documentation required for up to 3 days</td></tr><tr><td>Casual Leave</td><td>5 days</td><td>Cannot be accumulated or carried over</td></tr><tr><td>Maternity Leave</td><td>26 weeks</td><td>Paid, per statutory requirements</td></tr><tr><td>Paternity Leave</td><td>2 weeks</td><td>Paid</td></tr><tr><td>Bereavement Leave</td><td>5 days</td><td>Immediate family; extended on a case-by-case basis</td></tr><tr><td>Unpaid Leave</td><td>As approved</td><td>Requires HR BP and manager approval</td></tr><tr><td>Compensatory Off</td><td>As accrued</td><td>Accrued for working on official holidays</td></tr></tbody></table>
+
+<h3 id="how-to-apply-for-leave">3.3 How to Apply for Leave</h3>
+
+<p><strong>Step 1 – Check your leave balance</strong> Log in to HR Portal → Leave Management → My Leave Balance. Confirm you have sufficient leave days available for the type you are applying for.</p>
+
+<p><strong>Step 2 – Review team availability</strong> Best practice is to check your team calendar before submitting a leave request, especially for extended periods. Coordinate with your manager or team lead to avoid critical delivery conflicts.</p>
+
+<p><strong>Step 3 – Submit the leave request</strong> Navigate to HR Portal → Leave Management → Apply for Leave. Fill in:</p>
+<ul><li>Leave type</li><li>Start date and end date</li><li>Whether you will be partially available (e.g., on call for emergencies)</li><li>Handover notes (optional but strongly recommended for leaves over 3 days)</li></ul>
+
+<p><strong>Step 4 – Manager approval</strong> Your leave request is automatically routed to your direct manager. They must approve or reject within 2 business days. For leaves of 5+ days, 2 weeks advance notice is strongly recommended.</p>
+
+<p><strong>Step 5 – Receive confirmation</strong> Once approved, you will receive an email confirmation. The leave is automatically deducted from your balance and reflected in the project management system.</p>
+
+<h3 id="special-leave-considerations">3.4 Special Leave Considerations</h3>
+
+<ul><li><strong>Medical leave:</strong> For sick leave exceeding 3 consecutive days, a medical certificate from a licensed practitioner must be submitted upon return.</li><li><strong>Emergency leave:</strong> For unplanned urgent situations, notify your manager via phone or WhatsApp immediately, then formalise the request in the portal the same day or the next working day.</li><li><strong>Leave during project deadlines:</strong> Managers reserve the right to ask you to postpone leave during critical project delivery windows. Any disputes are handled by the HR Business Partner.</li></ul>
+
+<h3 id="escalation-policy">3.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If your leave request is not reviewed within 3 business days, or is rejected without reasonable justification, contact your HR Business Partner. Leave disputes are handled under the Employee Grievance Policy.</div></div>
+
+<hr>
+
+<h2 id="benefits-and-insurance">4. Benefits and Insurance</h2>
+
+<h3 id="overview">4.1 Overview</h3>
+
+<p>Nagarro provides a comprehensive benefits package to support employees' health, financial security, and professional growth. Benefits are administered through the Benefits Portal and typically activate after a 30-day probationary period.</p>
+
+<h3 id="health-insurance">4.2 Health Insurance</h3>
+
+<p>All permanent employees and their immediate dependents (spouse and up to 2 children) are covered under the Group Mediclaim Policy. Key details:</p>
+
+<ul><li><strong>Coverage amount:</strong> INR 5 Lakh / $75,000 USD equivalent per family per year</li><li><strong>Cashless hospitalisation:</strong> Available at 3,000+ network hospitals</li><li><strong>Pre-existing conditions:</strong> Covered after a 2-year waiting period</li><li><strong>Top-up option:</strong> Employees may purchase additional coverage at subsidised group rates</li></ul>
+
+<p>To add a dependent, go to Benefits Portal → Dependents → Add Member within 30 days of joining or a qualifying life event (marriage, childbirth).</p>
+
+<h3 id="dental-and-vision">4.3 Dental and Vision</h3>
+
+<p>Optional dental and vision coverage is available. Employees opt in during the annual Open Enrollment period (November 1–15). Mid-year enrollment is permitted only for qualifying life events.</p>
+
+<h3 id="provident-fund-pf-and-retirement">4.4 Provident Fund (PF) and Retirement</h3>
+
+<p>Statutory contributions are automatically deducted and matched by Nagarro at 12% of basic salary. Employees may make voluntary additional contributions via the HR Portal → Benefits → PF Additional Contribution.</p>
+
+<h3 id="professional-development-budget">4.5 Professional Development Budget</h3>
+
+<p>Each employee receives an annual L&D budget of $1,500 for approved training, certifications, and conferences. Request disbursement via HR Portal → Learning → Training Request.</p>
+
+<h3 id="escalation-policy">4.6 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> For insurance claim issues or denial of coverage, contact the insurance helpdesk number on your policy card. If unresolved, escalate to hr-benefits@nagarro.com with your claim reference number.</div></div>
+
+<hr>
+
+<h2 id="performance-review">5. Performance Review</h2>
+
+<h3 id="overview">5.1 Overview</h3>
+
+<p>Nagarro follows a bi-annual performance review cycle — Mid-Year Review (June–July) and Annual Review (December–January). The process is designed to be transparent, development-focused, and aligned with both individual and company goals.</p>
+
+<h3 id="review-cycle-timeline">5.2 Review Cycle Timeline</h3>
+
+<table><thead><tr><th>Phase</th><th>Timing</th><th>What Happens</th></tr></thead><tbody><tr><td>Goal Setting</td><td>January</td><td>Manager and employee agree on annual goals</td></tr><tr><td>Mid-Year Check-in</td><td>June</td><td>Informal progress review, no ratings</td></tr><tr><td>Self-Evaluation</td><td>December</td><td>Employee completes self-assessment form</td></tr><tr><td>Manager Review</td><td>December</td><td>Manager reviews and adds assessment</td></tr><tr><td>Calibration</td><td>January</td><td>HR and leadership calibrate ratings across teams</td></tr><tr><td>Results Shared</td><td>Late January</td><td>Final ratings and feedback communicated</td></tr><tr><td>Salary Revision</td><td>February</td><td>Compensation changes effective March 1st</td></tr></tbody></table>
+
+<h3 id="the-review-process">5.3 The Review Process</h3>
+
+<p><strong>Step 1 – Complete your self-evaluation</strong> Access Performance Portal → My Review → Self-Assessment. Rate yourself against each goal on a 1–5 scale and provide supporting evidence (project outcomes, stakeholder feedback, metrics).</p>
+
+<p><strong>Step 2 – Request peer feedback</strong> Optionally nominate 2–4 peers or stakeholders for 360-degree feedback via the portal. Feedback providers have 7 days to respond.</p>
+
+<p><strong>Step 3 – Schedule a 1-on-1 with your manager</strong> Discuss your self-assessment and agree on the final narrative. This conversation is mandatory and should be documented in the portal.</p>
+
+<p><strong>Step 4 – Await final rating</strong> After calibration, your final rating (Exceeds/Meets/Below Expectations) will be shared by your manager in a dedicated meeting. Ratings are not emailed without a conversation.</p>
+
+<h3 id="rating-definitions">5.4 Rating Definitions</h3>
+
+<table><thead><tr><th>Rating</th><th>Description</th></tr></thead><tbody><tr><td>5 – Exceptional</td><td>Consistently exceeds all expectations; role model for the team</td></tr><tr><td>4 – Exceeds Expectations</td><td>Regularly goes beyond requirements; strong impact</td></tr><tr><td>3 – Meets Expectations</td><td>Reliably delivers on all commitments</td></tr><tr><td>2 – Partially Meets</td><td>Some gaps in delivery; improvement plan recommended</td></tr><tr><td>1 – Below Expectations</td><td>Significant shortfall; PIP (Performance Improvement Plan) initiated</td></tr></tbody></table>
+
+<h3 id="escalation-policy">5.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If you believe your rating is unfair or the process was not followed correctly, you may raise a formal review request within 15 days of receiving your rating. Contact HR BP to initiate the review.</div></div>
+
+<hr>
+
+<h2 id="workplace-harassment-or-conflict">6. Workplace Harassment or Conflict</h2>
+
+<h3 id="zero-tolerance-policy">6.1 Zero Tolerance Policy</h3>
+
+<p>Nagarro maintains a strict zero-tolerance policy toward any form of harassment, discrimination, bullying, or workplace misconduct. This policy applies to all employees, contractors, clients, and vendors operating within Nagarro's work environments, including virtual environments.</p>
+
+<h3 id="what-constitutes-harassment">6.2 What Constitutes Harassment</h3>
+
+<ul><li>Verbal or written abuse, threats, or intimidation</li><li>Unwanted physical contact or sexual advances</li><li>Persistent offensive jokes, slurs, or demeaning comments</li><li>Exclusion, isolation, or deliberate undermining of a colleague</li><li>Retaliation against anyone for reporting misconduct</li></ul>
+
+<h3 id="reporting-process">6.3 Reporting Process</h3>
+
+<p><strong>Step 1 – Document the incident</strong> Record dates, times, locations, what was said or done, and any witnesses. This documentation is critical for the investigation.</p>
+
+<p><strong>Step 2 – File a confidential report</strong> Go to HR Portal → Employee Relations → Report Misconduct. Reports can be submitted anonymously. The system uses end-to-end encryption and is only accessible to the HR Investigation team.</p>
+
+<p><strong>Step 3 – Initial response</strong> An HR Business Partner will acknowledge your report within 24 hours and contact you to discuss next steps. You will be assigned a dedicated case manager.</p>
+
+<p><strong>Step 4 – Investigation</strong> A formal investigation will be initiated within 5 business days. Both parties will be interviewed separately. All proceedings are strictly confidential.</p>
+
+<p><strong>Step 5 – Resolution</strong> Upon conclusion, appropriate action will be taken — ranging from mandatory training and written warning to termination and legal referral, depending on severity.</p>
+
+<h3 id="escalation-policy">6.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> For any situation involving immediate physical safety, contact security or emergency services first. For legal threats or systemic issues involving senior management, escalate directly to the Chief HR Officer at chro@nagarro.com.</div></div>
+
+                <div class="doc-footer">
+                    <span>Nagarro Internal Knowledge Base</span>
+                    <span>Classification: Internal Use Only</span>
+                </div>
+            </div>
+        </article>
+    </div>
+</body>
+</html>

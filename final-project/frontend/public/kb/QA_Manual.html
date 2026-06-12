@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quality Assurance Operations Manual | Nagarro Knowledge Base</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: #bfdbfe;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --red-100: #fee2e2;
+            --red-700: #b91c1c;
+            --red-border: #fca5a5;
+            --green-100: #dcfce7;
+            --green-700: #15803d;
+            --amber-100: #fef3c7;
+            --amber-700: #b45309;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--slate-700);
+            background: var(--slate-50);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: var(--slate-900);
+            color: white;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-brand {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-brand::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+        .topbar-meta {
+            color: var(--slate-400);
+        }
+
+        /* LAYOUT */
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        /* TOC SIDEBAR */
+        .toc {
+            position: sticky;
+            top: 72px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 13px;
+        }
+        .toc-title {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-500);
+            margin-bottom: 12px;
+        }
+        .toc a {
+            display: block;
+            color: var(--slate-500);
+            text-decoration: none;
+            padding: 4px 0;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            margin-left: -10px;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .toc a:hover {
+            color: var(--blue);
+            border-left-color: var(--blue);
+        }
+        .toc a.toc-h3 {
+            padding-left: 20px;
+            margin-left: -10px;
+            font-size: 12px;
+            color: var(--slate-400);
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--slate-900) 0%, #1e3a5f 100%);
+            padding: 48px 48px 40px;
+            color: white;
+        }
+        .doc-header h1 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            line-height: 1.25;
+        }
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 16px;
+        }
+        .doc-meta span { display: flex; align-items: center; gap: 6px; }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .doc-body {
+            padding: 48px;
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin: 48px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+            scroll-margin-top: 80px;
+        }
+        h2:first-of-type { margin-top: 0; }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin: 32px 0 12px;
+            scroll-margin-top: 80px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--blue);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        p {
+            margin: 0 0 16px;
+            color: var(--slate-700);
+        }
+
+        strong {
+            color: var(--slate-900);
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 0 0 20px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 8px; color: var(--slate-700); }
+        li::marker { color: var(--blue); }
+
+        /* NUMBERED STEPS */
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+        }
+        .steps li::before {
+            content: counter(step);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 14px;
+        }
+        thead tr {
+            background: var(--slate-900);
+            color: white;
+        }
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tbody tr { border-bottom: 1px solid var(--slate-200); }
+        tbody tr:nth-child(even) { background: var(--slate-50); }
+        tbody tr:hover { background: var(--blue-light); }
+        td {
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        /* ESCALATION / CALLOUT BOXES */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 24px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+        .callout.red {
+            background: var(--red-100);
+            border: 1px solid var(--red-border);
+            color: var(--red-700);
+        }
+        .callout.amber {
+            background: var(--amber-100);
+            border: 1px solid #fcd34d;
+            color: var(--amber-700);
+        }
+        .callout.blue {
+            background: var(--blue-light);
+            border: 1px solid var(--blue-border);
+            color: #1e40af;
+        }
+        .callout.green {
+            background: var(--green-100);
+            border: 1px solid #86efac;
+            color: var(--green-700);
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--slate-200);
+            margin: 48px 0;
+        }
+
+        /* OVERVIEW BLOCK */
+        .overview-block {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            padding: 20px 24px;
+            margin: 0 0 40px;
+            font-size: 14.5px;
+            color: #1e3a5f;
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 64px;
+            padding: 24px 0 0;
+            border-top: 1px solid var(--slate-200);
+            font-size: 12px;
+            color: var(--slate-400);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .toc { position: static; }
+            .doc-header { padding: 32px; }
+            .doc-body { padding: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="topbar-brand" href="#">Nagarro Knowledge Base</a>
+        <span class="topbar-meta">Internal Use Only — Confidential</span>
+    </div>
+    <div class="layout">
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#overview" class="">Overview</a>
+<a href="#bug-report" class="">1. Bug Report</a>
+<a href="#overview" class="toc-h3">1.1 Overview</a>
+<a href="#bug-severity-classification" class="toc-h3">1.2 Bug Severity Classification</a>
+<a href="#writing-a-high-quality-bug-report" class="toc-h3">1.3 Writing a High-Quality Bug Report</a>
+<a href="#bug-lifecycle" class="toc-h3">1.4 Bug Lifecycle</a>
+<a href="#escalation-policy" class="toc-h3">1.5 Escalation Policy</a>
+<a href="#test-data-request" class="">2. Test Data Request</a>
+<a href="#overview" class="toc-h3">2.1 Overview</a>
+<a href="#types-of-test-data" class="toc-h3">2.2 Types of Test Data</a>
+<a href="#requesting-test-data" class="toc-h3">2.3 Requesting Test Data</a>
+<a href="#sensitive-data-handling" class="toc-h3">2.4 Sensitive Data Handling</a>
+<a href="#escalation-policy" class="toc-h3">2.5 Escalation Policy</a>
+<a href="#environment-down" class="">3. Environment Down</a>
+<a href="#environment-overview" class="toc-h3">3.1 Environment Overview</a>
+<a href="#diagnosing-an-environment-outage" class="toc-h3">3.2 Diagnosing an Environment Outage</a>
+<a href="#minimising-impact-during-downtime" class="toc-h3">3.3 Minimising Impact During Downtime</a>
+<a href="#escalation-policy" class="toc-h3">3.4 Escalation Policy</a>
+<a href="#automation-failure" class="">4. Automation Failure</a>
+<a href="#overview" class="toc-h3">4.1 Overview</a>
+<a href="#ci-cd-pipeline-overview" class="toc-h3">4.2 CI/CD Pipeline Overview</a>
+<a href="#diagnosing-a-pipeline-failure" class="toc-h3">4.3 Diagnosing a Pipeline Failure</a>
+<a href="#managing-flaky-tests" class="toc-h3">4.4 Managing Flaky Tests</a>
+<a href="#escalation-policy" class="toc-h3">4.5 Escalation Policy</a>
+<a href="#release-sign-off" class="">5. Release Sign-Off</a>
+<a href="#overview" class="toc-h3">5.1 Overview</a>
+<a href="#release-readiness-checklist" class="toc-h3">5.2 Release Readiness Checklist</a>
+<a href="#sign-off-process" class="toc-h3">5.3 Sign-Off Process</a>
+<a href="#escalation-policy" class="toc-h3">5.4 Escalation Policy</a>
+<a href="#production-bug-reported" class="">6. Production Bug Reported</a>
+<a href="#overview" class="toc-h3">6.1 Overview</a>
+<a href="#immediate-response-first-30-minutes" class="toc-h3">6.2 Immediate Response (First 30 Minutes)</a>
+<a href="#investigation-and-resolution" class="toc-h3">6.3 Investigation and Resolution</a>
+<a href="#escalation-policy" class="toc-h3">6.4 Escalation Policy</a>
+        </nav>
+        <article class="content">
+            <div class="doc-header">
+                <h1>Quality Assurance Operations Manual</h1><div class="doc-meta"><span>📋 Document Owner: QA Centre of Excellence (QA CoE)</span><span>📋 Last Updated: June 2026</span><span>📋 Version: 3.5</span><span>📋 Classification: Internal Use Only</span></div><div style="margin-top:16px;display:flex;gap:8px"><span class="doc-badge">3.5</span><span class="doc-badge">Internal Use Only</span></div>
+            </div>
+            <div class="doc-body">
+                
+<h2 id="overview">Overview</h2>
+
+<div class="overview-block">This manual is the authoritative reference for all Quality Assurance processes at Nagarro. It covers the full QA lifecycle from test strategy and environment management to defect reporting, automation, and release governance. It is intended for QA Engineers, Test Leads, SDETs, and Project Managers working on any Nagarro engagement.</div>
+
+<p>QA CoE contact: <strong>qa-coe@nagarro.com</strong> | QA Community Slack: <strong>#qa-community</strong></p>
+
+<hr>
+
+<h2 id="bug-report">1. Bug Report</h2>
+
+<h3 id="overview">1.1 Overview</h3>
+
+<p>Effective bug reporting is a professional skill. A well-written bug report provides developers with everything they need to reproduce, understand, and fix a defect without back-and-forth. Poor bug reports waste time and erode team trust. At Nagarro, all bugs must be reported via Jira using the standard defect template.</p>
+
+<h3 id="bug-severity-classification">1.2 Bug Severity Classification</h3>
+
+<p>All bugs must be classified by severity at the time of reporting:</p>
+
+<table><thead><tr><th>Severity</th><th>Definition</th><th>Example</th><th>Expected Fix Time</th></tr></thead><tbody><tr><td>Sev-1 (Critical)</td><td>System crash, data loss, security breach</td><td>Checkout crashes, user data exposed</td><td>Same day</td></tr><tr><td>Sev-2 (High)</td><td>Major feature broken, no workaround</td><td>Login fails, payments not processing</td><td>Within 24 hours</td></tr><tr><td>Sev-3 (Medium)</td><td>Feature partially broken, workaround exists</td><td>Filter doesn't sort correctly</td><td>Next sprint</td></tr><tr><td>Sev-4 (Low)</td><td>Minor UI issues, cosmetic defects</td><td>Button colour off-spec, typo</td><td>Backlog</td></tr></tbody></table>
+
+<h3 id="writing-a-high-quality-bug-report">1.3 Writing a High-Quality Bug Report</h3>
+
+<p><strong>Step 1 – Reproduce the bug at least twice</strong> Before logging, reproduce the issue at least twice to confirm it is consistent and not a one-off glitch. Note the exact conditions under which it occurs.</p>
+
+<p><strong>Step 2 – Open Jira → Create Issue → Bug</strong> Navigate to your project in Jira. Click <strong>Create</strong> → Select Issue Type: <strong>Bug</strong>. Fill in all mandatory fields.</p>
+
+<p><strong>Step 3 – Write a clear summary</strong> The summary should follow the format: <strong>[Feature] [What is broken] [Context]</strong></p>
+<ul><li>✅ Good: "Checkout – Payment confirmation email not sent when paying by Visa"</li><li>❌ Bad: "Email doesn't work"</li></ul>
+
+<p><strong>Step 4 – Fill in all required fields</strong></p>
+
+<ul><li><strong>Environment:</strong> Specify the exact environment (e.g., Staging v2.3.1, Chrome 115, Windows 11)</li><li><strong>Steps to Reproduce:</strong> Numbered list — be as precise as possible. Include test account credentials if needed (use the test credentials sheet — never production credentials).</li><li><strong>Expected Result:</strong> What should have happened according to the requirement/acceptance criteria?</li><li><strong>Actual Result:</strong> What actually happened? Describe precisely — do not just say "it broke."</li><li><strong>Severity:</strong> Assign per the classification table above.</li><li><strong>Priority:</strong> How urgently should this be fixed? (May differ from severity — e.g., a cosmetic bug on the homepage might be high priority)</li></ul>
+
+<p><strong>Step 5 – Attach evidence</strong> Always attach:</p>
+<ul><li>Screenshots (annotated with arrows or highlights where relevant)</li><li>Screen recording video (for intermittent or complex interaction bugs)</li><li>Browser console logs (F12 → Console → right-click → Save as)</li><li>Network trace if the issue involves API calls (F12 → Network tab → Export HAR)</li></ul>
+
+<p><strong>Step 6 – Assign and notify</strong> Assign to the relevant developer or leave in the Triage queue. Tag the relevant module lead. For Sev-1 and Sev-2 bugs, send a Slack notification to the #project-[name] channel immediately — do not rely on Jira notifications alone.</p>
+
+<h3 id="bug-lifecycle">1.4 Bug Lifecycle</h3>
+
+<p>New → Triage → In Progress → Fixed → Re-test → Verified/Closed</p>
+
+<p>If a bug is re-opened after being marked Fixed, add a comment explaining why it was not actually resolved. Track re-open rates — high re-open rates indicate a quality issue in the fix process.</p>
+
+<h3 id="escalation-policy">1.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> Any Sev-1 bug discovered in a Production environment must be reported immediately to the QA Lead, Project Manager, and the on-call engineer. Do not wait for the next daily standup. The P1 Incident Management process must be initiated within 30 minutes of discovery.</div></div>
+
+<hr>
+
+<h2 id="test-data-request">2. Test Data Request</h2>
+
+<h3 id="overview">2.1 Overview</h3>
+
+<p>Quality test data is a prerequisite for meaningful testing. Using production data for testing is strictly prohibited at Nagarro due to GDPR, data privacy regulations, and client contractual obligations. All test data must be synthetically generated or anonymised before use in any non-production environment.</p>
+
+<h3 id="types-of-test-data">2.2 Types of Test Data</h3>
+
+<table><thead><tr><th>Type</th><th>Use Case</th><th>Source</th></tr></thead><tbody><tr><td>Synthetic Data</td><td>Functional and regression testing</td><td>Mock data generation scripts</td></tr><tr><td>Anonymised Production Data</td><td>Performance testing with realistic volumes</td><td>Data masking tool (automated)</td></tr><tr><td>Seed Data</td><td>Initial environment setup</td><td>Configuration scripts in the repository</td></tr><tr><td>Edge Case Data</td><td>Boundary testing</td><td>Manually crafted or parameterised</td></tr></tbody></table>
+
+<h3 id="requesting-test-data">2.3 Requesting Test Data</h3>
+
+<p><strong>Step 1 – Define your data requirements</strong> Before submitting a request, document:</p>
+<ul><li>What type of data is needed (users, transactions, products, etc.)</li><li>Volume required (e.g., 1,000 user accounts, 10,000 order records)</li><li>Specific attribute constraints (e.g., users aged 18–65, orders in USD only)</li><li>Environment it is needed for (Dev, QA, Staging, UAT)</li></ul>
+
+<p><strong>Step 2 – Submit a Test Data Request</strong> Access IT Portal → Test Data Management → New Request. Fill in the data specification form and attach any example data templates.</p>
+
+<p><strong>Step 3 – Run the generation script</strong> For standard data types, the self-service data generation tool at <strong>testdata.nagarro.com</strong> can generate and load data directly into the QA or Staging environment within 30 minutes. Follow the instructions on the portal.</p>
+
+<p><strong>Step 4 – Validate the generated data</strong> After generation, validate a sample of the data against your specifications. Common issues: date format mismatches, referential integrity violations, or missing required fields.</p>
+
+<p><strong>Step 5 – Data cleanup after testing</strong> After your test cycle is complete, use the data cleanup tool to purge test data from shared environments. This prevents data pollution for other teams.</p>
+
+<h3 id="sensitive-data-handling">2.4 Sensitive Data Handling</h3>
+
+<p>If your testing requires data that resembles sensitive information (e.g., national IDs, payment card numbers), you must:</p>
+<ul><li>Use only format-preserving but entirely synthetic values (e.g., valid-format but non-real credit card numbers)</li><li>Never use real personal data</li><li>Store all test credentials in the team's password manager — not in spreadsheets or plain text files</li></ul>
+
+<h3 id="escalation-policy">2.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If the data generation script fails to produce valid data after two attempts, raise an IT Priority 2 ticket. If test data is blocking a sprint, flag it as a dependency risk in the daily standup and notify the PM immediately.</div></div>
+
+<hr>
+
+<h2 id="environment-down">3. Environment Down</h2>
+
+<h3 id="environment-overview">3.1 Environment Overview</h3>
+
+<p>Nagarro uses a multi-environment delivery pipeline to ensure code quality at every stage before production:</p>
+
+<table><thead><tr><th>Environment</th><th>Purpose</th><th>Owner</th><th>Access</th></tr></thead><tbody><tr><td>Development (Dev)</td><td>Feature development and unit testing</td><td>Dev team</td><td>Dev team only</td></tr><tr><td>QA / SIT</td><td>System integration testing</td><td>QA team</td><td>QA + Dev</td></tr><tr><td>Staging / Pre-Prod</td><td>Full regression, performance, UAT</td><td>QA + PM</td><td>All project team</td></tr><tr><td>UAT</td><td>Client-driven user acceptance testing</td><td>Client + QA</td><td>Client + QA</td></tr><tr><td>Production</td><td>Live system</td><td>DevOps</td><td>Restricted</td></tr></tbody></table>
+
+<h3 id="diagnosing-an-environment-outage">3.2 Diagnosing an Environment Outage</h3>
+
+<p><strong>Step 1 – Confirm the issue is environment-wide</strong> Ask at least one other team member if they can access the environment. If it's only you, the issue may be local (VPN, firewall, browser). Try a different browser, clear cache, or reconnect VPN.</p>
+
+<p><strong>Step 2 – Check the IT Status Page</strong> Visit <strong>status.nagarro.com</strong> for active incident notifications. If a maintenance window or known outage is listed, this is already being handled — subscribe to updates and wait.</p>
+
+<p><strong>Step 3 – Check the environment health dashboard</strong> Each environment has a health dashboard accessible at <strong>envhealth.nagarro.com/[project-code]</strong>. Look for failed services, unhealthy containers, or database connectivity issues.</p>
+
+<p><strong>Step 4 – Attempt a service restart</strong> If you have DevOps access and the issue is a failed application service (not infrastructure):</p>
+<ol><li>SSH into the environment (credentials in the team vault)</li><li>Run <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">sudo systemctl restart [service-name]</code> or use the environment management console in AWS/Azure</li><li>Monitor logs: <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">sudo journalctl -u [service-name] -f</code></li></ol>
+
+<p><strong>Step 5 – Log a DevOps support ticket</strong> If you cannot resolve it yourself within 30 minutes, raise a ticket in IT Portal → DevOps → Environment Issue. Include: environment name, symptoms, steps already attempted, and urgency level. Attach log snippets.</p>
+
+<h3 id="minimising-impact-during-downtime">3.3 Minimising Impact During Downtime</h3>
+
+<ul><li>Redirect the team to local development, code reviews, test planning, or documentation work</li><li>Communicate the outage proactively to the PM so client commitments can be reassessed</li><li>Log the incident with start time, end time, root cause, and resolution in the Incident Log</li></ul>
+
+<h3 id="escalation-policy">3.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If the QA or Staging environment is down for more than 2 hours during a sprint and the DevOps team is unresponsive, escalate to the IT Manager and your Delivery Head. Persistent environment instability should be logged as a project risk.</div></div>
+
+<hr>
+
+<h2 id="automation-failure">4. Automation Failure</h2>
+
+<h3 id="overview">4.1 Overview</h3>
+
+<p>Nagarro's automated testing pipelines are a critical part of our continuous delivery capability. Automated test failures in the CI/CD pipeline must be investigated promptly. Every pipeline failure is a potential quality signal — do not dismiss failures without investigation.</p>
+
+<h3 id="ci-cd-pipeline-overview">4.2 CI/CD Pipeline Overview</h3>
+
+<p>Nagarro uses the following stack for test automation:</p>
+
+<table><thead><tr><th>Tool</th><th>Purpose</th></tr></thead><tbody><tr><td>GitHub Actions / Azure DevOps</td><td>CI/CD pipeline orchestration</td></tr><tr><td>Cypress</td><td>End-to-end (E2E) web testing</td></tr><tr><td>Playwright</td><td>Cross-browser E2E testing</td></tr><tr><td>Jest / Vitest</td><td>Unit and integration testing (JavaScript)</td></tr><tr><td>JUnit / TestNG</td><td>Unit testing (Java)</td></tr><tr><td>Selenium Grid</td><td>Legacy browser compatibility testing</td></tr><tr><td>k6 / JMeter</td><td>Performance and load testing</td></tr></tbody></table>
+
+<h3 id="diagnosing-a-pipeline-failure">4.3 Diagnosing a Pipeline Failure</h3>
+
+<p><strong>Step 1 – Review the pipeline logs</strong> In GitHub Actions or Azure DevOps, navigate to the failed run. Click on the failed job and expand the step that failed. Read the full error message carefully before taking any action.</p>
+
+<p><strong>Step 2 – Categorise the failure</strong></p>
+
+<table><thead><tr><th>Failure Type</th><th>Characteristics</th><th>Action</th></tr></thead><tbody><tr><td>Functional failure</td><td>Test assertion fails consistently</td><td>Likely a real bug — log a defect</td></tr><tr><td>Flaky test</td><td>Passes sometimes, fails sometimes</td><td>Investigate timing/async issues</td></tr><tr><td>Environment failure</td><td>Connection timeout, service unavailable</td><td>Retry the pipeline; check environment health</td></tr><tr><td>Configuration failure</td><td>Missing environment variable, wrong credentials</td><td>Fix config; do not ignore</td></tr><tr><td>Infrastructure failure</td><td>Pipeline agent down, resource exhaustion</td><td>Contact DevOps</td></tr></tbody></table>
+
+<p><strong>Step 3 – Reproduce locally</strong> Run the failing test(s) locally using the same environment variables as the pipeline. If it passes locally, the issue is likely environment or configuration-related. If it fails locally, you have a reproducible failure — debug from there.</p>
+
+<p><strong>Step 4 – Check for recent code changes</strong> Use <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">git log</code> or the PR history to identify what changed in the last commit that triggered the failure. A targeted diff review often reveals the root cause quickly.</p>
+
+<p><strong>Step 5 – Fix and verify</strong> Once the root cause is identified:</p>
+<ul><li>If it's a real bug: Log a defect in Jira and notify the dev team</li><li>If it's a flaky test: Add retry logic and fix race conditions</li><li>If it's a selector change due to UI updates: Update the locators</li><li>If it's a config issue: Update the pipeline environment variables and notify the team</li></ul>
+
+<p><strong>Step 6 – Document the fix</strong> Add a comment to the pipeline failure run explaining what was wrong and how it was fixed. Update the team runbook if this is a recurring pattern.</p>
+
+<h3 id="managing-flaky-tests">4.4 Managing Flaky Tests</h3>
+
+<p>Flaky tests undermine confidence in the test suite. Nagarro's policy:</p>
+<ul><li>Any test with a failure rate >10% over a 2-week period must be quarantined (tagged <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:13px;font-family:monospace">@quarantine</code> and excluded from the main pipeline) and fixed within the next sprint.</li><li>The QA Lead maintains a Flaky Test Register — log all flaky tests there.</li><li>Zero-tolerance for known flaky tests blocking CI/CD on the main branch.</li></ul>
+
+<h3 id="escalation-policy">4.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If the main branch pipeline is consistently red for more than 24 hours and the team cannot identify the root cause, escalate to the QA Lead and Tech Lead simultaneously. Blocking the main branch is a Sev-2 issue.</div></div>
+
+<hr>
+
+<h2 id="release-sign-off">5. Release Sign-Off</h2>
+
+<h3 id="overview">5.1 Overview</h3>
+
+<p>The QA sign-off is the formal gate that authorises deployment of a software release to Production. No deployment to Production should occur without a documented QA sign-off, except in emergency hotfix scenarios (which follow a separate Expedited Release process).</p>
+
+<h3 id="release-readiness-checklist">5.2 Release Readiness Checklist</h3>
+
+<p>Before issuing sign-off, the QA Lead must confirm the following:</p>
+
+<p><strong>Functional Testing</strong></p>
+<ul><li>☐ All user stories in the release scope have been tested against acceptance criteria</li><li>☐ No open Sev-1 or Sev-2 bugs. All Sev-3+ bugs have been triaged and deferred with client acknowledgement.</li><li>☐ Regression suite has been executed — pass rate ≥ 98%</li><li>☐ Exploratory testing has been performed on high-risk areas</li></ul>
+
+<p><strong>Non-Functional Testing</strong></p>
+<ul><li>☐ Performance tests executed — response times within SLA (typically <2s for 95th percentile)</li><li>☐ Security scan completed — no Critical or High vulnerabilities unmitigated</li><li>☐ Accessibility scan completed (WCAG 2.1 AA) for public-facing features</li></ul>
+
+<p><strong>Process and Documentation</strong></p>
+<ul><li>☐ All bugs found in this cycle have been logged and have a resolution status</li><li>☐ Test execution report generated and stored in the Project Hub</li><li>☐ Release notes reviewed and approved</li><li>☐ Rollback plan confirmed with DevOps</li></ul>
+
+<h3 id="sign-off-process">5.3 Sign-Off Process</h3>
+
+<p><strong>Step 1 – Generate the QA Test Execution Report</strong> From the Test Management tool (TestRail / Zephyr), generate the Test Execution Summary Report. Export as PDF and upload to Project Hub → Releases → [Release Name] → QA Report.</p>
+
+<p><strong>Step 2 – Complete the Release Readiness Checklist</strong> Fill in the checklist in the Project Hub release record. Each item requires a Yes/No and a comment for any Nos.</p>
+
+<p><strong>Step 3 – Confirm with Stakeholders</strong> For major releases, hold a brief (30-min) Release Readiness Review with the PM, Tech Lead, and DevOps Lead. For minor releases, an email confirmation is sufficient.</p>
+
+<p><strong>Step 4 – Issue Formal Sign-Off</strong> In the Project Hub, click <strong>Approve Release for Deployment</strong>. This timestamps the approval and notifies the DevOps team to proceed with the deployment window.</p>
+
+<h3 id="escalation-policy">5.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If there is pressure to sign off on a release with known open Sev-1 or Sev-2 bugs, the QA Lead must formally document the risk and obtain written sign-off from both the client and the Nagarro Delivery Head accepting the risk. The QA team should not be pressured into signing off on a defective release.</div></div>
+
+<hr>
+
+<h2 id="production-bug-reported">6. Production Bug Reported</h2>
+
+<h3 id="overview">6.1 Overview</h3>
+
+<p>Production bugs are the highest-priority issues in the QA world. A bug in production means real users are affected right now. Speed, accuracy, and clear communication are essential. This section covers the P1 Incident Response process for production bugs.</p>
+
+<h3 id="immediate-response-first-30-minutes">6.2 Immediate Response (First 30 Minutes)</h3>
+
+<p><strong>Minute 0–5: Triage</strong></p>
+<ul><li>Reproduce the issue on the production environment (using a test/canary account — never disturb live user data)</li><li>Assess the blast radius: How many users are affected? What data/transactions are impacted?</li><li>Assign a severity level immediately (default to Sev-1 until you can confirm otherwise)</li></ul>
+
+<p><strong>Minute 5–15: Notify</strong></p>
+<ul><li>Post in the #incidents Slack channel immediately with: What is broken, How many users affected, Steps to reproduce, Initial severity</li><li>Tag: Project PM, Tech Lead, QA Lead, DevOps Lead, Account Manager</li><li>For Sev-1 issues: Phone the on-call engineer. Do not rely on Slack alone.</li></ul>
+
+<p><strong>Minute 15–30: Contain</strong></p>
+<ul><li>Assess whether an immediate rollback is safer than a hotfix</li><li>If the bug involves data corruption or security, disable the affected feature immediately (feature flag, firewall rule, or full rollback)</li><li>Communicate to the client's technical contact — do not let them find out from their end users</li></ul>
+
+<h3 id="investigation-and-resolution">6.3 Investigation and Resolution</h3>
+
+<p><strong>Step 1 – Create a Sev-1 Jira ticket</strong> Even in a crisis, proper documentation must be maintained. Create the Jira ticket concurrently with the response — it serves as the incident log.</p>
+
+<p><strong>Step 2 – Root cause analysis</strong> Pull application logs, database logs, and deployment records for the time window when the bug first appeared. Correlate with recent deployments using the deployment history in the DevOps pipeline.</p>
+
+<p><strong>Step 3 – Fix strategy decision</strong></p>
+<ul><li><strong>Hotfix:</strong> A minimal targeted fix deployed directly to production. Requires expedited QA validation (smoke test on staging minimum) and Delivery Head approval.</li><li><strong>Rollback:</strong> Revert to the last known-good version. Faster, but may lose recent legitimate changes.</li></ul>
+
+<p><strong>Step 4 – Deploy and validate</strong> After the fix is deployed, the QA team must immediately run a smoke test on production to confirm the fix is working and no new issues have been introduced.</p>
+
+<p><strong>Step 5 – Post-Incident Review (PIR)</strong> Within 5 business days of resolution, conduct a blameless PIR with all involved parties. Document:</p>
+<ul><li>Timeline of events</li><li>Root cause</li><li>Why existing tests didn't catch it</li><li>What process changes will prevent recurrence</li></ul>
+
+<p>The PIR report must be filed in the Project Hub and shared with the client.</p>
+
+<h3 id="escalation-policy">6.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> Any production incident involving personal data exposure, financial loss, or regulatory implications must be escalated to the CISO and Legal team within 1 hour of discovery. Depending on the jurisdiction, a mandatory breach notification may be required within 72 hours (GDPR Article 33). Do not delay this escalation.</div></div>
+
+                <div class="doc-footer">
+                    <span>Nagarro Internal Knowledge Base</span>
+                    <span>Classification: Internal Use Only</span>
+                </div>
+            </div>
+        </article>
+    </div>
+</body>
+</html>

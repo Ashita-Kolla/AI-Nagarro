@@ -9,7 +9,8 @@
       "Generate invoice in ERP system",
       "Send invoice via email"
     ],
-    "escalate_if": "Customer information incomplete"
+    "escalate_if": "Customer information incomplete",
+    "reference_link": "/kb/Finance_Manual.html"
   },
   {
     "id": "fin-002",

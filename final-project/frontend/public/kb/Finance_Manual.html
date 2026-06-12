@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Operations Manual | Nagarro Knowledge Base</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@700&display=swap');
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        :root {
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: #bfdbfe;
+            --slate-900: #0f172a;
+            --slate-800: #1e293b;
+            --slate-700: #334155;
+            --slate-500: #64748b;
+            --slate-400: #94a3b8;
+            --slate-200: #e2e8f0;
+            --slate-100: #f1f5f9;
+            --slate-50: #f8fafc;
+            --red-100: #fee2e2;
+            --red-700: #b91c1c;
+            --red-border: #fca5a5;
+            --green-100: #dcfce7;
+            --green-700: #15803d;
+            --amber-100: #fef3c7;
+            --amber-700: #b45309;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--slate-700);
+            background: var(--slate-50);
+            margin: 0;
+            padding: 0;
+        }
+
+        /* TOP BAR */
+        .topbar {
+            background: var(--slate-900);
+            color: white;
+            padding: 12px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar-brand {
+            font-weight: 700;
+            font-size: 15px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .topbar-brand::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+        .topbar-meta {
+            color: var(--slate-400);
+        }
+
+        /* LAYOUT */
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 48px;
+            align-items: start;
+        }
+
+        /* TOC SIDEBAR */
+        .toc {
+            position: sticky;
+            top: 72px;
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            padding: 24px;
+            font-size: 13px;
+        }
+        .toc-title {
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--slate-500);
+            margin-bottom: 12px;
+        }
+        .toc a {
+            display: block;
+            color: var(--slate-500);
+            text-decoration: none;
+            padding: 4px 0;
+            border-left: 2px solid transparent;
+            padding-left: 10px;
+            margin-left: -10px;
+            transition: all 0.15s;
+            line-height: 1.4;
+        }
+        .toc a:hover {
+            color: var(--blue);
+            border-left-color: var(--blue);
+        }
+        .toc a.toc-h3 {
+            padding-left: 20px;
+            margin-left: -10px;
+            font-size: 12px;
+            color: var(--slate-400);
+        }
+
+        /* MAIN CONTENT */
+        .content {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .doc-header {
+            background: linear-gradient(135deg, var(--slate-900) 0%, #1e3a5f 100%);
+            padding: 48px 48px 40px;
+            color: white;
+        }
+        .doc-header h1 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            line-height: 1.25;
+        }
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            font-size: 12px;
+            color: #93c5fd;
+            margin-top: 16px;
+        }
+        .doc-meta span { display: flex; align-items: center; gap: 6px; }
+        .doc-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #e2e8f0;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .doc-body {
+            padding: 48px;
+        }
+
+        /* TYPOGRAPHY */
+        h2 {
+            font-family: 'Merriweather', Georgia, serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin: 48px 0 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--slate-200);
+            scroll-margin-top: 80px;
+        }
+        h2:first-of-type { margin-top: 0; }
+
+        h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--blue);
+            margin: 32px 0 12px;
+            scroll-margin-top: 80px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: var(--blue);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        p {
+            margin: 0 0 16px;
+            color: var(--slate-700);
+        }
+
+        strong {
+            color: var(--slate-900);
+            font-weight: 600;
+        }
+
+        ul, ol {
+            margin: 0 0 20px;
+            padding-left: 24px;
+        }
+        li { margin-bottom: 8px; color: var(--slate-700); }
+        li::marker { color: var(--blue); }
+
+        /* NUMBERED STEPS */
+        .steps { counter-reset: step; list-style: none; padding: 0; }
+        .steps li {
+            counter-increment: step;
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+        }
+        .steps li::before {
+            content: counter(step);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 28px;
+            height: 28px;
+            background: var(--blue);
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 50%;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        /* TABLES */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 14px;
+        }
+        thead tr {
+            background: var(--slate-900);
+            color: white;
+        }
+        thead th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        tbody tr { border-bottom: 1px solid var(--slate-200); }
+        tbody tr:nth-child(even) { background: var(--slate-50); }
+        tbody tr:hover { background: var(--blue-light); }
+        td {
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        /* ESCALATION / CALLOUT BOXES */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin: 24px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+        .callout.red {
+            background: var(--red-100);
+            border: 1px solid var(--red-border);
+            color: var(--red-700);
+        }
+        .callout.amber {
+            background: var(--amber-100);
+            border: 1px solid #fcd34d;
+            color: var(--amber-700);
+        }
+        .callout.blue {
+            background: var(--blue-light);
+            border: 1px solid var(--blue-border);
+            color: #1e40af;
+        }
+        .callout.green {
+            background: var(--green-100);
+            border: 1px solid #86efac;
+            color: var(--green-700);
+        }
+
+        /* DIVIDER */
+        hr {
+            border: none;
+            border-top: 1px solid var(--slate-200);
+            margin: 48px 0;
+        }
+
+        /* OVERVIEW BLOCK */
+        .overview-block {
+            background: var(--blue-light);
+            border-left: 4px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            padding: 20px 24px;
+            margin: 0 0 40px;
+            font-size: 14.5px;
+            color: #1e3a5f;
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 64px;
+            padding: 24px 0 0;
+            border-top: 1px solid var(--slate-200);
+            font-size: 12px;
+            color: var(--slate-400);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: 1fr; }
+            .toc { position: static; }
+            .doc-header { padding: 32px; }
+            .doc-body { padding: 32px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="topbar">
+        <a class="topbar-brand" href="#">Nagarro Knowledge Base</a>
+        <span class="topbar-meta">Internal Use Only — Confidential</span>
+    </div>
+    <div class="layout">
+        <nav class="toc">
+            <div class="toc-title">Contents</div>
+            <a href="#overview" class="">Overview</a>
+<a href="#invoice-generation" class="">1. Invoice Generation</a>
+<a href="#purpose-and-scope" class="toc-h3">1.1 Purpose and Scope</a>
+<a href="#prerequisites-before-raising-an-invoice" class="toc-h3">1.2 Prerequisites Before Raising an Invoice</a>
+<a href="#step-by-step-invoice-process" class="toc-h3">1.3 Step-by-Step Invoice Process</a>
+<a href="#common-issues-and-resolutions" class="toc-h3">1.4 Common Issues and Resolutions</a>
+<a href="#escalation-policy" class="toc-h3">1.5 Escalation Policy</a>
+<a href="#reimbursement-requests" class="">2. Reimbursement Requests</a>
+<a href="#policy-overview" class="toc-h3">2.1 Policy Overview</a>
+<a href="#eligible-expenses" class="toc-h3">2.2 Eligible Expenses</a>
+<a href="#submission-process" class="toc-h3">2.3 Submission Process</a>
+<a href="#policy-limits-reference-table" class="toc-h3">2.4 Policy Limits Reference Table</a>
+<a href="#escalation-policy" class="toc-h3">2.5 Escalation Policy</a>
+<a href="#payment-status-inquiry" class="">3. Payment Status Inquiry</a>
+<a href="#overview" class="toc-h3">3.1 Overview</a>
+<a href="#checking-payment-status" class="toc-h3">3.2 Checking Payment Status</a>
+<a href="#escalation-policy" class="toc-h3">3.3 Escalation Policy</a>
+<a href="#corporate-credit-card" class="">4. Corporate Credit Card</a>
+<a href="#eligibility-and-purpose" class="toc-h3">4.1 Eligibility and Purpose</a>
+<a href="#application-process" class="toc-h3">4.2 Application Process</a>
+<a href="#usage-policies" class="toc-h3">4.3 Usage Policies</a>
+<a href="#escalation-policy" class="toc-h3">4.4 Escalation Policy</a>
+<a href="#budget-approval" class="">5. Budget Approval</a>
+<a href="#overview" class="toc-h3">5.1 Overview</a>
+<a href="#budget-types" class="toc-h3">5.2 Budget Types</a>
+<a href="#approval-process" class="toc-h3">5.3 Approval Process</a>
+<a href="#escalation-policy" class="toc-h3">5.4 Escalation Policy</a>
+        </nav>
+        <article class="content">
+            <div class="doc-header">
+                <h1>Finance Operations Manual</h1><div class="doc-meta"><span>📋 Document Owner: Finance Operations Team</span><span>📋 Last Updated: June 2026</span><span>📋 Version: 3.2</span><span>📋 Classification: Internal Use Only</span></div><div style="margin-top:16px;display:flex;gap:8px"><span class="doc-badge">3.2</span><span class="doc-badge">Internal Use Only</span></div>
+            </div>
+            <div class="doc-body">
+                
+<h2 id="overview">Overview</h2>
+
+<div class="overview-block">This manual provides comprehensive guidance for all finance-related processes at Nagarro. It is intended for employees, managers, and finance team members who need to understand, initiate, or process financial transactions, approvals, and inquiries. All policies described herein are aligned with Nagarro's internal financial controls and regulatory compliance requirements.</div>
+
+<p>For urgent finance matters outside business hours, contact the Finance on-call team at <strong>finance-oncall@nagarro.com</strong>.</p>
+
+<hr>
+
+<h2 id="invoice-generation">1. Invoice Generation</h2>
+
+<h3 id="purpose-and-scope">1.1 Purpose and Scope</h3>
+
+<p>Invoice generation is a critical business process used to formally request payment from clients for services rendered or goods delivered. Every invoice issued by Nagarro must comply with local tax regulations, client contract terms, and Nagarro's internal billing policies. Incorrect or incomplete invoices can delay payment cycles and negatively impact cash flow.</p>
+
+<p>This section applies to all client-facing project managers, delivery leads, and finance business partners who participate in the billing lifecycle.</p>
+
+<h3 id="prerequisites-before-raising-an-invoice">1.2 Prerequisites Before Raising an Invoice</h3>
+
+<p>Before initiating an invoice, you must verify the following:</p>
+
+<ul><li><strong>Contract or SOW is active:</strong> Confirm the signed Statement of Work (SOW) or Master Service Agreement (MSA) is on file and within the valid date range.</li><li><strong>Deliverables confirmed:</strong> Obtain written confirmation from the client (email or project tool) that the milestone or deliverable has been accepted.</li><li><strong>Billing schedule alignment:</strong> Ensure the invoice date falls within the agreed billing cycle (e.g., monthly retainer on the 1st, milestone on completion).</li><li><strong>PO Number available:</strong> Most enterprise clients require a valid Purchase Order number on each invoice. Obtain this from the client's procurement contact in advance.</li></ul>
+
+<h3 id="step-by-step-invoice-process">1.3 Step-by-Step Invoice Process</h3>
+
+<p><strong>Step 1 – Collect and validate customer details</strong> Access the client profile in the ERP system (SAP / Oracle). Verify the legal entity name, billing address, tax identification number (TIN/VAT), and designated accounts payable contact. Any discrepancy between the ERP record and the client's current details must be resolved before proceeding.</p>
+
+<p><strong>Step 2 – Confirm billable amounts</strong> Pull the approved timesheets and/or expense reports for the billing period. Cross-reference against the agreed rate card in the SOW. Ensure no unbilled amounts from prior periods are outstanding without a formal amendment.</p>
+
+<p><strong>Step 3 – Create the invoice in the ERP system</strong> Navigate to the Billing module in SAP/Oracle. Select the correct project code and cost center. Enter the invoice lines, including description, quantity, rate, currency, and applicable taxes. Use the standard Nagarro invoice template — do not create ad-hoc documents in Word or Excel.</p>
+
+<p><strong>Step 4 – Internal review and approval</strong> All invoices above $10,000 USD require approval from the Delivery Head before sending. Invoices above $50,000 USD require Finance Controller sign-off. Route the invoice draft via the Workflow Approval system, not via email.</p>
+
+<p><strong>Step 5 – Send the invoice to the client</strong> Once approved, the system will auto-generate a PDF and send it to the client's designated AP email. Retain a copy of the sent confirmation. For clients requiring portal submission (e.g., Ariba, Coupa), upload manually and record the portal reference number in the ERP.</p>
+
+<p><strong>Step 6 – Track and follow up</strong> Set a payment follow-up reminder for T+5 days before the invoice due date. Log all client communication regarding the invoice in the ERP activity log.</p>
+
+<h3 id="common-issues-and-resolutions">1.4 Common Issues and Resolutions</h3>
+
+<table><thead><tr><th>Issue</th><th>Resolution</th></tr></thead><tbody><tr><td>Client requests invoice correction</td><td>Issue a Credit Note and re-raise the corrected invoice within 2 business days</td></tr><tr><td>PO number not yet issued</td><td>Hold the invoice and notify the client PM; do not send without a PO</td></tr><tr><td>Tax rate discrepancy</td><td>Consult the Tax team at tax@nagarro.com before issuing</td></tr><tr><td>ERP system error</td><td>Contact IT Helpdesk and cc finance-ops@nagarro.com</td></tr></tbody></table>
+
+<h3 id="escalation-policy">1.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> Escalate to the Finance Controller if: (1) the client disputes the invoice and no resolution is reached within 5 business days; (2) the invoice amount exceeds the project PO by more than 5%; or (3) the client is more than 45 days overdue without a payment plan in place.</div></div>
+
+<hr>
+
+<h2 id="reimbursement-requests">2. Reimbursement Requests</h2>
+
+<h3 id="policy-overview">2.1 Policy Overview</h3>
+
+<p>Nagarro reimburses employees for legitimate, pre-approved business expenses incurred while performing their duties. Reimbursement is governed by the <strong>Global Expense Policy v5.1</strong>, available on the intranet. Employees are responsible for ensuring their expenses comply with the policy before submitting. Non-compliant expenses will be rejected without exception.</p>
+
+<p>Reimbursements are processed in the bi-weekly payroll cycle. Submissions received by the 10th of the month will be processed in that month's second payroll run.</p>
+
+<h3 id="eligible-expenses">2.2 Eligible Expenses</h3>
+
+<p>The following categories are eligible for reimbursement with proper documentation:</p>
+
+<ul><li><strong>Travel:</strong> Flights (economy class for trips under 8 hours), trains, taxis, and car rentals. First or business class requires VP-level pre-approval.</li><li><strong>Accommodation:</strong> Hotels up to the regional per-diem rate. See Appendix A for current per-diem limits by city.</li><li><strong>Meals:</strong> Up to $75/day for international travel, $40/day for domestic travel, with itemized receipts.</li><li><strong>Client entertainment:</strong> Up to $150/person with business purpose noted and manager approval.</li><li><strong>Home office:</strong> Monthly internet stipend up to $50 for approved remote workers.</li><li><strong>Training and certifications:</strong> Up to $2,000/year per employee with manager pre-approval.</li></ul>
+
+<h3 id="submission-process">2.3 Submission Process</h3>
+
+<p><strong>Step 1 – Collect all receipts</strong> Receipts must be itemized and legible. Credit card statements alone are not accepted. For cash expenses, a self-certification form is required for amounts over $25.</p>
+
+<p><strong>Step 2 – Log into the Expense Portal</strong> Access via intranet → Finance → Expense Management → New Claim. Select the correct expense category, project code, and cost center for each line item.</p>
+
+<p><strong>Step 3 – Upload receipts and complete all mandatory fields</strong> Attach original receipts (PDF or JPEG, max 5MB each). Fill in the business purpose field with a specific description (e.g., "Client dinner with Accenture team during Q2 business review" — not just "dinner").</p>
+
+<p><strong>Step 4 – Submit for manager approval</strong> The system routes the claim to your direct manager. Managers must approve or reject within 3 business days. If unapproved after 5 business days, it auto-escalates to the Manager's manager.</p>
+
+<p><strong>Step 5 – Finance audit and processing</strong> The Finance team conducts a sample audit of 10% of all claims. Selected claims may require additional documentation. Payment is issued via payroll or a separate bank transfer for larger amounts.</p>
+
+<h3 id="policy-limits-reference-table">2.4 Policy Limits Reference Table</h3>
+
+<table><thead><tr><th>Category</th><th>Domestic Limit</th><th>International Limit</th></tr></thead><tbody><tr><td>Flights</td><td>Economy, any amount</td><td>Economy under 8h / Business over 8h with approval</td></tr><tr><td>Hotel</td><td>$150/night</td><td>$250/night</td></tr><tr><td>Meals per day</td><td>$40</td><td>$75</td></tr><tr><td>Ground transport</td><td>Actual cost</td><td>Actual cost</td></tr><tr><td>Client entertainment</td><td>$150/person</td><td>$200/person</td></tr></tbody></table>
+
+<h3 id="escalation-policy">2.5 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> Escalate to HR/Finance Business Partner if: (1) your manager is unresponsive for over 5 business days; (2) your claim is rejected and you believe it was wrongfully denied; or (3) the expense is related to a sensitive matter such as a confidential client engagement.</div></div>
+
+<hr>
+
+<h2 id="payment-status-inquiry">3. Payment Status Inquiry</h2>
+
+<h3 id="overview">3.1 Overview</h3>
+
+<p>This section covers how to check the status of an outgoing vendor payment or an employee reimbursement. Nagarro's standard payment terms are Net-30 for most vendors, unless otherwise specified in the contract.</p>
+
+<h3 id="checking-payment-status">3.2 Checking Payment Status</h3>
+
+<p><strong>Step 1 – Access the Finance Portal</strong> Navigate to Finance Portal → Payments → Search. Enter the invoice number, vendor name, or payment reference.</p>
+
+<p><strong>Step 2 – Review payment schedule</strong> Check the scheduled payment date. Payments are processed on the 15th and 28th of each month. If the invoice was approved after the cutoff, it will be included in the next cycle.</p>
+
+<p><strong>Step 3 – Confirm bank details are correct</strong> If a payment is overdue, verify that the vendor's bank details on file are correct and match the invoice. Incorrect account numbers are the most common cause of payment delays.</p>
+
+<p><strong>Step 4 – Contact Finance if still unresolved</strong> Log a query via the Finance Helpdesk portal with the invoice number, amount, and expected payment date. You will receive a response within 2 business days.</p>
+
+<h3 id="escalation-policy">3.3 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If payment is more than 15 days past the due date with no communication from Finance, escalate to the Finance Controller with full invoice documentation.</div></div>
+
+<hr>
+
+<h2 id="corporate-credit-card">4. Corporate Credit Card</h2>
+
+<h3 id="eligibility-and-purpose">4.1 Eligibility and Purpose</h3>
+
+<p>Nagarro corporate credit cards are issued to employees who regularly incur business expenses of $500/month or more. Cards are issued in the employee's name and are for business use only. Personal charges are strictly prohibited and will result in disciplinary action.</p>
+
+<h3 id="application-process">4.2 Application Process</h3>
+
+<p><strong>Step 1 – Submit the request form</strong> Download the Corporate Card Request Form from the intranet. Complete all sections including your employee ID, department, cost center, and justification for the card.</p>
+
+<p><strong>Step 2 – Obtain VP-level approval</strong> Have your Vice President or department head sign the form digitally via DocuSign.</p>
+
+<p><strong>Step 3 – Submit to Finance Operations</strong> Email the signed form to corporate-cards@nagarro.com. Processing takes 5–7 business days.</p>
+
+<p><strong>Step 4 – Card activation</strong> Your card will be mailed to your registered office address. Activate online using the link in the welcome email. Set up your online account and enroll in the spend management portal (Concur/SAP Concur).</p>
+
+<h3 id="usage-policies">4.3 Usage Policies</h3>
+
+<ul><li>All transactions must be reconciled in Concur within 5 business days of the transaction.</li><li>Receipts must be attached to each transaction record.</li><li>Cards must not be shared under any circumstances.</li><li>Cash advances on the corporate card are not permitted.</li></ul>
+
+<h3 id="escalation-policy">4.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> For lost or stolen cards, call the card issuer's emergency hotline immediately (number on back of card) and notify Security at security@nagarro.com within 1 hour.</div></div>
+
+<hr>
+
+<h2 id="budget-approval">5. Budget Approval</h2>
+
+<h3 id="overview">5.1 Overview</h3>
+
+<p>All departmental expenditures not covered by pre-approved operating budgets require a formal Budget Approval before commitment. This ensures financial controls are maintained and spending is aligned with company strategy.</p>
+
+<h3 id="budget-types">5.2 Budget Types</h3>
+
+<ul><li><strong>OPEX (Operating Expenditure):</strong> Day-to-day operational costs such as software subscriptions, travel, and contractor fees.</li><li><strong>CAPEX (Capital Expenditure):</strong> Long-term investments such as hardware purchases, office equipment, or infrastructure upgrades above $5,000.</li><li><strong>Project Budget:</strong> Dedicated budgets tied to a specific client or internal project, governed by the approved Project Financial Plan.</li></ul>
+
+<h3 id="approval-process">5.3 Approval Process</h3>
+
+<p><strong>Step 1 – Review your department's current budget</strong> Access the Budget Dashboard in the Finance Portal. Review remaining budget against planned spend for the quarter.</p>
+
+<p><strong>Step 2 – Complete the Budget Request Form</strong> Fill in the request amount, business justification, vendor details, and expected ROI or cost benefit. Attach supporting quotes or proposals.</p>
+
+<p><strong>Step 3 – Route for approval</strong></p>
+<ul><li>Up to $5,000: Manager approval</li><li>$5,001–$25,000: Department VP approval</li><li>$25,001–$100,000: CFO approval</li><li>Over $100,000: Board approval required</li></ul>
+
+<p><strong>Step 4 – Procurement</strong> Once approved, forward the approval confirmation to procurement@nagarro.com to begin the vendor onboarding and purchase order process.</p>
+
+<h3 id="escalation-policy">5.4 Escalation Policy</h3>
+
+<div class="callout red"><span class="callout-icon">⚠️</span><div><strong>Escalation Policy:</strong> If a budget request is urgent and approval is delayed beyond 5 business days, escalate to your Finance Business Partner. Committing expenditure without approval is a serious policy violation.</div></div>
+
+                <div class="doc-footer">
+                    <span>Nagarro Internal Knowledge Base</span>
+                    <span>Classification: Internal Use Only</span>
+                </div>
+            </div>
+        </article>
+    </div>
+</body>
+</html>
