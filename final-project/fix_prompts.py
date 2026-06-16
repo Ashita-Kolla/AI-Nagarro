@@ -36,7 +36,9 @@ Return ONLY raw valid JSON. DO NOT wrap the JSON in markdown blocks (e.g. no ```
   "priority": "low|medium|high",
   "summary": "one line summary",
   "email_subject": "",
-  "email_body": ""
+  "email_body": "",
+  "requires_attachment": true,
+  "attachment_type": "none|invoice|payslip|policy"
 }}"""
         node['parameters']['text'] = new_prompt
 

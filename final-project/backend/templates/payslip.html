@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Payslip{% endblock %}
+{% block doc_title %}Employee Payslip{% endblock %}
+{% block doc_meta %}
+    <span>📋 Issued By: Payroll Department</span>
+    <span>📋 Pay Period: {{ date }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="overview-block">
+    This is your official electronic payslip. Please keep this document strictly confidential.
+</div>
+<h2>Earnings & Deductions</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Earnings</th>
+            <th>Amount (USD)</th>
+            <th>Deductions</th>
+            <th>Amount (USD)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Basic Salary</td>
+            <td>$5,000.00</td>
+            <td>Income Tax (TDS)</td>
+            <td>$1,200.00</td>
+        </tr>
+        <tr>
+            <td>House Rent Allowance (HRA)</td>
+            <td>$1,500.00</td>
+            <td>Provident Fund (PF)</td>
+            <td>$300.00</td>
+        </tr>
+        <tr>
+            <td>Special Allowance</td>
+            <td>$800.00</td>
+            <td>Health Insurance Premium</td>
+            <td>$50.00</td>
+        </tr>
+        <tr style="font-weight: bold; background: var(--slate-100);">
+            <td>Gross Earnings</td>
+            <td>$7,300.00</td>
+            <td>Total Deductions</td>
+            <td>$1,550.00</td>
+        </tr>
+    </tbody>
+</table>
+<div style="text-align: right; margin-top: 20px; font-size: 1.1rem; color: var(--blue);">
+    <strong>Net Pay: $5,750.00</strong>
+</div>
+<hr>
+<p>If there are any discrepancies in your payslip, please raise a ticket with the Payroll team via the HR Portal within 15 days.</p>
+{% endblock %}

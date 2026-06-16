@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Corporate Policy{% endblock %}
+{% block doc_title %}Official Policy Document{% endblock %}
+{% block doc_meta %}
+    <span>📋 Issued By: HR / Compliance Team</span>
+    <span>📋 Last Updated: {{ date }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="overview-block">
+    This document outlines the standard corporate policies applicable to all Nagarro employees. Compliance is mandatory.
+</div>
+<h2>1. Code of Conduct</h2>
+<p>
+    Nagarro expects all employees to adhere to the highest standards of professional conduct. This includes, but is not limited to:
+</p>
+<ul>
+    <li>Maintaining confidentiality of client and company data.</li>
+    <li>Treating all colleagues with respect and professionalism.</li>
+    <li>Avoiding any conflicts of interest in professional duties.</li>
+</ul>
+
+<h2>2. Leave Policy Summary</h2>
+<p>
+    Employees are entitled to annual paid time off (PTO), sick leave, and casual leave as per their employment contract. All planned leaves must be applied for at least 2 weeks in advance via the HR Portal.
+</p>
+
+<h2>3. Information Security</h2>
+<p>
+    The use of unauthorized external software on company devices is strictly prohibited. Employees must complete the mandatory infosec training annually.
+</p>
+<hr>
+<p>For detailed sub-policies, please refer to the complete Knowledge Base on the internal portal.</p>
+{% endblock %}

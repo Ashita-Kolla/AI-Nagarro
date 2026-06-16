@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice{% endblock %}
+{% block doc_title %}Invoice{% endblock %}
+{% block doc_meta %}
+    <span>📋 Issued By: Finance Department</span>
+    <span>📋 Date: {{ date }}</span>
+    <span>📋 Status: <strong style="color: #4ade80;">PAID</strong></span>
+{% endblock %}
+
+{% block content %}
+<div class="overview-block">
+    This is an auto-generated invoice corresponding to your recent service request. Please keep this document for your records.
+</div>
+<h2>Invoice Details</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Item Code</th>
+            <th>Description</th>
+            <th>Amount (USD)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>IT-HW-001</td>
+            <td>Hardware Procurement (Standard Laptop)</td>
+            <td>$1,200.00</td>
+        </tr>
+        <tr>
+            <td>IT-SW-042</td>
+            <td>Annual Enterprise Software Licenses</td>
+            <td>$300.00</td>
+        </tr>
+    </tbody>
+</table>
+<div style="text-align: right; margin-top: 20px; font-size: 1.1rem;">
+    <strong>Total: $1,500.00</strong>
+</div>
+<hr>
+<p>If you have any questions regarding this invoice, please contact <a href="mailto:finance-help@nagarro.com">finance-help@nagarro.com</a>.</p>
+{% endblock %}
