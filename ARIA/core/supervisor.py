@@ -36,35 +36,47 @@ class Supervisor:
         """
         Evaluates the output of an agent.
         Prints a warning if confidence < 50.
+        (Used by the CLI runner.)
         """
-        prompt_path = os.path.join(self.prompts_dir, "supervisor_quality_check.md")
-        if not os.path.exists(prompt_path):
-            return
-            
-        with open(prompt_path, "r", encoding="utf-8") as f:
-            template = f.read()
-            
-        # Convert output to string
-        agent_output_str = json.dumps(agent_output_data, indent=2) if isinstance(agent_output_data, dict) else str(agent_output_data)
-        context_str = context_manager.get_context_string()
-        
-        prompt = template.replace("{AGENT_NAME}", agent_name)
-        prompt = prompt.replace("{CONTEXT}", context_str)
-        prompt = prompt.replace("{AGENT_OUTPUT}", agent_output_str)
-        
-        print(f"\nSupervisor is performing a quality check on {agent_name}'s output...")
-        response_text = call_llm(prompt)
-        parsed = parse_json_from_llm(response_text)
-        
-        if parsed:
-            score = parsed.get("confidence_score", 100)
-            reason = parsed.get("confidence_reasoning", "")
+        score, warning = self.check_quality_ws(agent_name, agent_output_data, context_manager)
+        if score is not None:
             if score < 50:
-                print(f"\n[SUPERVISOR WARNING] Confidence Score: {score}/100")
-                print(f"Reason: {reason}")
-                warnings = parsed.get("warnings", [])
-                for w in warnings:
-                    print(f" - {w}")
+                print(f"\n[SUPERVISOR WARNING] Confidence Score: {score}/100 — {warning}")
                 print("The Human Gate will still run, but you may want to Edit or Regenerate.")
             else:
                 print(f"[SUPERVISOR] Quality check passed (Score: {score}/100).")
+
+    def check_quality_ws(self, agent_name, agent_output_data, context_manager):
+        """
+        Evaluates the output of an agent.
+        Returns (score: int|None, warning: str|None).
+        Used by WSAgentRunner — no print statements.
+        """
+        prompt_path = os.path.join(self.prompts_dir, "supervisor_quality_check.md")
+        if not os.path.exists(prompt_path):
+            return None, None
+
+        with open(prompt_path, "r", encoding="utf-8") as f:
+            template = f.read()
+
+        agent_output_str = (
+            json.dumps(agent_output_data, indent=2, ensure_ascii=False)
+            if isinstance(agent_output_data, dict) else str(agent_output_data)
+        )
+        context_str = context_manager.get_context_string()
+
+        prompt = template.replace("{AGENT_NAME}", agent_name)
+        prompt = prompt.replace("{CONTEXT}", context_str)
+        prompt = prompt.replace("{AGENT_OUTPUT}", agent_output_str)
+
+        response_text = call_llm(prompt)
+        parsed = parse_json_from_llm(response_text)
+
+        if not parsed:
+            return None, None
+
+        score   = parsed.get("confidence_score", 100)
+        reason  = parsed.get("confidence_reasoning", "")
+        warns   = parsed.get("warnings", [])
+        warning = (reason + " " + "; ".join(warns)).strip() if score < 50 else None
+        return score, warning

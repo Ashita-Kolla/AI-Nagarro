@@ -17,3 +17,10 @@ week3/trixie_wellness/rag/vector_stores/crisis_support/index.faiss
 week3/trixie_wellness/rag/__pycache__/vectorstore.cpython-312.pyc
 week3/trixie_wellness/rag/__pycache__/router.cpython-312.pyc
 week3/trixie_wellness/evaluation/__pycache__
+ARIA/node/node_modules/
+ARIA/node_modules/
+ARIA/ARIA/__pycache__
+ARIA/node/install_tools.bat
+
+ARIA/node/npm
+ARIA/my-aria-app/package-lock.json
