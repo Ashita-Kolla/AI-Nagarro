@@ -69,6 +69,17 @@ class WSAgentRunner:
 
                 if action == "Approve":
                     self.context_manager.add_output(agent_name, result_data)
+                    
+                    if hasattr(agent_module, "post_approval"):
+                        try:
+                            self.push({"type": "log", "message": f"Running post-approval tasks for {agent_name}..."})
+                            agent_module.post_approval(result_data, self.context_manager)
+                            if agent_name == "BA":
+                                self.push({"type": "brd_ready", "path": "outputs/BRD.docx",
+                                           "message": "BRD document generated: outputs/BRD.docx"})
+                        except Exception as e:
+                            self.push({"type": "error", "message": f"Post-approval task failed: {e}"})
+                            
                     self.push({"type": "agent_approved", "agent": agent_name})
                     self.push({"type": "log", "message": f"Human approved {agent_name}. Proceeding."})
                     break

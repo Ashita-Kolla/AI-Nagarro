@@ -3,7 +3,9 @@ ws_server.py — FastAPI WebSocket bridge for ARIA
 Connects the React frontend to the Python agent pipeline.
 
 Run with:
-    uvicorn ws_server:app --reload --port 8000
+    uvicorn ws_server:app --port 8000
+
+!! IMPORTANT: Do NOT use --reload. It kills the pipeline thread mid-run.
 """
 
 import asyncio
@@ -15,6 +17,7 @@ import sys
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
@@ -31,6 +34,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/download/brd")
+async def download_brd():
+    """Serve the generated BRD.docx for browser download."""
+    brd_path = os.path.join(os.path.dirname(__file__), "outputs", "BRD.docx")
+    if not os.path.exists(brd_path):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="BRD not yet generated.")
+    return FileResponse(
+        path=brd_path,
+        filename="BRD.docx",
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
 
 
 # ─────────────────────────────────────────────
@@ -82,16 +99,24 @@ async def websocket_endpoint(websocket: WebSocket):
         asyncio.run_coroutine_threadsafe(out_q.put(event), loop)
 
     try:
+        pipeline_running = False          # guard: only one pipeline per WS session
+
         while True:
             raw = await websocket.receive_text()
             msg = json.loads(raw)
 
             # ── Start a new pipeline run ────────────────────────────────────
             if msg.get("type") == "start":
+                if pipeline_running:
+                    push({"type": "log", "message": "Pipeline already running. Please wait or reconnect."})
+                    continue
+
                 brief = msg.get("brief", "").strip()
                 if not brief:
                     push({"type": "error", "message": "No brief provided."})
                     continue
+
+                pipeline_running = True
 
                 def run_pipeline(brief=brief):
                     try:
@@ -135,6 +160,9 @@ def _execute_pipeline(brief: str, push, in_q: queue.Queue):
 
     push({"type": "supervisor_result", "data": routing_data})
     push({"type": "log", "message": f"Supervisor summary: {routing_data.get('summary', '')}"})
+
+    # Store supervisor output in context so downstream agents (e.g. BA) can read it
+    ctx.add_output("Supervisor", routing_data)
 
     agents_required = routing_data.get("agents_required", [])
     if not agents_required:

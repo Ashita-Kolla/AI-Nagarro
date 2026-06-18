@@ -14,7 +14,7 @@ powershell
 # 1. Navigate to ARIA folder
 cd "c:\Users\ashitakolla\OneDrive - Nagarro\Desktop\AI-Nagarro\ARIA"
 # 2. Start the FastAPI/uvicorn server
-python -m uvicorn ws_server:app --reload --port 8000
+python -m uvicorn ws_server:app --port 8000
 
 
 Terminal 2: Frontend

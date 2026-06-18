@@ -45,6 +45,14 @@ class AgentRunner:
                 
                 if action == 'A':
                     self.context_manager.add_output(agent_name, result_data)
+                    
+                    if hasattr(agent_module, "post_approval"):
+                        try:
+                            print(f"Running post-approval tasks for {agent_name}...")
+                            agent_module.post_approval(result_data, self.context_manager)
+                        except Exception as e:
+                            print(f"Post-approval task failed: {e}")
+                            
                     print(f"Step {agent_name} approved and context saved.")
                     break
                 elif action == 'E':
