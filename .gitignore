@@ -24,3 +24,4 @@ ARIA/node/install_tools.bat
 
 ARIA/node/npm
 ARIA/my-aria-app/package-lock.json
+ARIA/outputs/*
