@@ -19,7 +19,7 @@ class Supervisor:
         prompt = template.replace("{USER_BRIEF}", brief)
         
         print("Supervisor is evaluating the project brief...")
-        response_text = call_llm(prompt)
+        response_text = call_llm(prompt, agent_name="Supervisor")
         parsed = parse_json_from_llm(response_text)
         
         if not parsed:
@@ -69,7 +69,7 @@ class Supervisor:
         prompt = prompt.replace("{CONTEXT}", context_str)
         prompt = prompt.replace("{AGENT_OUTPUT}", agent_output_str)
 
-        response_text = call_llm(prompt)
+        response_text = call_llm(prompt, agent_name="Supervisor")
         parsed = parse_json_from_llm(response_text)
 
         if not parsed:

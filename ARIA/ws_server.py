@@ -36,17 +36,26 @@ app.add_middleware(
 )
 
 
-@app.get("/download/brd")
-async def download_brd():
-    """Serve the generated BRD.docx for browser download."""
-    brd_path = os.path.join(os.path.dirname(__file__), "outputs", "BRD.docx")
-    if not os.path.exists(brd_path):
+@app.get("/download/{agent_name}/{filename}")
+async def download_artifact(agent_name: str, filename: str):
+    """Serve any generated artifact for browser download."""
+    import urllib.parse
+    agent_name = urllib.parse.unquote(agent_name)
+    filename = urllib.parse.unquote(filename)
+    
+    # Basic path traversal protection
+    if ".." in agent_name or ".." in filename or "/" in filename or "\\" in filename:
         from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="BRD not yet generated.")
+        raise HTTPException(status_code=400, detail="Invalid path")
+        
+    file_path = os.path.join(os.path.dirname(__file__), "outputs", agent_name, filename)
+    if not os.path.exists(file_path):
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="File not found.")
+        
     return FileResponse(
-        path=brd_path,
-        filename="BRD.docx",
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        path=file_path,
+        filename=filename,
     )
 
 
@@ -144,7 +153,7 @@ async def websocket_endpoint(websocket: WebSocket):
 def _execute_pipeline(brief: str, push, in_q: queue.Queue):
     from core.context_manager import ContextManager
     from core.supervisor import Supervisor
-    from core.ws_agent_runner import WSAgentRunner
+    from core.langgraph_runner import LangGraphRunner
 
     ctx = ContextManager()
     ctx.add_output("USER_BRIEF", brief)
@@ -170,10 +179,24 @@ def _execute_pipeline(brief: str, push, in_q: queue.Queue):
         push({"type": "error", "message": f"Brief too vague to route (confidence: {confidence}). Please clarify."})
         return
 
-    execution_queue = supervisor.build_execution_queue(agents_required)
-    push({"type": "log", "message": f"Execution queue resolved: {' → '.join(execution_queue)}"})
+    # Build the required agents sequence just for stable reference
+    ordered_required = supervisor.build_execution_queue(agents_required)
+    
+    push({"type": "log", "message": f"Dynamic LangGraph routing configured for: {' → '.join(ordered_required)}"})
 
-    runner = WSAgentRunner(ctx, supervisor, push_event=push, hitl_queue=in_q)
-    runner.run_queue(execution_queue)
+    runner = LangGraphRunner(ctx, supervisor, push_event=push, hitl_queue=in_q)
+    
+    initial_state = {
+        "brief": brief,
+        "supervisor_routing": routing_data,
+        "agents_required": ordered_required,
+        "completed_agents": [],
+        "current_agent": "",
+        "agent_outputs": {},
+        "human_correction": "",
+        "human_action": {}
+    }
+    
+    runner.run_graph(initial_state)
 
     push({"type": "pipeline_done", "message": "All agents completed. Full context saved."})

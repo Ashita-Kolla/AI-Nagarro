@@ -25,3 +25,7 @@ ARIA/node/install_tools.bat
 ARIA/node/npm
 ARIA/my-aria-app/package-lock.json
 ARIA/outputs/*
+ARIA/core/__pycache__/
+ARIA/agents/__pycache__/
+ARIA/ws_server.py
+

@@ -22,8 +22,12 @@ class ContextManager:
         self.project_context[agent_name] = data
         self.save_context()
         
+        # Create agent-specific output directory
+        agent_dir = os.path.join(self.outputs_dir, agent_name)
+        os.makedirs(agent_dir, exist_ok=True)
+        
         # Save individual step output for legacy compatibility or debugging
-        step_file = os.path.join(self.outputs_dir, f"{agent_name}.json")
+        step_file = os.path.join(agent_dir, f"{agent_name}.json")
         with open(step_file, "w", encoding="utf-8") as f:
             json.dump({"step": agent_name, "content": data}, f, indent=2, ensure_ascii=False)
             

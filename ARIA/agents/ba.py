@@ -9,7 +9,8 @@ from core.llm_utils import call_llm, parse_json_from_llm
 
 def generate_brd(ba_output: dict, project_name: str):
     try:
-        os.makedirs("outputs", exist_ok=True)
+        out_dir = os.path.join("outputs", "BA")
+        os.makedirs(out_dir, exist_ok=True)
         doc = Document()
         
         style_h1 = doc.styles['Heading 1']
@@ -127,10 +128,13 @@ BA OUTPUT:
         row_cells[2].text = "ARIA BA Agent"
         row_cells[3].text = "Initial draft"
         
-        doc.save("outputs/BRD.docx")
-        print("Successfully generated outputs/BRD.docx")
+        brd_path = os.path.join(out_dir, "BRD.docx")
+        doc.save(brd_path)
+        print(f"Successfully generated {brd_path}")
+        return brd_path
     except Exception as e:
         print(f"Error generating BRD.docx: {e}")
+        return None
 
 def post_approval(data: dict, context_manager):
     """Hook called by the agent runner after human approval."""
@@ -139,7 +143,7 @@ def post_approval(data: dict, context_manager):
     project_name = "Unknown Project"
     if isinstance(supervisor_output, dict):
         project_name = supervisor_output.get("project_name", "Unknown Project")
-    generate_brd(data, project_name)
+    return generate_brd(data, project_name)
 
 def run(context_manager, correction: str = None) -> dict:
     """
@@ -304,7 +308,7 @@ OUTPUT FORMAT:
     )
     
     print("Calling LLM for BA analysis...")
-    response_text = call_llm(prompt, max_tokens=8000)
+    response_text = call_llm(prompt, agent_name='BA')
     data = parse_json_from_llm(response_text)
     
     if not data:

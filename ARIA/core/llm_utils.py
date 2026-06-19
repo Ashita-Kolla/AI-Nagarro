@@ -3,14 +3,29 @@ import json
 import re
 from groq import Groq
 
-def call_llm(prompt, model="llama-3.3-70b-versatile", max_tokens=2000, temperature=0.3):
+MODEL_MAP = {
+    "BA": "mixtral-8x7b-32768",
+    "Architect": "mixtral-8x7b-32768",
+    "Developer": "mixtral-8x7b-32768",
+    "QA": "llama3-8b-8192",
+    "DevOps": "llama3-8b-8192",
+    "PM": "llama3-8b-8192",
+    "Supervisor": "llama-3.3-70b-versatile"
+}
+
+def call_llm(prompt, agent_name=None, model="llama-3.3-70b-versatile", max_tokens=2000, temperature=0.3):
     """
     Unified LLM caller using Groq API.
     Wraps the call in a try/except block.
+    Dynamically switches models based on agent_name if provided.
     """
+    if agent_name and agent_name in MODEL_MAP:
+        model = MODEL_MAP[agent_name]
+
     client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
     
     try:
+        print(f"[LLM] Calling model '{model}' for agent '{agent_name or 'Unknown'}'")
         response = client.chat.completions.create(
             messages=[
                 {
