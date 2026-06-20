@@ -6,10 +6,11 @@ def build_prompt(context_manager, correction: str = None) -> str:
     context = context_manager.get_context()
     
     user_brief = context.get("USER_BRIEF", "")
-    ba_output = context.get("BA", {})
-    architect_output = context.get("Architect", {})
-    qa_feedback = context.get("QA", {})
+    ba_output = context_manager.get_summary("BA")
+    architect_output = context_manager.get_summary("Architect")
+    qa_feedback = context_manager.get_summary("QA")
 
+    import json as _json
     prompt = f"""You are the Developer Agent for ARIA.
 
 You are the CORE IMPLEMENTATION ENGINE.
@@ -19,22 +20,24 @@ You are a FULL SYSTEM BUILDER responsible for generating a COMPLETE WORKING CODE
 USER BRIEF:
 {user_brief}
 
-BA REQUIREMENTS:
-{str(ba_output)[:2000]}
+BA REQUIREMENTS (SUMMARY):
+{_json.dumps(ba_output, indent=2, ensure_ascii=False)}
 
-ARCHITECTURE DESIGN:
-{str(architect_output)[:2000]}
+ARCHITECTURE DESIGN (SUMMARY):
+{_json.dumps(architect_output, indent=2, ensure_ascii=False)}
 """
     
     if qa_feedback:
-        prompt += f"\nQA FEEDBACK (PREVIOUS RUN):\n{str(qa_feedback)[:1000]}\nFix ONLY reported issues. Regenerate corrected codebase while preserving structure.\n"
+        import json as _json2
+        prompt += f"\nQA FEEDBACK (PREVIOUS RUN):\n{_json2.dumps(qa_feedback, indent=2, ensure_ascii=False)}\nFix ONLY reported issues. Regenerate corrected codebase while preserving structure.\n"
 
     prompt += """
 === RESPONSIBILITIES ===
-1. Generate a complete working project including folder structure, all source code files, config, and entrypoints.
+1. Generate a core working project including folder structure, main source code files, config, and entrypoints.
 2. Strictly follow the Architect output (modules, services, patterns).
-3. Ensure every BA requirement is implemented.
+3. Ensure the *core* BA requirements are implemented.
 4. Output must be testable via Playwright (if applicable), deterministic, and stable.
+5. CRITICAL: You are bound by a strict 10000 token output limit. If you try to write too much code, the JSON will truncate and fail validation! You MUST write ONLY the Minimum Viable Product (MVP) files. Use stubs or comments for non-critical features to save tokens. Do not write massive HTML/CSS templates. Keep it concise.
 
 """
 

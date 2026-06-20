@@ -96,17 +96,12 @@ def run(context_manager, correction: str = None) -> dict:
             print("Environment Agent Error: Failed to parse valid JSON from LLM.")
             return {}
 
-        setup_script_name = parsed_data.get("setup_script_name", "setup.ps1")
+        # Extract commands but do NOT execute automatically
         setup_commands = parsed_data.get("setup_commands", [])
         
         if setup_commands:
-            exec_results = execute_setup_script(setup_script_name, setup_commands)
-            parsed_data["execution_status"] = exec_results["status"]
-            parsed_data["execution_log"] = exec_results["log"]
-            
-            if exec_results["status"] == "FAIL":
-                print(f"Environment Agent Error: Setup script execution failed.")
-                print(exec_results["log"])
+            parsed_data["execution_status"] = "PENDING_APPROVAL"
+            parsed_data["execution_log"] = "Waiting for human test run or approval."
         
         return parsed_data
     except Exception as e:
@@ -116,13 +111,27 @@ def run(context_manager, correction: str = None) -> dict:
 def post_approval(data: dict, context_manager) -> list:
     """
     Exports the Environment artifacts.
-    Note: The actual script was written during the `run` phase to `outputs/QA/tests/`.
-    We just save the JSON manifest here.
+    Also checks if the human saved an edited script to disk, and injects it into context.
     """
     out_dir = os.path.join("outputs", "Environment")
     os.makedirs(out_dir, exist_ok=True)
     
     generated_files = []
+
+    # Inject edited script if available
+    edited_script_path = os.path.join(out_dir, "setup.ps1")
+    if os.path.exists(edited_script_path):
+        with open(edited_script_path, "r", encoding="utf-8") as f:
+            script_content = f.read()
+        data["setup_commands"] = script_content.split('\n')
+        # Update context manager so downstream agents get the edited script
+        context_manager.add_output("Environment", data)
+        generated_files.append(edited_script_path)
+    else:
+        # If no edit was made, write the LLM's original script to disk
+        with open(edited_script_path, "w", encoding="utf-8") as f:
+            f.write('\n'.join(data.get("setup_commands", [])))
+        generated_files.append(edited_script_path)
 
     full_json_path = os.path.join(out_dir, "environment_setup.json")
     with open(full_json_path, "w", encoding="utf-8") as f:

@@ -4,13 +4,14 @@ from core.llm_utils import call_llm, parse_json_from_llm
 
 def build_prompt(context_manager, correction: str = None) -> str:
     context = context_manager.get_context()
+    import json as _json
     
-    # Extract upstream outputs
+    # Extract upstream outputs via summaries
     user_brief = context.get("USER_BRIEF", "")
-    supervisor_output = context.get("Supervisor", {})
-    architect_output = context.get("Architect", {})
-    developer_output = context.get("Developer", {})
-    qa_output = context.get("QA", {})
+    supervisor_output = context_manager.get_summary("Supervisor")
+    architect_output = context_manager.get_summary("Architect")
+    developer_output = context_manager.get_summary("Developer")
+    qa_output = context_manager.get_summary("QA")
 
     prompt = f"""You are the DevOps Agent for the ARIA multi-agent SDLC system.
 
@@ -19,10 +20,10 @@ You are NOT an orchestrator. You are NOT a code generator. You are NOT an archit
 
 === CONTEXT ===
 User Brief: {user_brief}
-Supervisor Strategy: {json.dumps(supervisor_output, indent=2)}
-Architect Design: {json.dumps(architect_output, indent=2)}
-Developer Output Summary: {str(developer_output)[:1000]}
-QA Results Summary: {str(qa_output)[:500]}
+Supervisor Strategy (summary): {_json.dumps(supervisor_output, indent=2)}
+Architect Design (summary): {_json.dumps(architect_output, indent=2)}
+Developer Output (summary): {_json.dumps(developer_output, indent=2)}
+QA Results (summary): {_json.dumps(qa_output, indent=2)}
 
 === RESPONSIBILITIES ===
 1. Generate Docker configuration (Dockerfile and docker-compose.yml if multi-service)

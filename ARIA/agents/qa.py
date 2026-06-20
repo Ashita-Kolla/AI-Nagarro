@@ -135,30 +135,18 @@ def run(context_manager, correction: str = None) -> dict:
             print("QA Agent Error: Failed to parse valid JSON from LLM.")
             return {}
 
-        # 2. Execute tests in Runtime Environment
+        # 2. Extract tests but do NOT execute them automatically.
+        # Execution is triggered by the human via "Test Run Scripts" in the frontend.
         test_suite = parsed_data.get("test_suite", [])
-        exec_results = execute_playwright_tests(test_suite)
         
-        # 3. Deterministic PASS/FAIL override based on real execution
         parsed_data["execution_results"] = {
-            "total_tests": exec_results["total_tests"],
-            "passed": exec_results["passed"],
-            "failed": exec_results["failed"]
+            "total_tests": len(test_suite),
+            "passed": 0,
+            "failed": 0,
+            "status": "PENDING_APPROVAL",
+            "log": "Waiting for human test run or approval."
         }
         
-        # Deterministic Gate Logic: If tests failed, force QA status to FAIL
-        if exec_results["failed"] > 0:
-            parsed_data["status"] = "FAIL"
-            # Inject the execution failure into the bug report
-            bug_report = parsed_data.get("bug_report", [])
-            bug_report.append({
-                "severity": "CRITICAL",
-                "issue": "Playwright Execution Failed",
-                "reproduction": "Run `npx playwright test` in outputs/QA/tests/",
-                "suggested_fix": exec_results["log"][:500] + "..." # truncate log for JSON
-            })
-            parsed_data["bug_report"] = bug_report
-
         return parsed_data
     except Exception as e:
         print(f"QA Agent Error: {str(e)}")
@@ -167,19 +155,39 @@ def run(context_manager, correction: str = None) -> dict:
 def post_approval(data: dict, context_manager) -> list:
     """
     Exports the QA artifacts (test cases and results) to the file system.
+    Injects human-edited test suites from disk if available.
     """
     out_dir = os.path.join("outputs", "QA")
-    os.makedirs(out_dir, exist_ok=True)
+    qa_tests_dir = os.path.join(out_dir, "tests")
+    os.makedirs(qa_tests_dir, exist_ok=True)
     
     generated_files = []
+    
+    # 1. Update data with human edits from disk (if the WS handler saved them)
+    test_suite = data.get("test_suite", [])
+    for test in test_suite:
+        filename = test.get("file")
+        if filename:
+            file_path = os.path.join(qa_tests_dir, filename)
+            if os.path.exists(file_path):
+                # If human edited it and it was saved to disk
+                with open(file_path, "r", encoding="utf-8") as f:
+                    test["code"] = f.read()
+                generated_files.append(file_path)
+            else:
+                # If no human edit, write the LLM's original code to disk
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(test.get("code", ""))
+                generated_files.append(file_path)
 
-    # 1. Save Full Output JSON
+    # Inject the updated test_suite into context so downstream agents see edits
+    context_manager.add_output("QA", data)
+
+    # 2. Save Full Output JSON
     full_json_path = os.path.join(out_dir, "test_results.json")
     with open(full_json_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
     generated_files.append(full_json_path)
-    
-    # Note: Test files (.spec.ts) were already saved to outputs/QA/tests/ during execution!
 
     print(f"QA artifacts exported to {out_dir}.")
     return generated_files

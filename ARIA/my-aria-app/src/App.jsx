@@ -13,7 +13,7 @@ const XIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" v
 const ExternalLinkIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>;
 const WarningIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>;
 
-const AGENTS_LIST = ["BA", "Architect", "Developer", "QA", "DevOps", "PM", "Optimisation"];
+const AGENTS_LIST = ["BA", "Architect", "Developer", "Environment", "QA", "DevOps", "PM", "Optimisation"];
 
 // --- RICH MOCK OUTPUTS ---
 const MOCK_OUTPUTS = {
@@ -107,6 +107,72 @@ function OutputModal({ agent, onClose }) {
   const output = agent.output;
   const hasArtifacts = agent.artifacts && agent.artifacts.length > 0;
   
+  // Script Edit State
+  const [envScript, setEnvScript] = useState('');
+  const [qaTestSuites, setQaTestSuites] = useState([]);
+  const [testRunLog, setTestRunLog] = useState(null);
+  const [isTestRunning, setIsTestRunning] = useState(false);
+
+  useEffect(() => {
+    if (agent.name === 'Environment' && output && output.setup_commands) {
+      setEnvScript(output.setup_commands.join('\n'));
+    }
+    if (agent.name === 'QA' && output && output.test_suite) {
+      setQaTestSuites(output.test_suite);
+    }
+  }, [agent.name, output]);
+
+  const handleTestRunScript = () => {
+    if (!envScript.trim()) return;
+    setIsTestRunning(true);
+    setTestRunLog("Starting test run...");
+    const ws = window._wsRef?.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'test_run_script', script_content: envScript }));
+    } else {
+      setTestRunLog("WebSocket not connected.");
+      setIsTestRunning(false);
+    }
+  };
+
+  const handleTestRunQa = () => {
+    if (qaTestSuites.length === 0) return;
+    setIsTestRunning(true);
+    setTestRunLog("Running Playwright test suite...");
+    const ws = window._wsRef?.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'test_run_qa', test_suite: qaTestSuites }));
+    } else {
+      setTestRunLog("WebSocket not connected.");
+      setIsTestRunning(false);
+    }
+  };
+
+  const updateQaTestCode = (index, newCode) => {
+    const updated = [...qaTestSuites];
+    updated[index] = { ...updated[index], code: newCode };
+    setQaTestSuites(updated);
+  };
+
+  useEffect(() => {
+    const handleTestResult = (e) => {
+      setIsTestRunning(false);
+      setTestRunLog(`[${e.detail.status}]\n${e.detail.log}`);
+    };
+    window.addEventListener('test_run_result', handleTestResult);
+    return () => { window.removeEventListener('test_run_result', handleTestResult); };
+  }, []);
+
+  const isBA = agent.name === 'BA' && (output?.user_stories || output?.business_requirements || output?.functional_requirements);
+  const isEnv = agent.name === 'Environment';
+  const isQA = agent.name === 'QA';
+
+  // Expose edited data to parent component for Approve action
+  useEffect(() => {
+    if (isEnv) agent._editedScript = envScript;
+    if (isQA) agent._editedQASuite = qaTestSuites;
+  }, [isEnv, envScript, isQA, qaTestSuites, agent]);
+
   let tabsKeys = [];
   if (typeof output === 'object' && output !== null && !Array.isArray(output)) {
     tabsKeys = Object.keys(output).filter(k => !['supervisor_warning'].includes(k));
@@ -408,7 +474,6 @@ function OutputModal({ agent, onClose }) {
     );
   };
 
-  const isBA = agent.name === 'BA' && (output?.user_stories || output?.business_requirements || output?.functional_requirements);
 
   return (
     <div className="fixed inset-0 z-50 flex items-stretch" onClick={onClose}>
@@ -455,7 +520,39 @@ function OutputModal({ agent, onClose }) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {output ? (
-            isBA ? renderBAOutput(output) : renderGenericOutput(output)
+            isBA ? renderBAOutput(output) : 
+            isEnv ? (
+              <div className="flex flex-col h-full gap-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-gray-300">Generated Setup Script</h3>
+                  <button onClick={handleTestRunScript} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
+                    {isTestRunning ? 'Running...' : '▶ Test Run Script'}
+                  </button>
+                </div>
+                <textarea value={envScript} onChange={(e) => setEnvScript(e.target.value)} className="w-full h-64 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-sm text-green-400" spellCheck={false} />
+                {testRunLog && (
+                  <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
+                )}
+              </div>
+            ) : isQA && qaTestSuites.length > 0 ? (
+              <div className="flex flex-col h-full gap-6">
+                <div className="flex items-center justify-between sticky top-0 bg-gray-900 pb-2 z-10">
+                  <h3 className="text-sm font-semibold text-gray-300">Playwright Test Suite ({qaTestSuites.length} files)</h3>
+                  <button onClick={handleTestRunQa} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
+                    {isTestRunning ? 'Running tests...' : '▶ Test Run Scripts'}
+                  </button>
+                </div>
+                {testRunLog && (
+                  <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
+                )}
+                {qaTestSuites.map((test, idx) => (
+                  <div key={idx} className="bg-gray-800/60 border border-gray-700 rounded-xl p-4">
+                    <div className="text-sm font-mono text-gray-300 mb-2">{test.file}</div>
+                    <textarea value={test.code} onChange={(e) => updateQaTestCode(idx, e.target.value)} className="w-full h-48 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-xs text-green-400" spellCheck={false} />
+                  </div>
+                ))}
+              </div>
+            ) : renderGenericOutput(output)
           ) : (
             <p className="text-gray-500 text-sm">No output available.</p>
           )}
@@ -493,6 +590,7 @@ export default function App() {
     setWsStatus('connecting');
     const ws = new WebSocket('ws://localhost:8000/ws');
     wsRef.current = ws;
+    window._wsRef = wsRef; // For OutputModal access
 
     ws.onopen = () => {
       setWsStatus('connected');
@@ -529,6 +627,10 @@ export default function App() {
 
       case 'agent_start':
         dispatch({ type: 'UPDATE_AGENT', payload: { name: msg.agent, status: 'running', summary: `Running ${msg.agent}…` } });
+        break;
+
+      case 'test_run_result':
+        window.dispatchEvent(new CustomEvent('test_run_result', { detail: msg }));
         break;
 
       case 'agent_output':
@@ -608,12 +710,27 @@ export default function App() {
     if (action === 'Edit') {
       dispatch({ type: 'START_EDIT' });
       dispatch({ type: 'ADD_MESSAGE', payload: { sender: 'aria', text: `Correction mode active for ${agent}. Type your feedback and press Send.` } });
+    } else if (action === 'Approve') {
+      // Safely tell backend to save user's edited scripts directly to disk
+      const agentObj = state.agents.find(a => a.name === agent);
+      if (agentObj) {
+        if (agentObj.name === 'Environment' && agentObj._editedScript !== undefined) {
+          wsSend({ type: 'save_scripts', agent: 'Environment', script_content: agentObj._editedScript });
+        } else if (agentObj.name === 'QA' && agentObj._editedQASuite !== undefined) {
+          wsSend({ type: 'save_scripts', agent: 'QA', test_suite: agentObj._editedQASuite });
+        }
+      }
+      // Immediately send standard gate action - LangGraph routing is completely untouched!
+      wsSend({ type: 'gate_action', action, agent });
+      dispatch({ type: 'UPDATE_AGENT', payload: { name: agent, status: 'complete' } });
+      dispatch({ type: 'SET_GATE', payload: null });
+      dispatch({ type: 'ADD_LOG', payload: `${agent} approved. Pipeline continuing...` });
+    } else if (action === 'Regenerate') {
+      wsSend({ type: 'gate_action', action, agent });
+      dispatch({ type: 'UPDATE_AGENT', payload: { name: agent, status: 'running', summary: 'Regenerating…' } });
+      dispatch({ type: 'SET_GATE', payload: null });
     } else {
       wsSend({ type: 'gate_action', action, agent });
-      if (action === 'Regenerate') {
-        dispatch({ type: 'UPDATE_AGENT', payload: { name: agent, status: 'running', summary: 'Regenerating…' } });
-        dispatch({ type: 'SET_GATE', payload: null });
-      }
     }
   };
 

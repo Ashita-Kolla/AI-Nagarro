@@ -176,70 +176,38 @@ will be used by 6 downstream agents — Architect,
 Developer, QA, DevOps, PM, and Optimisation.
 
 1. BUSINESS REQUIREMENTS
-   Write 6-10 high-level business requirements.
+   Write 5-7 high-level business requirements.
    Format: "BR-001: The system must..."
    These are business needs, not technical specs.
-   Cover: core purpose, user needs, compliance, 
-   performance, security, scalability, business goals.
+   Cover: core purpose, user needs, performance, security, scalability.
 
 2. USER STORIES
    Write one user story per major feature.
-   Minimum 6 stories, maximum 15.
+   Minimum 4 stories, maximum 6.
    
    Format exactly:
    - id: US-001
-   - role: specific type of user (not just "user")
-   - action: what they want to do — specific and detailed
-   - benefit: measurable outcome for them
-   - acceptance_criteria: list of 3-5 measurable, 
-     testable conditions. Never write "works correctly".
-     Always specify exact behaviour, timing, or output.
-
-   Good acceptance criterion:
-   "Booking form displays inline error 'Please enter 
-   a valid email address' when email field contains 
-   no @ symbol and user clicks Submit"
-
-   Bad acceptance criterion:
-   "Form validates correctly"
+   - role: specific type of user
+   - action: what they want to do (be concise)
+   - benefit: measurable outcome
+   - acceptance_criteria: list of 2-3 measurable, testable conditions.
 
 3. FUNCTIONAL REQUIREMENTS
-   One functional requirement per major system behaviour.
+   One requirement per major system behaviour. Maximum 8.
    Format: "FR-001: The system must..."
-   Cover: all features mentioned in the brief, 
-   all behaviours implied by user stories, 
-   all integrations, all data operations.
 
 4. NON-FUNCTIONAL REQUIREMENTS
-   Cover these categories explicitly if relevant:
-   - Performance (load times, response times)
-   - Security (auth, data encryption, GDPR)
-   - Scalability (concurrent users, data volume)
-   - Accessibility (WCAG level)
-   - Availability (uptime SLA)
-   - Compatibility (browsers, devices, screen sizes)
+   Cover only the most relevant categories (max 2 items each):
+   - Performance, Security, Scalability, Availability
 
 5. ASSUMPTIONS
-   List every assumption you made due to missing 
-   information. Be explicit. Downstream agents 
-   will treat these as approved decisions.
+   List up to 5 key assumptions.
 
 6. OUT OF SCOPE
-   List everything explicitly NOT included based 
-   on the brief. If something is a common feature 
-   that the brief did not mention, call it out here.
+   List up to 4 explicitly excluded items.
 
 7. CONFIDENCE SCORE
-   Score from 0-100 how complete and reliable 
-   this analysis is.
-   
-   Scale:
-   0-40: Brief was very vague. Many assumptions made.
-   41-70: Brief was mostly clear. Some gaps filled.
-   71-90: Brief was good. Minor assumptions only.
-   91-100: Brief was complete. No significant gaps.
-   
-   Write one sentence explaining the score honestly.
+   Score 0-100 with one sentence of reasoning.
 
 ---
 

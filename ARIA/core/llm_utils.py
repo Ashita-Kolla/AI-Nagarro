@@ -3,30 +3,52 @@ import json
 import re
 from groq import Groq
 
+# ── Tiered model assignment ─────────────────────────────────────────────────
+# Heavy agents that need reasoning get the 70b model.
+# Light agents (routing, infra, governance) use the fast 8b model.
+# NOTE: llama-3.3-70b-versatile TPD quota exhausted — all on 8b-instant until reset.
 MODEL_MAP = {
-    "BA": "llama-3.3-70b-versatile",
-    "Architect": "llama-3.3-70b-versatile",
-    "Developer": "llama-3.3-70b-versatile",
-    "Environment": "llama-3.3-70b-versatile",
-    "QA": "llama-3.3-70b-versatile",
-    "DevOps": "llama-3.3-70b-versatile",
-    "PM": "llama-3.3-70b-versatile",
-    "Supervisor": "llama-3.3-70b-versatile"
+    "BA":          "llama-3.1-8b-instant",
+    "Architect":   "llama-3.1-8b-instant",
+    "Developer":   "llama-3.1-8b-instant",
+    "Environment": "llama-3.1-8b-instant",
+    "QA":          "llama-3.1-8b-instant",
+    "DevOps":      "llama-3.1-8b-instant",
+    "PM":          "llama-3.1-8b-instant",
+    "Supervisor":  "llama-3.1-8b-instant",
 }
 
-def call_llm(prompt, agent_name=None, model="llama-3.3-70b-versatile", max_tokens=2000, temperature=0.3):
+# ── Per-agent output token caps ──────────────────────────────────────────────
+# Tight caps stop models from rambling and burning the daily budget.
+MAX_TOKENS_MAP = {
+    "BA":          2500,  # BA JSON is verbose — needs room for all requirements
+    "Architect":   1800,  # architecture JSON
+    "Developer":   4000,  # code generation — needs most tokens
+    "Environment":  500,  # just a list of shell commands
+    "QA":          1500,  # test file JSON
+    "DevOps":      1000,  # docker / ci JSON
+    "PM":          1200,  # governance report
+    "Supervisor":   700,  # routing JSON only
+}
+
+def call_llm(prompt, agent_name=None, model="llama-3.1-8b-instant", max_tokens=1200, temperature=0.3):
     """
     Unified LLM caller using Groq API.
     Wraps the call in a try/except block.
-    Dynamically switches models based on agent_name if provided.
+    Dynamically switches models AND token caps based on agent_name if provided.
     """
     if agent_name and agent_name in MODEL_MAP:
         model = MODEL_MAP[agent_name]
+    # Agent cap ALWAYS wins — replaces caller default entirely.
+    # Using min() was a bug: it let the low function default (1200) suppress
+    # higher per-agent caps like BA=2500, Developer=4000.
+    if agent_name and agent_name in MAX_TOKENS_MAP:
+        max_tokens = MAX_TOKENS_MAP[agent_name]
 
     client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
     
     try:
-        print(f"[LLM] Calling model '{model}' for agent '{agent_name or 'Unknown'}'")
+        print(f"[LLM] Calling model '{model}' for agent '{agent_name or 'Unknown'}' (max_tokens={max_tokens})")
         response = client.chat.completions.create(
             messages=[
                 {
@@ -37,6 +59,7 @@ def call_llm(prompt, agent_name=None, model="llama-3.3-70b-versatile", max_token
             model=model,
             temperature=temperature,
             max_tokens=max_tokens,
+            response_format={"type": "json_object"}
         )
         return response.choices[0].message.content
     except Exception as e:

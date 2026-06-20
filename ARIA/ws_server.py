@@ -140,6 +140,54 @@ async def websocket_endpoint(websocket: WebSocket):
             # ── Forward human-gate decision to the waiting pipeline thread ──
             elif msg.get("type") == "gate_action":
                 in_q.put(msg)
+                
+            # ── Save Scripts (Safe UI approach) ──
+            elif msg.get("type") == "save_scripts":
+                agent_name = msg.get("agent")
+                if agent_name == "Environment":
+                    script_content = msg.get("script_content", "")
+                    env_dir = os.path.join("outputs", "Environment")
+                    os.makedirs(env_dir, exist_ok=True)
+                    with open(os.path.join(env_dir, "setup.ps1"), "w", encoding="utf-8") as f:
+                        f.write(script_content)
+                elif agent_name == "QA":
+                    test_suite = msg.get("test_suite", [])
+                    qa_dir = os.path.join("outputs", "QA", "tests")
+                    os.makedirs(qa_dir, exist_ok=True)
+                    for test in test_suite:
+                        filename = test.get("file")
+                        code = test.get("code")
+                        if filename and code:
+                            with open(os.path.join(qa_dir, filename), "w", encoding="utf-8") as f:
+                                f.write(code)
+
+            # ── Execute Environment Script (Test Run) ──
+            elif msg.get("type") == "test_run_script":
+                script_content = msg.get("script_content", "")
+                commands = script_content.split('\n')
+                def do_test_run():
+                    try:
+                        from agents.environment import execute_setup_script
+                        # Pass a dummy name and the content
+                        result = execute_setup_script("setup.ps1", commands)
+                        push({"type": "test_run_result", "status": result["status"], "log": result["log"]})
+                    except Exception as e:
+                        push({"type": "test_run_result", "status": "FAIL", "log": f"Server error: {e}"})
+                threading.Thread(target=do_test_run, daemon=True).start()
+
+            # ── Execute QA Playwright Scripts (Test Run) ──
+            elif msg.get("type") == "test_run_qa":
+                test_suite = msg.get("test_suite", [])
+                def do_qa_test_run():
+                    try:
+                        from agents.qa import execute_playwright_tests
+                        result = execute_playwright_tests(test_suite)
+                        status = "PASS" if result.get("failed", 0) == 0 else "FAIL"
+                        log = f"Total: {result.get('total_tests', 0)} | Passed: {result.get('passed', 0)} | Failed: {result.get('failed', 0)}\n\n{result.get('log', '')}"
+                        push({"type": "test_run_result", "status": status, "log": log})
+                    except Exception as e:
+                        push({"type": "test_run_result", "status": "FAIL", "log": f"Server error: {e}"})
+                threading.Thread(target=do_qa_test_run, daemon=True).start()
 
     except WebSocketDisconnect:
         pass

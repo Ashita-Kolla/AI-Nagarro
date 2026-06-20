@@ -5,14 +5,14 @@ from core.llm_utils import call_llm, parse_json_from_llm
 def build_prompt(context_manager, correction: str = None) -> str:
     context = context_manager.get_context()
     
-    # Extract upstream outputs
+    # Extract upstream summaries for token-efficient prompts
     user_brief = context.get("USER_BRIEF", "")
-    supervisor_output = context.get("Supervisor", {})
-    ba_output = context.get("BA", {})
-    architect_output = context.get("Architect", {})
-    developer_output = context.get("Developer", {})
-    qa_output = context.get("QA", {})
-    devops_output = context.get("DevOps", {})
+    supervisor_output = context_manager.get_summary("Supervisor")
+    ba_output = context_manager.get_summary("BA")
+    architect_output = context_manager.get_summary("Architect")
+    developer_output = context_manager.get_summary("Developer")
+    qa_output = context_manager.get_summary("QA")
+    devops_output = context_manager.get_summary("DevOps")
 
     prompt = f"""You are the PM Agent for ARIA, a multi-agent SDLC system.
 
@@ -24,23 +24,23 @@ You ONLY analyze, validate, and decide.
 USER BRIEF:
 {user_brief}
 
-SUPERVISOR OUTPUT:
+SUPERVISOR OUTPUT (summary):
 {json.dumps(supervisor_output, indent=2)}
 
-BA OUTPUT:
-{str(ba_output)[:1000]}
+BA OUTPUT (summary):
+{json.dumps(ba_output, indent=2)}
 
-ARCHITECT OUTPUT:
-{str(architect_output)[:1000]}
+ARCHITECT OUTPUT (summary):
+{json.dumps(architect_output, indent=2)}
 
-DEVELOPER OUTPUT:
-{str(developer_output)[:1000]}
+DEVELOPER OUTPUT (summary):
+{json.dumps(developer_output, indent=2)}
 
-QA OUTPUT:
-{str(qa_output)[:1000]}
+QA OUTPUT (summary):
+{json.dumps(qa_output, indent=2)}
 
-DEVOPS OUTPUT:
-{str(devops_output)[:1000]}
+DEVOPS OUTPUT (summary):
+{json.dumps(devops_output, indent=2)}
 
 === YOUR JOB ===
 Perform full project governance.
