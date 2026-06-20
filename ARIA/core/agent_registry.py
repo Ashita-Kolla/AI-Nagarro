@@ -17,10 +17,16 @@ AGENT_REGISTRY = {
         "requires": ["Architect"],
         "description": "Development agent responsible for detailing technical implementation steps."
     },
+    "Environment": {
+        "name": "Environment",
+        "prompt_file": "step_04b_environment.md",
+        "requires": ["Developer"],
+        "description": "Environment agent responsible for setting up the local workspace for tests."
+    },
     "QA": {
         "name": "QA",
         "prompt_file": "step_05_qa.md",
-        "requires": ["Developer"],
+        "requires": ["Environment"],
         "description": "Quality Assurance agent responsible for creating test plans and edge cases."
     },
     "DevOps": {
@@ -66,7 +72,7 @@ def resolve_execution_queue(required_agents):
     # Sort them according to a hardcoded standard order based on the registry
     # to guarantee a clean linear flow (BA -> Architect -> Developer -> QA -> DevOps -> PM -> Optimisation)
     # This acts as our topological sort since the flow is mostly linear.
-    standard_order = ["BA", "Architect", "Developer", "QA", "DevOps", "PM", "Optimisation"]
+    standard_order = ["BA", "Architect", "Developer", "Environment", "QA", "DevOps", "PM", "Optimisation"]
     
     final_queue = [agent for agent in standard_order if agent in queue_set]
     return final_queue

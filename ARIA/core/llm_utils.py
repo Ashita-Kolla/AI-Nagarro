@@ -4,12 +4,13 @@ import re
 from groq import Groq
 
 MODEL_MAP = {
-    "BA": "mixtral-8x7b-32768",
-    "Architect": "mixtral-8x7b-32768",
-    "Developer": "mixtral-8x7b-32768",
-    "QA": "llama3-8b-8192",
-    "DevOps": "llama3-8b-8192",
-    "PM": "llama3-8b-8192",
+    "BA": "llama-3.3-70b-versatile",
+    "Architect": "llama-3.3-70b-versatile",
+    "Developer": "llama-3.3-70b-versatile",
+    "Environment": "llama-3.3-70b-versatile",
+    "QA": "llama-3.3-70b-versatile",
+    "DevOps": "llama-3.3-70b-versatile",
+    "PM": "llama-3.3-70b-versatile",
     "Supervisor": "llama-3.3-70b-versatile"
 }
 
