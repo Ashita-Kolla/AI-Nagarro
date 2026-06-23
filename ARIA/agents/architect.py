@@ -268,7 +268,7 @@ DIAGRAM REQUIREMENTS (Mermaid):
   classDef database fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000;
   classDef external fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000;
   Web_App[React Web App]:::frontend --> API_Gateway[FastAPI Gateway]:::backend
-- "mermaid_erd": Must be a valid `erDiagram`. Ensure standard entity relationships.
+- "mermaid_erd": Must be a valid `erDiagram`. Ensure standard entity relationships. Do not mix `erDiagram` syntax with `classDiagram` syntax (e.g., do not use `class` inside an `erDiagram`). Make sure all relationships are complete before closing the string.
 
 OUTPUT SCHEMA (Must match exactly):
 {{

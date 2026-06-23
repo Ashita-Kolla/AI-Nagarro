@@ -88,10 +88,18 @@ function MermaidChart({ chart }) {
        if (cleanChart.endsWith('```')) cleanChart = cleanChart.substring(0, cleanChart.length - 3);
        cleanChart = cleanChart.trim();
 
-       window.mermaid.render(`mermaid-${Math.floor(Math.random()*10000)}`, cleanChart).then(({ svg }) => {
+       const id = `mermaid-${Math.floor(Math.random()*10000)}`;
+       window.mermaid.render(id, cleanChart).then(({ svg }) => {
+          if (svg.includes("Syntax error")) {
+             throw new Error("Mermaid Syntax Error");
+          }
           containerRef.current.innerHTML = svg;
        }).catch(e => {
           containerRef.current.innerHTML = `<div class="text-red-400 text-xs p-3 bg-red-900/20 border border-red-800/50 rounded flex flex-col gap-2"><span><b>Mermaid Syntax Error</b></span><span class="opacity-80">The agent generated invalid diagram code. Expand "Show raw mermaid syntax" below to see it.</span></div>`;
+          const errorSvg = document.getElementById('d' + id);
+          if (errorSvg) errorSvg.remove();
+          const errorContainer = document.getElementById(id);
+          if (errorContainer) errorContainer.remove();
        });
     }
   }, [chart]);
@@ -112,6 +120,8 @@ function OutputModal({ agent, onClose }) {
   const [qaTestSuites, setQaTestSuites] = useState([]);
   const [testRunLog, setTestRunLog] = useState(null);
   const [isTestRunning, setIsTestRunning] = useState(false);
+  const [singleTestLogs, setSingleTestLogs] = useState({});
+  const [runningSingleTests, setRunningSingleTests] = useState({});
 
   useEffect(() => {
     if (agent.name === 'Environment' && output && output.setup_commands) {
@@ -138,13 +148,22 @@ function OutputModal({ agent, onClose }) {
   const handleTestRunQa = () => {
     if (qaTestSuites.length === 0) return;
     setIsTestRunning(true);
-    setTestRunLog("Running Playwright test suite...");
+    setTestRunLog("Running fast local Python tests...");
     const ws = window._wsRef?.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ type: 'test_run_qa', test_suite: qaTestSuites }));
     } else {
       setTestRunLog("WebSocket not connected.");
       setIsTestRunning(false);
+    }
+  };
+
+  const handleTestRunSingle = (filename, code) => {
+    setRunningSingleTests(prev => ({ ...prev, [filename]: true }));
+    setSingleTestLogs(prev => ({ ...prev, [filename]: null }));
+    const ws = window._wsRef?.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'test_run_single_qa', filename, code }));
     }
   };
 
@@ -159,8 +178,17 @@ function OutputModal({ agent, onClose }) {
       setIsTestRunning(false);
       setTestRunLog(`[${e.detail.status}]\n${e.detail.log}`);
     };
+    const handleSingleTestResult = (e) => {
+      const { filename, status, log } = e.detail;
+      setRunningSingleTests(prev => ({ ...prev, [filename]: false }));
+      setSingleTestLogs(prev => ({ ...prev, [filename]: { status, log } }));
+    };
     window.addEventListener('test_run_result', handleTestResult);
-    return () => { window.removeEventListener('test_run_result', handleTestResult); };
+    window.addEventListener('test_run_single_result', handleSingleTestResult);
+    return () => { 
+        window.removeEventListener('test_run_result', handleTestResult); 
+        window.removeEventListener('test_run_single_result', handleSingleTestResult);
+    };
   }, []);
 
   const isBA = agent.name === 'BA' && (output?.user_stories || output?.business_requirements || output?.functional_requirements);
@@ -537,7 +565,7 @@ function OutputModal({ agent, onClose }) {
             ) : isQA && qaTestSuites.length > 0 ? (
               <div className="flex flex-col h-full gap-6">
                 <div className="flex items-center justify-between sticky top-0 bg-gray-900 pb-2 z-10">
-                  <h3 className="text-sm font-semibold text-gray-300">Playwright Test Suite ({qaTestSuites.length} files)</h3>
+                  <h3 className="text-sm font-semibold text-gray-300">Python Test Suite ({qaTestSuites.length} files)</h3>
                   <button onClick={handleTestRunQa} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
                     {isTestRunning ? 'Running tests...' : '▶ Test Run Scripts'}
                   </button>
@@ -546,9 +574,43 @@ function OutputModal({ agent, onClose }) {
                   <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
                 )}
                 {qaTestSuites.map((test, idx) => (
-                  <div key={idx} className="bg-gray-800/60 border border-gray-700 rounded-xl p-4">
-                    <div className="text-sm font-mono text-gray-300 mb-2">{test.file}</div>
-                    <textarea value={test.code} onChange={(e) => updateQaTestCode(idx, e.target.value)} className="w-full h-48 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-xs text-green-400" spellCheck={false} />
+                  <div key={idx} className="bg-gray-800/60 border border-gray-700 rounded-xl overflow-hidden flex flex-col">
+                    <div className="flex items-center justify-between bg-gray-800 px-4 py-3 border-b border-gray-700">
+                      <div className="text-sm font-mono text-gray-300 flex items-center gap-2">
+                        <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        {test.file}
+                      </div>
+                      <button 
+                        onClick={() => handleTestRunSingle(test.file, test.code)} 
+                        disabled={runningSingleTests[test.file]}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-green-700 hover:bg-green-600 disabled:opacity-50 text-white text-xs font-semibold rounded transition-colors"
+                      >
+                        {runningSingleTests[test.file] ? 'Running...' : '▶ Run Code'}
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-col xl:flex-row h-96">
+                      <textarea 
+                        value={test.code} 
+                        onChange={(e) => updateQaTestCode(idx, e.target.value)} 
+                        className="w-full xl:w-1/2 h-full bg-gray-950 border-r border-gray-700 p-4 font-mono text-xs text-green-400 resize-none outline-none focus:bg-gray-900/50 transition-colors" 
+                        spellCheck={false} 
+                      />
+                      <div className="w-full xl:w-1/2 h-full bg-black p-4 overflow-y-auto font-mono text-xs">
+                        {singleTestLogs[test.file] ? (
+                          <div>
+                            <div className={`mb-2 font-bold ${singleTestLogs[test.file].status === 'PASS' ? 'text-green-500' : 'text-red-500'}`}>
+                              Status: {singleTestLogs[test.file].status}
+                            </div>
+                            <pre className="text-gray-400 whitespace-pre-wrap leading-relaxed">{singleTestLogs[test.file].log}</pre>
+                          </div>
+                        ) : (
+                          <div className="text-gray-600 flex items-center h-full justify-center text-center px-4">
+                            {runningSingleTests[test.file] ? "Executing..." : "Click 'Run Code' to execute this test and view output here."}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -631,6 +693,10 @@ export default function App() {
 
       case 'test_run_result':
         window.dispatchEvent(new CustomEvent('test_run_result', { detail: msg }));
+        break;
+
+      case 'test_run_single_result':
+        window.dispatchEvent(new CustomEvent('test_run_single_result', { detail: msg }));
         break;
 
       case 'agent_output':
@@ -912,6 +978,11 @@ export default function App() {
                       <button onClick={() => handleGateAction('Regenerate')} className="flex-1 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-xs font-semibold rounded-lg transition-colors">
                         ↺ Regenerate
                       </button>
+                      {agent.name === 'QA' && (
+                        <button onClick={() => handleGateAction('LoopToDeveloper')} className="flex-1 py-1.5 bg-purple-700 hover:bg-purple-600 text-white text-xs font-semibold rounded-lg transition-colors" title="Loop back to the Developer to fix failing tests">
+                          ↶ Send to Dev
+                        </button>
+                      )}
                     </div>
                   </div>
                 )}

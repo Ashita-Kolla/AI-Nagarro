@@ -8,14 +8,14 @@ from groq import Groq
 # Light agents (routing, infra, governance) use the fast 8b model.
 # NOTE: llama-3.3-70b-versatile TPD quota exhausted — all on 8b-instant until reset.
 MODEL_MAP = {
-    "BA":          "llama-3.1-8b-instant",
-    "Architect":   "llama-3.1-8b-instant",
-    "Developer":   "llama-3.1-8b-instant",
-    "Environment": "llama-3.1-8b-instant",
-    "QA":          "llama-3.1-8b-instant",
-    "DevOps":      "llama-3.1-8b-instant",
-    "PM":          "llama-3.1-8b-instant",
-    "Supervisor":  "llama-3.1-8b-instant",
+    "BA":          "llama-3.3-70b-versatile",
+    "Architect":   "llama-3.3-70b-versatile",
+    "Developer":   "llama-3.3-70b-versatile",
+    "Environment": "llama-3.3-70b-versatile",
+    "QA":          "llama-3.3-70b-versatile",
+    "DevOps":      "llama-3.3-70b-versatile",
+    "PM":          "llama-3.3-70b-versatile",
+    "Supervisor":  "llama-3.3-70b-versatile",
 }
 
 # ── Per-agent output token caps ──────────────────────────────────────────────

@@ -135,6 +135,36 @@ class LangGraphRunner:
                 self.push({"type": "log", "message": f"Regenerating {agent_name} with no changes..."})
                 return {"human_correction": "", "human_action": {}}
                 
+            elif action == "LoopToDeveloper":
+                self.push({"type": "log", "message": f"Looping back from {agent_name} to Developer to fix QA test failures..."})
+                qa_output = state.get("agent_outputs", {}).get(agent_name, {})
+                
+                # Extract execution results if available, else just a general message
+                exec_results = qa_output.get("execution_results", {})
+                failed = exec_results.get("failed", 0)
+                log_out = exec_results.get("log", "No log provided.")
+                bug_report = json.dumps(qa_output.get("bug_report", []), indent=2)
+                
+                auto_correction = (
+                    f"AUTOMATED FEEDBACK FROM QA:\n"
+                    f"Tests failed: {failed}\n"
+                    f"Bug Reports:\n{bug_report}\n"
+                    f"Execution Log:\n{log_out}\n"
+                    f"Please update your output to resolve these issues."
+                )
+                
+                completed = list(state.get("completed_agents", []))
+                for a in ["Developer", "Environment", "QA"]:
+                    if a in completed:
+                        completed.remove(a)
+                        
+                return {
+                    "current_agent": "Developer",
+                    "human_correction": auto_correction,
+                    "human_action": {},
+                    "completed_agents": completed
+                }
+                
             return {}
 
         # 5. Conditional Routing logic

@@ -180,14 +180,52 @@ async def websocket_endpoint(websocket: WebSocket):
                 test_suite = msg.get("test_suite", [])
                 def do_qa_test_run():
                     try:
-                        from agents.qa import execute_playwright_tests
-                        result = execute_playwright_tests(test_suite)
+                        from agents.qa import execute_local_tests
+                        result = execute_local_tests(test_suite)
                         status = "PASS" if result.get("failed", 0) == 0 else "FAIL"
                         log = f"Total: {result.get('total_tests', 0)} | Passed: {result.get('passed', 0)} | Failed: {result.get('failed', 0)}\n\n{result.get('log', '')}"
                         push({"type": "test_run_result", "status": status, "log": log})
                     except Exception as e:
                         push({"type": "test_run_result", "status": "FAIL", "log": f"Server error: {e}"})
                 threading.Thread(target=do_qa_test_run, daemon=True).start()
+
+            # ── Execute Single QA Script (Playground) ──
+            elif msg.get("type") == "test_run_single_qa":
+                filename = msg.get("filename")
+                code = msg.get("code")
+                def do_single_qa_test_run():
+                    try:
+                        import subprocess
+                        import sys
+                        import os
+                        qa_dir = os.path.abspath(os.path.join("outputs", "QA", "tests"))
+                        codebase_dir = os.path.abspath(os.path.join("outputs", "Developer", "codebase"))
+                        codebase_tests_dir = os.path.join(codebase_dir, "tests")
+                        os.makedirs(qa_dir, exist_ok=True)
+                        os.makedirs(codebase_tests_dir, exist_ok=True)
+
+                        # Save into Developer/codebase/tests (primary - imports resolve here)
+                        test_path = os.path.join(codebase_tests_dir, filename)
+                        with open(test_path, "w", encoding="utf-8") as f:
+                            f.write(code)
+                        # Also keep a copy in QA/tests for records
+                        with open(os.path.join(qa_dir, filename), "w", encoding="utf-8") as f:
+                            f.write(code)
+
+                        # Run from codebase root so `from app.xyz import abc` works natively
+                        result = subprocess.run(
+                            [sys.executable, test_path],
+                            cwd=codebase_dir,
+                            capture_output=True,
+                            text=True,
+                            timeout=15
+                        )
+                        status = "PASS" if result.returncode == 0 else "FAIL"
+                        log = f"Exit code {result.returncode}\n{result.stdout}\n{result.stderr}"
+                        push({"type": "test_run_single_result", "filename": filename, "status": status, "log": log})
+                    except Exception as e:
+                        push({"type": "test_run_single_result", "filename": filename, "status": "FAIL", "log": f"Server error: {e}"})
+                threading.Thread(target=do_single_qa_test_run, daemon=True).start()
 
     except WebSocketDisconnect:
         pass
