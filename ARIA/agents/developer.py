@@ -32,13 +32,15 @@ ARCHITECTURE DESIGN (SUMMARY):
         prompt += f"\nQA FEEDBACK (PREVIOUS RUN):\n{_json2.dumps(qa_feedback, indent=2, ensure_ascii=False)}\nFix ONLY reported issues. Regenerate corrected codebase while preserving structure.\n"
 
     prompt += """
-=== RESPONSIBILITIES ===
-1. Generate a core working project including folder structure, main source code files, config, and entrypoints.
-2. Strictly follow the Architect output (modules, services, patterns).
-3. Ensure the *core* BA requirements are implemented.
-4. Output must be testable via Playwright (if applicable), deterministic, and stable.
-5. CRITICAL: You are bound by a strict 10000 token output limit. If you try to write too much code, the JSON will truncate and fail validation! You MUST write ONLY the Minimum Viable Product (MVP) files. Use stubs or comments for non-critical features to save tokens. Do not write massive HTML/CSS templates. Keep it concise.
-
+=== RESPONSIBILITIES & STRICT RULES ===
+1. EXTREME SIMPLICITY: You must keep the codebase as simple as humanly possible. Put all backend logic into a single `main.py` file if possible. DO NOT create complex folder structures (like `src/api/`, `src/database/`) unless explicitly requested.
+2. NO UNNECESSARY DEPENDENCIES: Do not import complex external libraries (like `bcrypt`, `sqlalchemy`) unless strictly requested. Use simple in-memory dictionaries or standard libraries if a database is requested but no specific DB is mandated.
+3. RUNNABLE CODE: The generated code MUST be fully runnable instantly.
+4. CORRECT IMPORTS: Ensure all imports match the exact file paths provided in the `file_tree`.
+5. PYTHON PACKAGES: If you must create folders, you MUST include `__init__.py` files in any directories that act as Python packages.
+6. NO PLACEHOLDERS: Provide complete, working code for the MVP. Do not leave "TODO" or "pass" for critical functionality.
+7. Output must be testable, deterministic, and stable.
+8. CRITICAL: You are bound by a strict token output limit. You MUST write ONLY the absolute Minimum Viable Product (MVP) files. Keep it concise.
 """
 
     if correction:
@@ -48,17 +50,23 @@ ARCHITECTURE DESIGN (SUMMARY):
 === OUTPUT REQUIREMENTS ===
 You must return strictly valid JSON matching EXACTLY this schema.
 Do NOT output any markdown blocks outside the JSON.
+The structure shown below is just an EXAMPLE. You must output the CORRECT structure dynamically based on the technology stack chosen.
 
 {
-  "project_name": "",
-  "language_stack": [],
+  "project_name": "example_project",
+  "language_stack": ["python", "fastapi"],
   "file_tree": [
-    "app/",
-    "app/main.py"
+    "src/",
+    "src/__init__.py",
+    "src/main.py"
   ],
   "files": [
     {
-      "path": "app/main.py",
+      "path": "src/__init__.py",
+      "content": ""
+    },
+    {
+      "path": "src/main.py",
       "content": "print('Hello World')"
     }
   ],

@@ -20,7 +20,8 @@ from typing import Any
 MAX_STRING_CHARS   = 200   # cap on any single string value (was 400)
 MAX_LIST_ITEMS     = 4     # cap on how many items to keep per list (was 5)
 CODE_KEYS          = {"content", "code", "dockerfile", "docker_compose",
-                      "github_actions", "env_example"}  # keys treated as code blobs
+                      "github_actions", "env_example", "local_deployment_guide",
+                      "mermaid_architecture", "mermaid_erd", "mermaid_gantt"}  # keys treated as code blobs
 
 # ── Per-agent extraction rules ─────────────────────────────────────────────────
 # Maps agent_name -> list of top-level keys to KEEP in the summary.
@@ -33,8 +34,8 @@ AGENT_KEEP_KEYS = {
         # non_functional_requirements, out_of_scope dropped — less critical downstream
     ],
     "Architect": [
-        "tech_stack", "architecture_pattern", "modules",
-        "database", "api_design", "deployment_target", "confidence_score"
+        "architecture_summary", "technology_stack", "system_components",
+        "database_design", "api_architecture", "confidence_score"
     ],
     "Developer": [
         "project_name", "language_stack", "file_tree", "entrypoint",

@@ -6,7 +6,7 @@ from core.context_manager import ContextManager
 from core.agent_runner import AgentRunner
 
 # Load environment variables (GROQ_API_KEY)
-load_dotenv()
+load_dotenv(override=True)
 
 def get_user_brief():
     print("Please enter your project brief. Type 'END' on a new line to finish:")

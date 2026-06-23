@@ -20,7 +20,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
-load_dotenv()
+load_dotenv(override=True)
 
 # Ensure the ARIA root is in sys.path so core/ and agents/ resolve correctly
 sys.path.insert(0, os.path.dirname(__file__))
@@ -198,33 +198,53 @@ async def websocket_endpoint(websocket: WebSocket):
                         import subprocess
                         import sys
                         import os
+                        from agents.qa import ensure_python_packages, fix_code_string
+
                         qa_dir = os.path.abspath(os.path.join("outputs", "QA", "tests"))
                         codebase_dir = os.path.abspath(os.path.join("outputs", "Developer", "codebase"))
                         codebase_tests_dir = os.path.join(codebase_dir, "tests")
                         os.makedirs(qa_dir, exist_ok=True)
                         os.makedirs(codebase_tests_dir, exist_ok=True)
 
-                        # Save into Developer/codebase/tests (primary - imports resolve here)
-                        test_path = os.path.join(codebase_tests_dir, filename)
-                        with open(test_path, "w", encoding="utf-8") as f:
-                            f.write(code)
-                        # Also keep a copy in QA/tests for records
-                        with open(os.path.join(qa_dir, filename), "w", encoding="utf-8") as f:
-                            f.write(code)
+                        # Ensure all Python package dirs have __init__.py before running
+                        ensure_python_packages(codebase_dir)
 
-                        # Run from codebase root so `from app.xyz import abc` works natively
+                        # Enforce .py extension — safety net in case frontend sends .js name
+                        safe_filename = filename
+                        if safe_filename and not safe_filename.endswith(".py"):
+                            safe_filename = os.path.splitext(safe_filename)[0] + ".py"
+
+                        # Repair literal \n in code (LLM double-escape bug)
+                        safe_code = fix_code_string(code)
+
+                        # Save into Developer/codebase/tests (primary — imports resolve here)
+                        test_path = os.path.join(codebase_tests_dir, safe_filename)
+                        with open(test_path, "w", encoding="utf-8") as f:
+                            f.write(safe_code)
+                        # Also keep a copy in QA/tests for frontend artifact records
+                        with open(os.path.join(qa_dir, safe_filename), "w", encoding="utf-8") as f:
+                            f.write(safe_code)
+
+
+                        # PYTHONPATH = codebase_dir so `from app.xyz import ...` resolves.
+                        # Python adds the script's own dir (tests/) to sys.path[0] when run
+                        # by absolute path — NOT the cwd — so we must set PYTHONPATH explicitly.
+                        env = os.environ.copy()
+                        env["PYTHONPATH"] = codebase_dir
                         result = subprocess.run(
                             [sys.executable, test_path],
                             cwd=codebase_dir,
+                            env=env,
                             capture_output=True,
                             text=True,
-                            timeout=15
+                            timeout=30
                         )
                         status = "PASS" if result.returncode == 0 else "FAIL"
                         log = f"Exit code {result.returncode}\n{result.stdout}\n{result.stderr}"
-                        push({"type": "test_run_single_result", "filename": filename, "status": status, "log": log})
+                        push({"type": "test_run_single_result", "filename": safe_filename, "status": status, "log": log})
                     except Exception as e:
                         push({"type": "test_run_single_result", "filename": filename, "status": "FAIL", "log": f"Server error: {e}"})
+
                 threading.Thread(target=do_single_qa_test_run, daemon=True).start()
 
     except WebSocketDisconnect:

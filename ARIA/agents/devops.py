@@ -32,7 +32,8 @@ QA Results (summary): {_json.dumps(qa_output, indent=2)}
 4. Define deployment strategy (container / VM / serverless, scaling, runtime constraints)
 5. Generate a deployment contract JSON
 6. List infrastructure assumptions and limitations
-7. Provide a confidence score (0-100) with reasoning
+7. Generate a Local Deployment Guide (Markdown). You MUST provide NATIVE run commands (e.g., `python -m uvicorn main:app`, `npm start`) to run the app directly on the host machine without Docker. Native run commands are MANDATORY.
+8. Provide a confidence score (0-100) with reasoning
 """
 
     if correction:
@@ -61,6 +62,7 @@ You must return strictly valid JSON matching exactly this schema, with no additi
     "runtime": "",
     "health_check": ""
   },
+  "local_deployment_guide": "# Local Deployment Guide\\n\\nRun `docker-compose up`...",
   "assumptions": [],
   "limitations": [],
   "confidence_score": 0,
@@ -145,6 +147,14 @@ def post_approval(data: dict, context_manager) -> list:
         with open(contract_path, "w", encoding="utf-8") as f:
             json.dump(contract, f, indent=2, ensure_ascii=False)
         generated_files.append(contract_path)
+
+    # 7. Local Deployment Guide
+    local_guide = data.get("local_deployment_guide", "")
+    if local_guide:
+        guide_path = os.path.join(out_dir, "LOCAL_DEPLOYMENT.md")
+        with open(guide_path, "w", encoding="utf-8") as f:
+            f.write(local_guide)
+        generated_files.append(guide_path)
 
     print(f"DevOps artifacts exported to {out_dir}.")
     return generated_files

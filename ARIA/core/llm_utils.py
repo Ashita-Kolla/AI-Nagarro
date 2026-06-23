@@ -8,14 +8,14 @@ from groq import Groq
 # Light agents (routing, infra, governance) use the fast 8b model.
 # NOTE: llama-3.3-70b-versatile TPD quota exhausted — all on 8b-instant until reset.
 MODEL_MAP = {
-    "BA":          "llama-3.3-70b-versatile",
-    "Architect":   "llama-3.3-70b-versatile",
-    "Developer":   "llama-3.3-70b-versatile",
-    "Environment": "llama-3.3-70b-versatile",
-    "QA":          "llama-3.3-70b-versatile",
-    "DevOps":      "llama-3.3-70b-versatile",
-    "PM":          "llama-3.3-70b-versatile",
-    "Supervisor":  "llama-3.3-70b-versatile",
+    "BA":          "llama-3.1-8b-instant",
+    "Architect":   "llama-3.1-8b-instant",
+    "Developer":   "llama-3.1-8b-instant",
+    "Environment": "llama-3.1-8b-instant",
+    "QA":          "llama-3.1-8b-instant",
+    "DevOps":      "llama-3.1-8b-instant",
+    "PM":          "llama-3.1-8b-instant",
+    "Supervisor":  "llama-3.1-8b-instant",
 }
 
 # ── Per-agent output token caps ──────────────────────────────────────────────
@@ -23,9 +23,9 @@ MODEL_MAP = {
 MAX_TOKENS_MAP = {
     "BA":          2500,  # BA JSON is verbose — needs room for all requirements
     "Architect":   1800,  # architecture JSON
-    "Developer":   4000,  # code generation — needs most tokens
+    "Developer":   8000,  # code generation — bumped to 8000 for full-stack apps
     "Environment":  500,  # just a list of shell commands
-    "QA":          1500,  # test file JSON
+    "QA":          3000,  # test files need plenty of room for real code
     "DevOps":      1000,  # docker / ci JSON
     "PM":          1200,  # governance report
     "Supervisor":   700,  # routing JSON only

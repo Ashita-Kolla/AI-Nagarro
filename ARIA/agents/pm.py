@@ -49,6 +49,7 @@ Perform full project governance.
 3. Perform alignment validation: Check consistency across all stages.
 4. Identify risks and gaps: Be honest and explicit.
 5. Generate GANTT CHART: Mermaid format and JSON task structure.
+   - CRITICAL: For the Mermaid chart inside the JSON, you MUST use proper `\\n` characters for newlines. DO NOT flatten the chart into a single line.
 6. Generate JIRA CSV EXPORT: Must represent SDLC tasks clearly.
 7. Provide final delivery recommendation.
 """
@@ -85,7 +86,7 @@ You must return strictly valid JSON matching exactly this schema, with no additi
     "Risk 1",
     "Risk 2"
   ],
-  "gantt_mermaid": "",
+  "mermaid_gantt": "gantt\\n  title Project Timeline\\n  dateFormat YYYY-MM-DD\\n  section Phase 1\\n  Task 1: 2024-01-01, 5d",
   "gantt_json": {
     "tasks": []
   },
@@ -137,7 +138,7 @@ def post_approval(data: dict, context_manager) -> list:
         generated_files.append(summary_path)
 
     # 3. Save Gantt Mermaid
-    mermaid_raw = data.get("gantt_mermaid", "")
+    mermaid_raw = data.get("mermaid_gantt", "")
     if mermaid_raw:
         # Clean mermaid code if wrapped in markdown
         mermaid_clean = mermaid_raw.strip()
