@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useReducer, useRef } from 'react';
 
 // --- ICONS ---
-const PaperclipIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>;
-const MicIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>;
-const SendIcon = () => <svg className="w-5 h-5 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>;
-const CheckCircleIcon = ({cls}) => <svg className={cls || "w-5 h-5 text-green-500"} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>;
-const ClockIcon = ({cls}) => <svg className={cls || "w-5 h-5 text-amber-500"} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>;
-const DotsIcon = () => <svg className="w-5 h-5 text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z"/></svg>;
-const ChevronDownIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"/></svg>;
-const ChevronUpIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"/></svg>;
-const XIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg>;
-const ExternalLinkIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>;
-const WarningIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>;
+const PaperclipIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>;
+const MicIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /></svg>;
+const SendIcon = () => <svg className="w-5 h-5 transform rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>;
+const CheckCircleIcon = ({ cls }) => <svg className={cls || "w-5 h-5 text-green-500"} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+const ClockIcon = ({ cls }) => <svg className={cls || "w-5 h-5 text-amber-500"} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
+const DotsIcon = () => <svg className="w-5 h-5 text-gray-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" /></svg>;
+const ChevronDownIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" /></svg>;
+const ChevronUpIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7" /></svg>;
+const XIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>;
+const ExternalLinkIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>;
+const WarningIcon = () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>;
 
-const AGENTS_LIST = ["BA", "Architect", "Developer", "Environment", "QA", "DevOps", "PM", "Optimisation"];
+const AGENTS_LIST = ["BA", "Architect", "Planner", "Developer", "Environment", "QA", "DevOps", "PM", "Optimisation"];
 
 // --- RICH MOCK OUTPUTS ---
 const MOCK_OUTPUTS = {
@@ -78,29 +78,29 @@ function reducer(state, action) {
 // =====================================================
 function MermaidChart({ chart }) {
   const containerRef = useRef(null);
-  
+
   useEffect(() => {
     if (containerRef.current && chart && window.mermaid) {
-       containerRef.current.innerHTML = '';
-       let cleanChart = String(chart).trim();
-       if (cleanChart.startsWith('```mermaid')) cleanChart = cleanChart.substring(10);
-       else if (cleanChart.startsWith('```')) cleanChart = cleanChart.substring(3);
-       if (cleanChart.endsWith('```')) cleanChart = cleanChart.substring(0, cleanChart.length - 3);
-       cleanChart = cleanChart.trim();
+      containerRef.current.innerHTML = '';
+      let cleanChart = String(chart).trim();
+      if (cleanChart.startsWith('```mermaid')) cleanChart = cleanChart.substring(10);
+      else if (cleanChart.startsWith('```')) cleanChart = cleanChart.substring(3);
+      if (cleanChart.endsWith('```')) cleanChart = cleanChart.substring(0, cleanChart.length - 3);
+      cleanChart = cleanChart.trim();
 
-       const id = `mermaid-${Math.floor(Math.random()*10000)}`;
-       window.mermaid.render(id, cleanChart).then(({ svg }) => {
-          if (svg.includes("Syntax error")) {
-             throw new Error("Mermaid Syntax Error");
-          }
-          containerRef.current.innerHTML = svg;
-       }).catch(e => {
-          containerRef.current.innerHTML = `<div class="text-red-400 text-xs p-3 bg-red-900/20 border border-red-800/50 rounded flex flex-col gap-2"><span><b>Mermaid Syntax Error</b></span><span class="opacity-80">The agent generated invalid diagram code. Expand "Show raw mermaid syntax" below to see it.</span></div>`;
-          const errorSvg = document.getElementById('d' + id);
-          if (errorSvg) errorSvg.remove();
-          const errorContainer = document.getElementById(id);
-          if (errorContainer) errorContainer.remove();
-       });
+      const id = `mermaid-${Math.floor(Math.random() * 10000)}`;
+      window.mermaid.render(id, cleanChart).then(({ svg }) => {
+        if (svg.includes("Syntax error")) {
+          throw new Error("Mermaid Syntax Error");
+        }
+        containerRef.current.innerHTML = svg;
+      }).catch(e => {
+        containerRef.current.innerHTML = `<div class="text-red-400 text-xs p-3 bg-red-900/20 border border-red-800/50 rounded flex flex-col gap-2"><span><b>Mermaid Syntax Error</b></span><span class="opacity-80">The agent generated invalid diagram code. Expand "Show raw mermaid syntax" below to see it.</span></div>`;
+        const errorSvg = document.getElementById('d' + id);
+        if (errorSvg) errorSvg.remove();
+        const errorContainer = document.getElementById(id);
+        if (errorContainer) errorContainer.remove();
+      });
     }
   }, [chart]);
 
@@ -114,7 +114,7 @@ function OutputModal({ agent, onClose }) {
   const [tab, setTab] = useState(0);
   const output = agent.output;
   const hasArtifacts = agent.artifacts && agent.artifacts.length > 0;
-  
+
   // Script Edit State
   const [envScript, setEnvScript] = useState('');
   const [qaTestSuites, setQaTestSuites] = useState([]);
@@ -185,15 +185,16 @@ function OutputModal({ agent, onClose }) {
     };
     window.addEventListener('test_run_result', handleTestResult);
     window.addEventListener('test_run_single_result', handleSingleTestResult);
-    return () => { 
-        window.removeEventListener('test_run_result', handleTestResult); 
-        window.removeEventListener('test_run_single_result', handleSingleTestResult);
+    return () => {
+      window.removeEventListener('test_run_result', handleTestResult);
+      window.removeEventListener('test_run_single_result', handleSingleTestResult);
     };
   }, []);
 
   const isBA = agent.name === 'BA' && (output?.user_stories || output?.business_requirements || output?.functional_requirements);
   const isEnv = agent.name === 'Environment';
   const isQA = agent.name === 'QA';
+  const isDeveloper = agent.name === 'Developer';
 
   // Expose edited data to parent component for Approve action
   useEffect(() => {
@@ -252,11 +253,10 @@ function OutputModal({ agent, onClose }) {
       <>
         {/* Confidence badge */}
         {confidence !== null && (
-          <div className={`mb-5 flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${
-            confidence >= 71 ? 'bg-green-900/20 border-green-700/40 text-green-300' :
-            confidence >= 41 ? 'bg-amber-900/20 border-amber-700/40 text-amber-300' :
-            'bg-red-900/20 border-red-700/40 text-red-300'
-          }`}>
+          <div className={`mb-5 flex items-center gap-3 px-4 py-3 rounded-xl border text-sm ${confidence >= 71 ? 'bg-green-900/20 border-green-700/40 text-green-300' :
+              confidence >= 41 ? 'bg-amber-900/20 border-amber-700/40 text-amber-300' :
+                'bg-red-900/20 border-red-700/40 text-red-300'
+            }`}>
             <span className="font-bold text-base">{confidence}/100</span>
             <span className="text-xs opacity-80">{confidenceReason}</span>
           </div>
@@ -443,7 +443,7 @@ function OutputModal({ agent, onClose }) {
             </button>
           ))}
         </div>
-        
+
         {currentKey === 'Downloads' && hasArtifacts ? (
           <div className="space-y-3">
             <p className="text-sm text-gray-400 mb-4">The following artifacts were generated by {agent.name}:</p>
@@ -502,6 +502,83 @@ function OutputModal({ agent, onClose }) {
     );
   };
 
+  const renderDeveloperOutput = (output) => {
+    const files = output.files || {};
+    const filePaths = Object.keys(files);
+    const setup = output.setup_instructions || {};
+    const steps = setup.steps || [];
+    const envs = setup.environment_variables || [];
+
+    return (
+      <div className="space-y-6">
+        {hasArtifacts && (
+          <div className="space-y-3">
+            <p className="text-sm text-gray-400 mb-4">The following artifacts were generated by {agent.name}:</p>
+            {agent.artifacts.map((path, i) => {
+              const filename = path.split(/[\/\\]/).pop();
+              return (
+                <a key={i} href={`http://localhost:8000/download/${encodeURIComponent(agent.name)}/${encodeURIComponent(filename)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between bg-gray-800/60 border border-gray-700 rounded-xl p-4 hover:border-blue-500/50 hover:bg-gray-800 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-blue-900/30 text-blue-400 rounded-lg">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                    </div>
+                    <span className="text-sm font-medium text-gray-200">{filename}</span>
+                  </div>
+                  <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider px-3 py-1 bg-blue-900/20 rounded-lg">Download</span>
+                </a>
+              )
+            })}
+          </div>
+        )}
+        
+        <div>
+          <h3 className="text-sm font-semibold text-blue-400 uppercase tracking-wider mb-3">Generated Codebase ({filePaths.length} files)</h3>
+          <div className="bg-gray-950 border border-gray-700 rounded-xl p-4 font-mono text-sm text-gray-300">
+            {filePaths.length > 0 ? (
+              <ul className="space-y-2">
+                {filePaths.map((fp, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <svg className="w-4 h-4 text-blue-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    {fp}
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="text-gray-500 italic">No files generated.</p>}
+          </div>
+        </div>
+
+        {steps.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-green-400 uppercase tracking-wider mb-3">Setup Instructions</h3>
+            <div className="bg-gray-800/60 border border-gray-700 rounded-xl p-4">
+              <ul className="space-y-2">
+                {steps.map((step, i) => (
+                  <li key={i} className="text-sm text-gray-200 flex gap-3"><span className="text-green-500 shrink-0">›</span> {step}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {envs.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-purple-400 uppercase tracking-wider mb-3">Environment Variables</h3>
+            <div className="space-y-2">
+              {envs.map((env, i) => (
+                <div key={i} className="bg-gray-800/40 border border-gray-700/50 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-mono font-bold text-purple-400 bg-purple-900/30 px-2 py-0.5 rounded border border-purple-800/50">{env.key}</span>
+                  </div>
+                  <p className="text-xs text-gray-300">{env.description}</p>
+                  {env.example && <p className="text-xs text-gray-500 mt-1 font-mono break-all">Example: {env.example}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-stretch" onClick={onClose}>
@@ -525,11 +602,10 @@ function OutputModal({ agent, onClose }) {
           </div>
           <div className="flex items-center gap-3">
             {agent.score !== null && (
-              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg border ${
-                agent.score >= 80 ? 'bg-green-900/30 text-green-400 border-green-800' :
-                agent.score >= 50 ? 'bg-amber-900/30 text-amber-400 border-amber-800' :
-                'bg-red-900/30 text-red-400 border-red-800'
-              }`}>Score: {agent.score}/100</span>
+              <span className={`text-xs font-mono px-3 py-1.5 rounded-lg border ${agent.score >= 80 ? 'bg-green-900/30 text-green-400 border-green-800' :
+                  agent.score >= 50 ? 'bg-amber-900/30 text-amber-400 border-amber-800' :
+                    'bg-red-900/30 text-red-400 border-red-800'
+                }`}>Score: {agent.score}/100</span>
             )}
             <button onClick={onClose} className="p-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
               <XIcon />
@@ -548,92 +624,92 @@ function OutputModal({ agent, onClose }) {
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6">
           {output ? (
-            isBA ? renderBAOutput(output) : 
-            isEnv ? (
-              <div className="flex flex-col h-full gap-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-300">Generated Setup Script</h3>
-                  <button onClick={handleTestRunScript} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
-                    {isTestRunning ? 'Running...' : '▶ Test Run Script'}
-                  </button>
-                </div>
-                <textarea value={envScript} onChange={(e) => setEnvScript(e.target.value)} className="w-full h-64 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-sm text-green-400" spellCheck={false} />
-                {testRunLog && (
-                  <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
-                )}
-              </div>
-            ) : isQA && qaTestSuites.length > 0 ? (
-              <div className="flex flex-col h-full gap-6">
-                {hasArtifacts && (
-                  <div className="space-y-3">
-                    <p className="text-sm text-gray-400 mb-2">The following artifacts were generated by {agent.name}:</p>
-                    {agent.artifacts.map((path, i) => {
-                      const filename = path.split(/[\/\\]/).pop();
-                      return (
-                        <a key={i} href={`http://localhost:8000/download/${encodeURIComponent(agent.name)}/${encodeURIComponent(filename)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between bg-gray-800/60 border border-gray-700 rounded-xl p-4 hover:border-blue-500/50 hover:bg-gray-800 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className="p-2 bg-blue-900/30 text-blue-400 rounded-lg">
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                            </div>
-                            <span className="text-sm font-medium text-gray-200">{filename}</span>
-                          </div>
-                          <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider px-3 py-1 bg-blue-900/20 rounded-lg">Download</span>
-                        </a>
-                      )
-                    })}
+            isBA ? renderBAOutput(output) :
+              isEnv ? (
+                <div className="flex flex-col h-full gap-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-gray-300">Generated Setup Script</h3>
+                    <button onClick={handleTestRunScript} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
+                      {isTestRunning ? 'Running...' : '▶ Test Run Script'}
+                    </button>
                   </div>
-                )}
-                <div className="flex items-center justify-between sticky top-0 bg-gray-900 pb-2 z-10">
-                  <h3 className="text-sm font-semibold text-gray-300">Python Test Suite ({qaTestSuites.length} files)</h3>
-                  <button onClick={handleTestRunQa} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
-                    {isTestRunning ? 'Running tests...' : '▶ Test Run Scripts'}
-                  </button>
+                  <textarea value={envScript} onChange={(e) => setEnvScript(e.target.value)} className="w-full h-64 bg-gray-950 border border-gray-700 rounded-lg p-4 font-mono text-sm text-green-400" spellCheck={false} />
+                  {testRunLog && (
+                    <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
+                  )}
                 </div>
-                {testRunLog && (
-                  <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
-                )}
-                {qaTestSuites.map((test, idx) => (
-                  <div key={idx} className="bg-gray-800/60 border border-gray-700 rounded-xl overflow-hidden flex flex-col">
-                    <div className="flex items-center justify-between bg-gray-800 px-4 py-3 border-b border-gray-700">
-                      <div className="text-sm font-mono text-gray-300 flex items-center gap-2">
-                        <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        {test.file}
-                      </div>
-                      <button 
-                        onClick={() => handleTestRunSingle(test.file, test.code)} 
-                        disabled={runningSingleTests[test.file]}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-green-700 hover:bg-green-600 disabled:opacity-50 text-white text-xs font-semibold rounded transition-colors"
-                      >
-                        {runningSingleTests[test.file] ? 'Running...' : '▶ Run Code'}
-                      </button>
-                    </div>
-                    
-                    <div className="flex flex-col xl:flex-row h-96">
-                      <textarea 
-                        value={test.code} 
-                        onChange={(e) => updateQaTestCode(idx, e.target.value)} 
-                        className="w-full xl:w-1/2 h-full bg-gray-950 border-r border-gray-700 p-4 font-mono text-xs text-green-400 resize-none outline-none focus:bg-gray-900/50 transition-colors" 
-                        spellCheck={false} 
-                      />
-                      <div className="w-full xl:w-1/2 h-full bg-black p-4 overflow-y-auto font-mono text-xs">
-                        {singleTestLogs[test.file] ? (
-                          <div>
-                            <div className={`mb-2 font-bold ${singleTestLogs[test.file].status === 'PASS' ? 'text-green-500' : 'text-red-500'}`}>
-                              Status: {singleTestLogs[test.file].status}
+              ) : isQA && qaTestSuites.length > 0 ? (
+                <div className="flex flex-col h-full gap-6">
+                  {hasArtifacts && (
+                    <div className="space-y-3">
+                      <p className="text-sm text-gray-400 mb-2">The following artifacts were generated by {agent.name}:</p>
+                      {agent.artifacts.map((path, i) => {
+                        const filename = path.split(/[\/\\]/).pop();
+                        return (
+                          <a key={i} href={`http://localhost:8000/download/${encodeURIComponent(agent.name)}/${encodeURIComponent(filename)}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between bg-gray-800/60 border border-gray-700 rounded-xl p-4 hover:border-blue-500/50 hover:bg-gray-800 transition-colors">
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 bg-blue-900/30 text-blue-400 rounded-lg">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                              </div>
+                              <span className="text-sm font-medium text-gray-200">{filename}</span>
                             </div>
-                            <pre className="text-gray-400 whitespace-pre-wrap leading-relaxed">{singleTestLogs[test.file].log}</pre>
-                          </div>
-                        ) : (
-                          <div className="text-gray-600 flex items-center h-full justify-center text-center px-4">
-                            {runningSingleTests[test.file] ? "Executing..." : "Click 'Run Code' to execute this test and view output here."}
-                          </div>
-                        )}
+                            <span className="text-xs text-blue-400 font-semibold uppercase tracking-wider px-3 py-1 bg-blue-900/20 rounded-lg">Download</span>
+                          </a>
+                        )
+                      })}
+                    </div>
+                  )}
+                  <div className="flex items-center justify-between sticky top-0 bg-gray-900 pb-2 z-10">
+                    <h3 className="text-sm font-semibold text-gray-300">Python Test Suite ({qaTestSuites.length} files)</h3>
+                    <button onClick={handleTestRunQa} disabled={isTestRunning} className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white text-sm font-semibold rounded-lg">
+                      {isTestRunning ? 'Running tests...' : '▶ Test Run Scripts'}
+                    </button>
+                  </div>
+                  {testRunLog && (
+                    <pre className={`w-full max-h-64 overflow-auto rounded-lg p-4 font-mono text-xs border ${testRunLog.includes('[FAIL]') ? 'bg-red-900/10 border-red-800/50 text-red-300' : 'bg-green-900/10 border-green-800/50 text-green-300'}`}>{testRunLog}</pre>
+                  )}
+                  {qaTestSuites.map((test, idx) => (
+                    <div key={idx} className="bg-gray-800/60 border border-gray-700 rounded-xl overflow-hidden flex flex-col">
+                      <div className="flex items-center justify-between bg-gray-800 px-4 py-3 border-b border-gray-700">
+                        <div className="text-sm font-mono text-gray-300 flex items-center gap-2">
+                          <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                          {test.file}
+                        </div>
+                        <button
+                          onClick={() => handleTestRunSingle(test.file, test.code)}
+                          disabled={runningSingleTests[test.file]}
+                          className="flex items-center gap-1 px-3 py-1.5 bg-green-700 hover:bg-green-600 disabled:opacity-50 text-white text-xs font-semibold rounded transition-colors"
+                        >
+                          {runningSingleTests[test.file] ? 'Running...' : '▶ Run Code'}
+                        </button>
+                      </div>
+
+                      <div className="flex flex-col xl:flex-row h-96">
+                        <textarea
+                          value={test.code}
+                          onChange={(e) => updateQaTestCode(idx, e.target.value)}
+                          className="w-full xl:w-1/2 h-full bg-gray-950 border-r border-gray-700 p-4 font-mono text-xs text-green-400 resize-none outline-none focus:bg-gray-900/50 transition-colors"
+                          spellCheck={false}
+                        />
+                        <div className="w-full xl:w-1/2 h-full bg-black p-4 overflow-y-auto font-mono text-xs">
+                          {singleTestLogs[test.file] ? (
+                            <div>
+                              <div className={`mb-2 font-bold ${singleTestLogs[test.file].status === 'PASS' ? 'text-green-500' : 'text-red-500'}`}>
+                                Status: {singleTestLogs[test.file].status}
+                              </div>
+                              <pre className="text-gray-400 whitespace-pre-wrap leading-relaxed">{singleTestLogs[test.file].log}</pre>
+                            </div>
+                          ) : (
+                            <div className="text-gray-600 flex items-center h-full justify-center text-center px-4">
+                              {runningSingleTests[test.file] ? "Executing..." : "Click 'Run Code' to execute this test and view output here."}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : renderGenericOutput(output)
+                  ))}
+                </div>
+              ) : isDeveloper ? renderDeveloperOutput(output) : renderGenericOutput(output)
           ) : (
             <p className="text-gray-500 text-sm">No output available.</p>
           )}
@@ -719,13 +795,19 @@ export default function App() {
         break;
 
       case 'agent_output':
-        dispatch({ type: 'UPDATE_AGENT', payload: {
-          name: msg.agent, status: 'waiting_approval',
-          summary: msg.summary || `${msg.agent} output ready.`,
-          score: msg.score ?? null, output: msg.data, warning: msg.warning || null,
-        }});
-        dispatch({ type: 'ADD_MESSAGE', payload: { sender: 'aria',
-          text: `${msg.agent} agent completed. Score: ${msg.score ?? 'N/A'}/100. Open the full output to review, then approve or edit.` } });
+        dispatch({
+          type: 'UPDATE_AGENT', payload: {
+            name: msg.agent, status: 'waiting_approval',
+            summary: msg.summary || `${msg.agent} output ready.`,
+            score: msg.score ?? null, output: msg.data, warning: msg.warning || null,
+          }
+        });
+        dispatch({
+          type: 'ADD_MESSAGE', payload: {
+            sender: 'aria',
+            text: `${msg.agent} agent completed. Score: ${msg.score ?? 'N/A'}/100. Open the full output to review, then approve or edit.`
+          }
+        });
         break;
 
       case 'gate_required':
@@ -743,8 +825,12 @@ export default function App() {
         break;
 
       case 'pipeline_done':
-        dispatch({ type: 'ADD_MESSAGE', payload: { sender: 'aria',
-          text: '✅ All agents completed. Full context saved to outputs/full_project_context.json.' } }); break;
+        dispatch({
+          type: 'ADD_MESSAGE', payload: {
+            sender: 'aria',
+            text: '✅ All agents completed. Full context saved to outputs/full_project_context.json.'
+          }
+        }); break;
 
       case 'error':
         dispatch({ type: 'ADD_LOG', payload: `ERROR: ${msg.message}` });
@@ -844,17 +930,15 @@ export default function App() {
       <div className="w-1/2 flex flex-col border-r border-gray-800 bg-gray-900/50">
         <div className="p-5 border-b border-gray-800 bg-gray-900/90 flex items-center justify-between">
           <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">ARIA Chatbot</h1>
-          <div className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border ${
-            wsStatus === 'connected'    ? 'bg-green-900/30 text-green-400 border-green-800' :
-            wsStatus === 'connecting'   ? 'bg-amber-900/30 text-amber-400 border-amber-800' :
-            wsStatus === 'error'        ? 'bg-red-900/30 text-red-400 border-red-800' :
-                                         'bg-gray-800/50 text-gray-400 border-gray-700/50'
-          }`}>
-            <div className={`w-2 h-2 rounded-full ${
-              wsStatus === 'connected'  ? 'bg-green-500 animate-pulse' :
-              wsStatus === 'connecting' ? 'bg-amber-500 animate-pulse' :
-                                         'bg-red-500'
-            }`} />
+          <div className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border ${wsStatus === 'connected' ? 'bg-green-900/30 text-green-400 border-green-800' :
+              wsStatus === 'connecting' ? 'bg-amber-900/30 text-amber-400 border-amber-800' :
+                wsStatus === 'error' ? 'bg-red-900/30 text-red-400 border-red-800' :
+                  'bg-gray-800/50 text-gray-400 border-gray-700/50'
+            }`}>
+            <div className={`w-2 h-2 rounded-full ${wsStatus === 'connected' ? 'bg-green-500 animate-pulse' :
+                wsStatus === 'connecting' ? 'bg-amber-500 animate-pulse' :
+                  'bg-red-500'
+              }`} />
             <span className="capitalize">{wsStatus === 'connected' ? 'Backend Connected' : wsStatus}</span>
           </div>
         </div>
@@ -862,11 +946,10 @@ export default function App() {
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {state.messages.map(msg => (
             <div key={msg.id} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
-              <div className={`max-w-[82%] p-4 rounded-2xl text-sm leading-relaxed ${
-                msg.sender === 'user'
+              <div className={`max-w-[82%] p-4 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap ${msg.sender === 'user'
                   ? 'bg-blue-600/20 text-blue-100 border border-blue-500/25 rounded-br-sm'
                   : 'bg-gray-800 text-gray-200 border border-gray-700 rounded-bl-sm'
-              }`}>
+                }`}>
                 {msg.text}
               </div>
               <span className="text-[10px] text-gray-600 mt-1 px-1">{msg.time}</span>
@@ -937,12 +1020,11 @@ export default function App() {
           {state.agents.map(agent => (
             <div key={agent.name}>
               {/* Agent Row */}
-              <div className={`rounded-xl border px-4 py-3 transition-all ${
-                agent.status === 'running' ? 'bg-gray-800/60 border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.08)]' :
-                agent.status === 'waiting_approval' ? 'bg-amber-900/10 border-amber-500/30' :
-                agent.status === 'complete' ? 'bg-gray-900 border-gray-700' :
-                'bg-gray-950 border-gray-800/40 opacity-40'
-              }`}>
+              <div className={`rounded-xl border px-4 py-3 transition-all ${agent.status === 'running' ? 'bg-gray-800/60 border-blue-500/40 shadow-[0_0_12px_rgba(59,130,246,0.08)]' :
+                  agent.status === 'waiting_approval' ? 'bg-amber-900/10 border-amber-500/30' :
+                    agent.status === 'complete' ? 'bg-gray-900 border-gray-700' :
+                      'bg-gray-950 border-gray-800/40 opacity-40'
+                }`}>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-6 flex justify-center shrink-0">{getStatusIcon(agent.status)}</div>

@@ -37,6 +37,9 @@ AGENT_KEEP_KEYS = {
         "architecture_summary", "technology_stack", "system_components",
         "database_design", "api_architecture", "confidence_score"
     ],
+    "Planner": [
+        "epics", "summary", "confidence_score"
+    ],
     "Developer": [
         "project_name", "language_stack", "file_tree", "entrypoint",
         "dependencies", "implementation_notes", "coverage_mapping", "confidence_score"

@@ -150,12 +150,18 @@ def install_python_deps(codebase_dir: str):
     for cmd in env_data.get("setup_commands", []):
         cmd_s = cmd.strip()
         if cmd_s.startswith("pip install"):
-            print(f"QA Agent: Running '{cmd_s}'...")
+            # Strip npm/yarn-style flags that are invalid for pip (e.g. -D, --save-dev)
+            tokens = cmd_s.split()
+            cleaned = [t for t in tokens if t not in {"-D", "--save-dev", "--save", "-g", "--global"}]
+            if len(cleaned) <= 2:
+                # Nothing left to install after stripping bad flags — skip
+                continue
+            print(f"QA Agent: Running '{' '.join(cleaned)}'...")
             result = subprocess.run(
-                [sys.executable, "-m"] + cmd_s.replace("pip", "pip", 1).split(),
+                [sys.executable, "-m"] + cleaned,
                 capture_output=True, text=True, timeout=120
             )
-            logs.append(f"{cmd_s} → exit {result.returncode}\n{result.stderr}")
+            logs.append(f"{' '.join(cleaned)} → exit {result.returncode}\n{result.stderr}")
 
     return "\n".join(logs)
 
@@ -197,102 +203,56 @@ def build_prompt(context_manager, correction: str = None) -> str:
         for ex in text_read_examples:
             examples_block += f"  {ex}\n"
 
-    prompt = f"""You are the QA Agent for ARIA — a senior-level QA engineer generating tests that will be executed immediately.
+    prompt = f"""You are the QA Agent for ARIA. Your ONLY output is a single valid JSON object. Nothing else.
+
+⚠️ ABSOLUTE OUTPUT RULES — VIOLATIONS WILL BREAK THE PIPELINE:
+1. Do NOT write any text before or after the JSON. No explanations, no headers, no "Here is the test suite".
+2. Do NOT wrap the JSON in markdown fences. No ```python, no ```json, no ```. Just raw JSON.
+3. ALL Python code inside JSON string values MUST use \\n for newlines (escaped backslash-n), NEVER raw newlines.
+   CORRECT: "code": "import unittest\\nclass TestFoo(unittest.TestCase):\\n    def test_bar(self):\\n        self.assertEqual(1,1)"
+   WRONG:   "code": "import unittest
+class TestFoo..."
+4. ALL double quotes inside code strings MUST be escaped as \\".
+5. Start your response with {{ and end with }}. No other characters outside the JSON.
 
 Project: {project_name}
 Language Stack: {lang_label}
 
 === PROJECT CONTEXT ===
-USER BRIEF: {user_brief}
-BA REQUIREMENTS: {str(ba_output)[:1000]}
-ARCHITECTURE: {str(architect_output)[:1000]}
-DEVELOPER SUMMARY: {str(developer_output)[:1000]}
+USER BRIEF: {user_brief[:800]}
+BA REQUIREMENTS: {str(ba_output)[:800]}
 
 === CODEBASE FILE TREE ===
-Each file is annotated with EXACTLY how to access it in your tests:
 {file_tree}
 
-{examples_block}
-
 === ACTUAL FILE CONTENTS ===
-{file_contents[:5000]}
+{file_contents[:3500]}
 
-=== EXECUTION ENVIRONMENT (READ THIS CAREFULLY) ===
-Your tests will be executed with these EXACT settings:
-  - cwd (working directory) = codebase root (the folder containing `app/`, etc.)
-  - PYTHONPATH = codebase root (so Python can find `app`, `src`, etc. as packages)
+=== EXECUTION ENVIRONMENT ===
+  - cwd = codebase root, PYTHONPATH = codebase root
   - Runner: python <test_file_absolute_path>
   - Python version: {sys.version.split()[0]}
 
-This means:
-  - WORKS: `from app.calculator import Calculator` -- if app/calculator.py exists
-  - WORKS: open('app/index.html', 'r') -- path relative to codebase root = cwd
-  - FAILS: `from app.script import calculate` -- if script.js is not a .py file
-  - AVOID: import subprocess; subprocess.run(['node', ...]) -- no Node.js assumed
+=== DEMO COVERAGE RULES ===
+Generate a SHORT and SIMPLE test suite for demo purposes.
+Do NOT write dozens of tests. Focus only on the absolute most critical paths:
+1. One basic positive test for the main API endpoint (e.g. GET list or POST create).
+2. One basic test for the frontend HTML (e.g. checking if the title or a form field exists).
+3. If there is a validation rule, write exactly one test for it (e.g. missing required field).
 
-=== RULES FOR GENERATING TESTS ===
+Keep the tests extremely short. This is a demo, not a production suite.
 
-RULE 1 — FILE NAMING:
-  - ALL test files MUST use the `.py` extension: `test_<feature>.py`
-  - NEVER name a test file `test_something.js`, `test_something.ts`, etc.
-  - Even if you are testing a `.js` or `.html` file, your test file is Python.
+=== HOW TO WRITE FASTAPI TESTS ===
+ (WITHOUT markdown fences — just write it as the code string value):
 
-RULE 2 — IMPORTS FOR PYTHON FILES (.py):
-  - Use the [PY-IMPORT] annotation in the file tree to know the exact import path.
-  - Example: `app/calculator.py` → `from app.calculator import Calculator`
-  - Example: `src/utils.py` → `from src.utils import helper_function`
-
-RULE 3 — NON-PYTHON FILES (.js, .html, .css, .json, etc.):
-  - You CANNOT import these. They are NOT Python modules.
-  - ALWAYS read them as text using open() with a path relative to cwd.
-  - Example for JS:
-      class TestScript(unittest.TestCase):
-          def setUp(self):
-              with open('app/script.js', 'r', encoding='utf-8') as f:
-                  self.content = f.read()
-          def test_calculate_function_exists(self):
-              self.assertIn('function calculate', self.content)
-          def test_error_handling_present(self):
-              self.assertIn('try', self.content)
-              self.assertIn('catch', self.content)
-  - Example for HTML:
-      from html.parser import HTMLParser
-      class TestHTML(unittest.TestCase):
-          def setUp(self):
-              with open('app/index.html', 'r', encoding='utf-8') as f:
-                  self.content = f.read()
-          def test_has_title(self):
-              self.assertIn('<title>', self.content.lower())
-
-RULE 4 — TEST QUALITY (DEMO MODE):
-  - Generate a MAXIMUM of 1 or 2 simple tests to serve as a demo.
-  - Keep the tests extremely short and simple.
-  - NEVER write `self.assertTrue(True)` or other dummy assertions. The tests must assert something REAL from the actual file contents.
-  - Use `unittest.mock.patch` for external dependencies if necessary, but prioritize the simplest possible test.
-
-RULE 5 — TEST FILE STRUCTURE (mandatory):
-  import unittest
-  # ... other imports ...
-
-  class Test<Feature>(unittest.TestCase):
-      def test_<specific_behaviour>(self):
-          # real assertion here
-
-  if __name__ == '__main__':
-      unittest.main()
-
-RULE 6 — BUG REPORTING:
-  - Report any real bugs you find in the actual file contents.
-  - Include severity (CRITICAL/MAJOR/MINOR), reproduction steps, and a fix.
-
-RULE 7 — ENVIRONMENT VARIABLES (CRITICAL):
-  - If a Python module expects environment variables at IMPORT time, you MUST mock them 
-    via `os.environ["VAR_NAME"] = "dummy"` BEFORE importing the module in your test!
-  - Example:
-      import os
-      import unittest
-      os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-      from app.config import DATABASE_URL  # Import AFTER setting env var
+ 
+=== RULES ===
+- 1 or 2 test files max (e.g. test_api.py, test_frontend.py)
+- Keep it under 5 total test methods across all files.
+- NEVER write self.assertTrue(True) or dummy assertions. Assert something real.
+- Always use sqlite:///:memory: for the test database — never write to app.db
+- Set os.environ BEFORE imports that read environment variables.
+- Keep bug reports concise. Identify the issue and provide a short fix.
 
 """
 
@@ -300,38 +260,29 @@ RULE 7 — ENVIRONMENT VARIABLES (CRITICAL):
         prompt += f"\n\n=== HUMAN CORRECTION ===\n{correction}\n"
 
     prompt += """
-=== OUTPUT REQUIREMENTS ===
-Return ONLY valid JSON. No markdown fences, no extra text.
-
+OUTPUT FORMAT — output ONLY this JSON, nothing else, starting NOW:
 {
-  "status": "PASS | FAIL",
+  "status": "PASS",
   "test_suite": [
     {
-      "file": "test_<feature>.py",
-      "code": "<complete runnable Python test code as a single escaped string>"
-    }
-  ],
-  "execution_results": {
-    "total_tests": 0,
-    "passed": 0,
-    "failed": 0
-  },
-  "bug_report": [
+      "file": "test_api.py",
+      "code": "import os, sys, unittest\\nsys.path.insert(0, ...)\\n..."
+    },
     {
-      "severity": "CRITICAL | MAJOR | MINOR",
-      "issue": "",
-      "reproduction": "",
-      "suggested_fix": ""
+      "file": "test_validation.py",
+      "code": "import os, sys, unittest\\n..."
+    },
+    {
+      "file": "test_frontend.py",
+      "code": "import unittest\\n..."
     }
   ],
-  "requirement_coverage": {
-    "total": 0,
-    "covered": 0,
-    "missing": []
-  },
+  "execution_results": {"total_tests": 0, "passed": 0, "failed": 0},
+  "bug_report": [{"severity": "MINOR", "issue": "", "reproduction": "", "suggested_fix": ""}],
+  "requirement_coverage": {"total": 10, "covered": 9, "missing": []},
   "artifacts_saved_to": "outputs/QA/test_results.json",
-  "confidence_score": 0,
-  "confidence_reasoning": ""
+  "confidence_score": 90,
+  "confidence_reasoning": "All CRUD, validation, and frontend tests covered."
 }
 """
     return prompt
