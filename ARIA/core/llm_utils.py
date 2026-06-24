@@ -5,15 +5,15 @@ from groq import Groq
 
 # ── Model assignment ──────────────────────────────────────────────────────────
 MODEL_MAP = {
-    "BA":          "groq/compound-core-7b",
-    "Architect":   "groq/compound-core-7b",
-    "Planner":     "groq/compound-core-7b",
-    "Developer":   "groq/compound-core-7b",
-    "Environment": "groq/compound-core-7b",
-    "QA":          "groq/compound-core-7b",
-    "DevOps":      "groq/compound-core-7b",
-    "PM":          "groq/compound-core-7b",
-    "Supervisor":  "groq/compound-core-7b",
+    "BA":          "meta-llama/llama-4-scout-17b-16e-instruct",
+    "Architect":   "meta-llama/llama-4-scout-17b-16e-instruct",
+    "Planner":     "meta-llama/llama-4-scout-17b-16e-instruct",
+    "Developer":   "meta-llama/llama-4-scout-17b-16e-instruct",
+    "Environment": "meta-llama/llama-4-scout-17b-16e-instruct",
+    "QA":          "meta-llama/llama-4-scout-17b-16e-instruct",
+    "DevOps":      "meta-llama/llama-4-scout-17b-16e-instruct",
+    "PM":          "meta-llama/llama-4-scout-17b-16e-instruct",
+    "Supervisor":  "meta-llama/llama-4-scout-17b-16e-instruct",
 }
 
 # ── Per-agent output token caps ───────────────────────────────────────────────
