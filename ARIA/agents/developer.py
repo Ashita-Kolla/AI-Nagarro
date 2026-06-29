@@ -31,7 +31,7 @@ Foundation files only:
 - config files (.env.example, tailwind.config.js etc)
 - database connection or storage utility
 
-Do NOT over-engineer the foundation. Consolidate configurations and setup into as few files as possible. Skip unnecessary boilerplate.
+Do NOT over-engineer the foundation, BUT ensure standard architecture separation. Put frontend code inside a `frontend/` directory (e.g. `frontend/package.json`) and backend code inside a `backend/` directory (e.g. `backend/main.py`). Skip unnecessary boilerplate.
 
 CODE REQUIREMENTS:
 1. FRONTEND: Use {frontend}. Follow standard conventions. Avoid complex build steps if possible.
@@ -77,7 +77,8 @@ Already generated files (DO NOT regenerate these unless modifying them for this 
 {chr(10).join(existing_files)}
 
 Generate ONLY the new/modified files needed for this epic.
-Consolidate your code into a minimal number of files. Do NOT create empty helper files, unnecessary directory structures, or overly abstracted design patterns.
+Consolidate your code into a minimal number of files, BUT ensure standard architecture separation.
+Put frontend code inside a `frontend/` directory (e.g. `frontend/package.json`, `frontend/src/App.jsx`) and backend code inside a `backend/` directory (e.g. `backend/main.py`).
 If modifying an existing file, provide the complete, updated file. Ensure all code is strictly functional and fully complete. No placeholders. No TODOs.
 
 OUTPUT FORMAT:
@@ -107,7 +108,8 @@ Already generated files (DO NOT regenerate these unless modifying them to fix th
 {chr(10).join(existing_files)}
 
 Generate ONLY the new/modified files needed to fix the issues mentioned in the feedback.
-Consolidate your code into a minimal number of files.
+Consolidate your code into a minimal number of files, BUT ensure standard architecture separation.
+Put frontend code inside a `frontend/` directory (e.g. `frontend/package.json`, `frontend/src/App.jsx`) and backend code inside a `backend/` directory (e.g. `backend/main.py`).
 If modifying an existing file, provide the complete, updated file. Ensure all code is strictly functional and fully complete. No placeholders. No TODOs.
 
 OUTPUT FORMAT:

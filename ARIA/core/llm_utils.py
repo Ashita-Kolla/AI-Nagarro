@@ -85,7 +85,7 @@ MAX_TOKENS_MAP = {
 # With JSON mode ON, Groq may raise json_validate_failed — the existing handler
 # extracts failed_generation and _repair_json_string fixes raw newlines before
 # parse_json_from_llm sees it, so the recovery chain still works.
-NO_JSON_MODE_AGENTS = {"Developer"}
+NO_JSON_MODE_AGENTS = {"Developer", "QA"}
 
 # ── Available model cache ─────────────────────────────────────────────────────
 _AVAILABLE_MODELS: list = []

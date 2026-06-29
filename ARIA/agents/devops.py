@@ -34,7 +34,7 @@ QA Results (summary): {_json.dumps(qa_output, indent=2)}
 4. Define deployment strategy (container / VM / serverless, scaling, runtime constraints)
 5. Generate a deployment contract JSON
 6. List infrastructure assumptions and limitations
-7. Generate a Local Deployment Guide (Markdown). You MUST provide NATIVE run commands (e.g., `python -m uvicorn main:app`, `npm start`) to run the app directly on the host machine without Docker. Native run commands are MANDATORY.
+7. Generate a Local Deployment Guide (Markdown). You MUST provide NATIVE run commands (e.g., `cd frontend && npm start`, `cd backend && python -m uvicorn main:app`) to run the app directly on the host machine without Docker. Native run commands are MANDATORY. You MUST inspect the Developer Output file tree to determine the correct directories and entry points.
 8. Provide a confidence score (0-100) with reasoning
 """
 
