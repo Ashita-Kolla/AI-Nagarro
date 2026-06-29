@@ -87,7 +87,7 @@ def scan_codebase_with_contents(max_file_bytes: int = 1500) -> tuple[str, str]:
                     content = f.read(max_file_bytes)
                 if len(content) == max_file_bytes:
                     content += "\n... (truncated)"
-                content_snippets.append(f"\n### {rel_path} ###\n{content}")
+                content_snippets.append(f"\n<file path=\"{rel_path}\">\n{content}\n</file>")
             except Exception:
                 pass
 
@@ -143,7 +143,7 @@ def install_python_deps(codebase_dir: str):
             [sys.executable, "-m", "pip", "install", "-r", req_path, "--quiet"],
             capture_output=True, text=True, timeout=120
         )
-        logs.append(f"pip -r requirements.txt → exit {result.returncode}\n{result.stderr}")
+        logs.append(f"pip -r requirements.txt -> exit {result.returncode}\n{result.stderr}")
 
     # 2. pip install lines from environment setup
     env_data = read_environment_deps()
@@ -161,13 +161,16 @@ def install_python_deps(codebase_dir: str):
                 [sys.executable, "-m"] + cleaned,
                 capture_output=True, text=True, timeout=120
             )
-            logs.append(f"{' '.join(cleaned)} → exit {result.returncode}\n{result.stderr}")
+            logs.append(f"{' '.join(cleaned)} -> exit {result.returncode}\n{result.stderr}")
 
     return "\n".join(logs)
 
 
+from core.context_compressor import compress_context_for_agent
+
 def build_prompt(context_manager, correction: str = None) -> str:
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("QA", raw_context)
 
     user_brief = context.get("USER_BRIEF", "")
     ba_output = context.get("BA", {})
@@ -226,33 +229,80 @@ BA REQUIREMENTS: {str(ba_output)[:800]}
 {file_tree}
 
 === ACTUAL FILE CONTENTS ===
-{file_contents[:3500]}
+{file_contents}
 
 === EXECUTION ENVIRONMENT ===
   - cwd = codebase root, PYTHONPATH = codebase root
   - Runner: python <test_file_absolute_path>
   - Python version: {sys.version.split()[0]}
 
-=== DEMO COVERAGE RULES ===
-Generate a SHORT and SIMPLE test suite for demo purposes.
-Do NOT write dozens of tests. Focus only on the absolute most critical paths:
-1. One basic positive test for the main API endpoint (e.g. GET list or POST create).
-2. One basic test for the frontend HTML (e.g. checking if the title or a form field exists).
-3. If there is a validation rule, write exactly one test for it (e.g. missing required field).
+=== COMPREHENSIVE COVERAGE MANDATE ===
+Generate a ROBUST and COMPLETE test suite that thoroughly tests the application.
+You MUST derive the exact API entity name and field names from the FILE CONTENTS section above.
+DO NOT hardcode entity names like 'contacts' or fields like 'full_name' or 'email' unless those
+actually appear in the codebase. Look at the actual route definitions and model fields.
 
-Keep the tests extremely short. This is a demo, not a production suite.
+You MUST test:
+
+1. CRUD OPERATIONS (use FastAPI TestClient with in-memory SQLite):
+   - CREATE: POST to the correct endpoint with the correct JSON fields → assert 200 and correct response fields
+   - READ ALL: GET list endpoint → assert 200 and result is a list
+   - READ ONE: GET single item by ID → assert 200 and correct data returned
+   - UPDATE: PATCH or PUT to update item → assert 200 and data changed
+   - DELETE: DELETE item by ID → assert 200 and item gone
+
+2. INPUT VALIDATION & ERROR HANDLING:
+   - POST with missing required field → assert 422
+   - GET /entity/99999 (non-existent item) → assert 404
+
+3. FRONTEND STRUCTURE (read index.html as text):
+   - Check that the main UI elements mentioned in the USER_BRIEF exist in the HTML
+   - Check fetch() API calls are present
+   - Check relevant button/form presence
 
 === HOW TO WRITE FASTAPI TESTS ===
- (WITHOUT markdown fences — just write it as the code string value):
+Before writing any test, read the FILE CONTENTS above carefully to identify:
+- The correct entity/resource name used in routes (e.g., /tasks/, /items/, /contacts/)
+- The exact field names in the Pydantic models or SQLAlchemy models
+- Which file is the FastAPI app entry point (look for `app = FastAPI()`)
 
- 
+Then use this pattern (adapt entity, fields, and import path from the actual codebase):
+
+  import os, sys, unittest
+  sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+  from fastapi.testclient import TestClient
+  from sqlalchemy import create_engine
+  from sqlalchemy.orm import sessionmaker
+  import main  # or the correct module where app = FastAPI() is defined
+  test_engine = create_engine("sqlite:///:memory:", connect_args={{"check_same_thread": False}})
+  main.Base.metadata.create_all(bind=test_engine)
+  TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_engine)
+  def override_get_db():
+      db = TestingSessionLocal()
+      try: yield db
+      finally: db.close()
+  main.app.dependency_overrides[main.get_db] = override_get_db
+  client = TestClient(main.app)
+
+  class TestEntity(unittest.TestCase):  # Replace 'Entity' with the actual entity name
+      def test_create_entity(self):
+          res = client.post("/entity/", json={{"field1": "value1", "field2": "value2"}})  # Use real fields!
+          self.assertEqual(res.status_code, 200)
+          self.assertIn("field1", res.json())
+      def test_get_all_entities_is_list(self):
+          res = client.get("/entity/")
+          self.assertEqual(res.status_code, 200)
+          self.assertIsInstance(res.json(), list)
+  if __name__ == "__main__": unittest.main()
+
 === RULES ===
-- 1 or 2 test files max (e.g. test_api.py, test_frontend.py)
-- Keep it under 5 total test methods across all files.
-- NEVER write self.assertTrue(True) or dummy assertions. Assert something real.
-- Always use sqlite:///:memory: for the test database — never write to app.db
+- Write at least 3 test files: test_api.py, test_validation.py, test_frontend.py.
+- Target 15-20 total test methods across all files to ensure high coverage.
+- NEVER write self.assertTrue(True) or dummy assertions.
+- NEVER hardcode entity names or fields — derive them from the actual FILE CONTENTS provided.
+- Always use sqlite:///:memory: for the test database — never write to app.db.
 - Set os.environ BEFORE imports that read environment variables.
-- Keep bug reports concise. Identify the issue and provide a short fix.
+- Write actionable bug reports if you find issues.
 
 """
 

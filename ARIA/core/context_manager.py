@@ -39,9 +39,9 @@ class ContextManager:
             reduction_pct = round((1 - summary_chars / len(data_str)) * 100)
             print(
                 f"[ContextCompressor] {agent_name}: "
-                f"{len(data_str):,} chars → {summary_chars:,} chars "
+                f"{len(data_str):,} chars -> {summary_chars:,} chars "
                 f"({reduction_pct}% reduction) | "
-                f"~{estimate_tokens(data_str):,} → ~{estimate_tokens(json.dumps(summary)):,} tokens"
+                f"~{estimate_tokens(data_str):,} -> ~{estimate_tokens(json.dumps(summary)):,} tokens"
             )
         
         self.save_context()

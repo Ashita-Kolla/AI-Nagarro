@@ -11,7 +11,8 @@ class AgentRunner:
         """
         Executes each agent in the queue, handling quality checks and HITL.
         """
-        for i in range(start_index, len(execution_queue)):
+        i = start_index
+        while i < len(execution_queue):
             agent_name = execution_queue[i]
             print(f"\n{'='*50}\nExecuting {agent_name}...\n{'='*50}")
             
@@ -23,7 +24,7 @@ class AgentRunner:
                 print(f"Error loading agent module for {agent_name}: {e}")
                 return
                 
-            human_note = None
+            human_note = self.agent_corrections.pop(agent_name, None) if hasattr(self, 'agent_corrections') else None
             
             while True:
                 # Call the agent's run function
@@ -34,7 +35,7 @@ class AgentRunner:
                     return
                     
                 print(f"\n--- Output for {agent_name} ---\n")
-                print(json.dumps(result_data, indent=2, ensure_ascii=False))
+                print(json.dumps(result_data, indent=2, ensure_ascii=True))
                 print("\n-------------------------------\n")
                 
                 # Quality Check
@@ -54,6 +55,19 @@ class AgentRunner:
                             print(f"Post-approval task failed: {e}")
                             
                     print(f"Step {agent_name} approved and context saved.")
+                    
+                    # QA Loop interception
+                    failed_count = result_data.get("execution_results", {}).get("failed", 0)
+                    if agent_name == "QA" and failed_count > 0 and "Developer" in execution_queue:
+                        log = result_data.get("execution_results", {}).get("log", "")
+                        qa_correction = f"Automated QA Feedback: {failed_count} tests failed.\nLogs:\n{log}"
+                        print(f"\n[QA LOOP] Tests failed! Routing back to Developer...")
+                        self.agent_corrections = getattr(self, 'agent_corrections', {})
+                        self.agent_corrections["Developer"] = qa_correction
+                        i = execution_queue.index("Developer")
+                        break # Breaks inner loop, goes to Developer
+                    
+                    i += 1
                     break
                 elif action == 'E':
                     human_note = human_note + f"\n- {correction}" if human_note else correction

@@ -1,16 +1,18 @@
 import os
 import json
 from core.llm_utils import call_llm, parse_json_from_llm
+from core.context_compressor import compress_context_for_agent
 
 def build_prompt(context_manager, correction: str = None) -> str:
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("Planner", raw_context)
     
-    ba_output = context_manager.get_summary("BA")
-    architect_output = context_manager.get_summary("Architect")
+    ba_output = context.get("BA", {})
+    architect_output = context.get("Architect", {})
 
     import json as _json
-    ba_str = _json.dumps(ba_output, indent=2) if ba_output else "{}"
-    arch_str = _json.dumps(architect_output, indent=2) if architect_output else "{}"
+    ba_str = _json.dumps(ba_output, indent=2)
+    arch_str = _json.dumps(architect_output, indent=2)
     
     tech_stack = architect_output.get("technology_stack", {}) if architect_output else {}
     frontend = tech_stack.get("frontend", "Not specified")
@@ -37,7 +39,7 @@ Produce a complete breakdown of development work.
 1. EPICS
    Group related user stories into epics.
    Each epic is a major feature area.
-   Minimum 4 epics, maximum 10.
+   Create the minimum number of epics necessary to complete the project. Do not overcomplicate or split simple tasks unnecessarily.
    Format: EP-001: [Epic name]
 
 2. TASKS

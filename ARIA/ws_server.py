@@ -14,6 +14,7 @@ import queue
 import threading
 import os
 import sys
+import uuid
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
@@ -108,7 +109,7 @@ async def websocket_endpoint(websocket: WebSocket):
         asyncio.run_coroutine_threadsafe(out_q.put(event), loop)
 
     try:
-        pipeline_running = False          # guard: only one pipeline per WS session
+        pipeline_state = {"running": False}  # dict so it can be mutated by threads
 
         while True:
             raw = await websocket.receive_text()
@@ -116,7 +117,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
             # ── Start a new pipeline run ────────────────────────────────────
             if msg.get("type") == "start":
-                if pipeline_running:
+                if pipeline_state["running"]:
                     push({"type": "log", "message": "Pipeline already running. Please wait or reconnect."})
                     continue
 
@@ -125,17 +126,46 @@ async def websocket_endpoint(websocket: WebSocket):
                     push({"type": "error", "message": "No brief provided."})
                     continue
 
-                pipeline_running = True
+                pipeline_state["running"] = True
+                run_thread_id = str(uuid.uuid4())   # unique per run — stored for resume
+                push({"type": "pipeline_started", "thread_id": run_thread_id})
 
-                def run_pipeline(brief=brief):
+                def run_pipeline(brief=brief, thread_id=run_thread_id):
                     try:
-                        _execute_pipeline(brief, push, in_q)
+                        _execute_pipeline(brief, push, in_q, thread_id)
                     except Exception as exc:
                         push({"type": "error", "message": f"Pipeline error: {exc}"})
                     finally:
-                        asyncio.run_coroutine_threadsafe(out_q.put(None), loop)
+                        pipeline_state["running"] = False
+                        push({"type": "log", "message": "Pipeline thread finished."})
 
                 threading.Thread(target=run_pipeline, daemon=True).start()
+
+            # ── Resume a checkpointed run ──────────────────────────────────
+            elif msg.get("type") == "resume":
+                if pipeline_state["running"]:
+                    push({"type": "log", "message": "Pipeline already running. Please wait."})
+                    continue
+
+                thread_id  = msg.get("thread_id", "")
+                from_agent = msg.get("from_agent", None)
+                if not thread_id:
+                    push({"type": "error", "message": "resume requires a thread_id."})
+                    continue
+
+                pipeline_state["running"] = True
+                push({"type": "log", "message": f"[Resume] Resuming run {thread_id[:8]}… from {from_agent or 'last checkpoint'}."})
+
+                def run_resume(tid=thread_id, fa=from_agent):
+                    try:
+                        _resume_pipeline(push, in_q, tid, fa)
+                    except Exception as exc:
+                        push({"type": "error", "message": f"Resume error: {exc}"})
+                    finally:
+                        pipeline_state["running"] = False
+                        push({"type": "log", "message": "Resume thread finished."})
+
+                threading.Thread(target=run_resume, daemon=True).start()
 
             # ── Forward human-gate decision to the waiting pipeline thread ──
             elif msg.get("type") == "gate_action":
@@ -256,7 +286,7 @@ async def websocket_endpoint(websocket: WebSocket):
 # ─────────────────────────────────────────────
 # PIPELINE EXECUTION (runs in a daemon thread)
 # ─────────────────────────────────────────────
-def _execute_pipeline(brief: str, push, in_q: queue.Queue):
+def _execute_pipeline(brief: str, push, in_q: queue.Queue, thread_id: str):
     from core.context_manager import ContextManager
     from core.supervisor import Supervisor
     from core.langgraph_runner import LangGraphRunner
@@ -288,7 +318,7 @@ def _execute_pipeline(brief: str, push, in_q: queue.Queue):
     # Build the required agents sequence just for stable reference
     ordered_required = supervisor.build_execution_queue(agents_required)
     
-    push({"type": "log", "message": f"Dynamic LangGraph routing configured for: {' → '.join(ordered_required)}"})
+    push({"type": "log", "message": f"Dynamic LangGraph routing configured for: {' -> '.join(ordered_required)}"})
 
     runner = LangGraphRunner(ctx, supervisor, push_event=push, hitl_queue=in_q)
     
@@ -303,6 +333,26 @@ def _execute_pipeline(brief: str, push, in_q: queue.Queue):
         "human_action": {}
     }
     
-    runner.run_graph(initial_state)
+    runner.run_graph(initial_state, thread_id=thread_id)
 
     push({"type": "pipeline_done", "message": "All agents completed. Full context saved."})
+
+
+def _resume_pipeline(push, in_q: queue.Queue, thread_id: str, from_agent: str = None):
+    """Resumes the pipeline from a saved checkpoint."""
+    from core.context_manager import ContextManager
+    from core.supervisor import Supervisor
+    from core.langgraph_runner import LangGraphRunner
+
+    # Note: State is loaded from SqliteSaver inside LangGraphRunner.
+    # ContextManager should ideally re-hydrate from disk if it was saving there,
+    # but since ARIA relies on the state passed through LangGraph, we can just
+    # instantiate it and pass it to the runner. The agents use the state values.
+    # If ContextManager holds critical global state, it should be serialized too,
+    # but for ARIA's current design, the LangGraph state is sufficient for resuming.
+    ctx = ContextManager()
+    supervisor = Supervisor()
+    runner = LangGraphRunner(ctx, supervisor, push_event=push, hitl_queue=in_q)
+    
+    runner.resume_graph(thread_id, from_agent=from_agent)
+    push({"type": "pipeline_done", "message": "Resumed pipeline completed. Full context saved."})

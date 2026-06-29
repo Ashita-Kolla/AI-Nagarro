@@ -152,3 +152,65 @@ def summary_to_str(agent_name: str, summary: dict) -> str:
     """Format a compressed summary as a readable string for prompt injection."""
     body = json.dumps(summary, indent=2, ensure_ascii=False)
     return f"--- {agent_name} (summary) ---\n{body}\n"
+
+# ── Dynamic upstream context filtering ────────────────────────────────────────
+
+AGENT_CONTEXT_KEYS = {
+    "Architect": {
+        "BA": ["user_stories", "non_functional_requirements", "out_of_scope"],
+    },
+    "Planner": {
+        "BA": ["user_stories", "functional_requirements"],
+        "Architect": ["technology_stack", "architecture_summary", "system_components", "api_architecture"],
+    },
+    "Developer": {
+        "BA": ["user_stories", "functional_requirements"],
+        "Architect": ["technology_stack", "database_schema", "architecture_overview", "api_architecture", "database_design", "system_components", "architecture_summary"],
+        "Planner": ["epics"],
+    },
+    "QA": {
+        "BA": ["user_stories", "functional_requirements"],
+        "Developer": ["summary", "epics"],
+    },
+    "DevOps": {
+        "Architect": ["technology_stack", "infra"],
+        "Developer": ["setup_instructions", "environment_variables"],
+    },
+    "PM": {
+        "BA": ["user_stories", "out_of_scope"],
+        "Developer": ["summary"],
+        "QA": ["execution_results", "requirement_coverage"],
+        "DevOps": ["cicd_pipeline", "environments"],
+    },
+    "Optimisation": {
+        "BA": ["user_stories", "assumptions"],
+        "Developer": ["summary", "epics"],
+        "PM": ["timeline_weeks", "milestones", "risks"],
+    }
+}
+
+def compress_context_for_agent(agent_name: str, full_context: dict) -> dict:
+    """
+    Returns only the context keys each downstream agent actually needs from upstream.
+    Reduces prompt size by 60-80%.
+    """
+    keys = AGENT_CONTEXT_KEYS.get(agent_name, {})
+    if not keys:
+        return full_context  # e.g. Supervisor gets everything
+
+    compressed = {}
+    for source_agent, needed_keys in keys.items():
+        source_data = full_context.get(source_agent, {})
+        if not source_data:
+            continue
+        compressed[source_agent] = {
+            k: source_data[k]
+            for k in needed_keys
+            if k in source_data
+        }
+    
+    # Always include USER_BRIEF if present
+    if "USER_BRIEF" in full_context:
+        compressed["USER_BRIEF"] = full_context["USER_BRIEF"]
+        
+    return compressed

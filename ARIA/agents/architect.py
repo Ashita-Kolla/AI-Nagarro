@@ -221,15 +221,19 @@ def post_approval(data: dict, context_manager):
     
     return framework.run_all(data, project_name)
 
+from core.context_compressor import compress_context_for_agent
+
 def run(context_manager, correction: str = None) -> dict:
     """
     Runs the Architect agent.
     Transforms BA outputs into a complete technical solution architecture.
     """
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("Architect", raw_context)
+    
     user_brief = context.get("USER_BRIEF", "")
     ba_output = context.get("BA", {})
-    architect_output = context.get("Architect", {}) # Fetch previous iteration if editing
+    architect_output = raw_context.get("Architect", {}) # Fetch previous iteration if editing
     
     prompt_template = """
 You are the Expert AI SDLC Solution Architect for ARIA, a multi-agent SDLC platform.

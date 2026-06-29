@@ -56,6 +56,7 @@ const initialState = {
   activeGate: null,
   inputText: '',
   isEditing: false,
+  thread_id: null,
 };
 
 function reducer(state, action) {
@@ -69,6 +70,7 @@ function reducer(state, action) {
     case 'SET_GATE': return { ...state, activeGate: action.payload };
     case 'START_EDIT': return { ...state, isEditing: true, inputText: `Correction for ${state.activeGate}: ` };
     case 'END_EDIT': return { ...state, isEditing: false, inputText: '' };
+    case 'SET_THREAD_ID': return { ...state, thread_id: action.payload };
     default: return state;
   }
 }
@@ -771,6 +773,9 @@ export default function App() {
   // ── Handle events pushed by Python backend ───────────────────────────────
   function handleServerEvent(msg) {
     switch (msg.type) {
+      case 'pipeline_started':
+        dispatch({ type: 'SET_THREAD_ID', payload: msg.thread_id }); break;
+
       case 'log':
         dispatch({ type: 'ADD_LOG', payload: msg.message }); break;
 
@@ -1044,6 +1049,15 @@ export default function App() {
                       >
                         <ExternalLinkIcon />
                         Open full output
+                      </button>
+                    )}
+                    {state.thread_id && wsStatus === 'connected' && agent.status !== 'complete' && agent.status !== 'waiting_approval' && (
+                      <button
+                        onClick={() => wsSend({ type: 'resume', thread_id: state.thread_id, from_agent: agent.name })}
+                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 bg-blue-900/30 hover:bg-blue-800/50 text-blue-400 hover:text-blue-300 border border-blue-800/50 rounded-lg transition-colors font-medium"
+                        title="Resume pipeline execution from this agent"
+                      >
+                        ▶ Resume
                       </button>
                     )}
                     {agent.status === 'complete' && (

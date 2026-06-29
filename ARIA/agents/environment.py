@@ -2,9 +2,11 @@ import os
 import json
 import subprocess
 from core.llm_utils import call_llm, parse_json_from_llm
+from core.context_compressor import compress_context_for_agent
 
 def build_prompt(context_manager, correction: str = None) -> str:
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("Environment", raw_context)
     
     user_brief = context.get("USER_BRIEF", "")
     architect_output = context.get("Architect", {})

@@ -1,17 +1,19 @@
 import os
 import json
 from core.llm_utils import call_llm, parse_json_from_llm
+from core.context_compressor import compress_context_for_agent
 
 def build_prompt(context_manager, correction: str = None) -> str:
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("DevOps", raw_context)
     import json as _json
     
     # Extract upstream outputs via summaries
     user_brief = context.get("USER_BRIEF", "")
-    supervisor_output = context_manager.get_summary("Supervisor")
-    architect_output = context_manager.get_summary("Architect")
-    developer_output = context_manager.get_summary("Developer")
-    qa_output = context_manager.get_summary("QA")
+    supervisor_output = context.get("Supervisor", {})
+    architect_output = context.get("Architect", {})
+    developer_output = context.get("Developer", {})
+    qa_output = context.get("QA", {})
 
     prompt = f"""You are the DevOps Agent for the ARIA multi-agent SDLC system.
 

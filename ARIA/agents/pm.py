@@ -1,18 +1,20 @@
 import os
 import json
 from core.llm_utils import call_llm, parse_json_from_llm
+from core.context_compressor import compress_context_for_agent
 
 def build_prompt(context_manager, correction: str = None) -> str:
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("PM", raw_context)
     
     # Extract upstream summaries for token-efficient prompts
     user_brief = context.get("USER_BRIEF", "")
-    supervisor_output = context_manager.get_summary("Supervisor")
-    ba_output = context_manager.get_summary("BA")
-    architect_output = context_manager.get_summary("Architect")
-    developer_output = context_manager.get_summary("Developer")
-    qa_output = context_manager.get_summary("QA")
-    devops_output = context_manager.get_summary("DevOps")
+    supervisor_output = context.get("Supervisor", {})
+    ba_output = context.get("BA", {})
+    architect_output = context.get("Architect", {})
+    developer_output = context.get("Developer", {})
+    qa_output = context.get("QA", {})
+    devops_output = context.get("DevOps", {})
 
     prompt = f"""You are the PM Agent for ARIA, a multi-agent SDLC system.
 

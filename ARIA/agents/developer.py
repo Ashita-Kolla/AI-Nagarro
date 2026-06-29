@@ -5,96 +5,179 @@ from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from core.llm_utils import call_llm, parse_json_from_llm
 
-def build_prompt(context_manager, correction: str = None) -> str:
-    context = context_manager.get_context()
-    
-    architect_output = context_manager.get_summary("Architect")
-    planner_output = context_manager.get_summary("Planner")
+from core.context_compressor import compress_context_for_agent
 
-    import json as _json
-    planner_str = _json.dumps(planner_output, indent=2) if planner_output else "{}"
-    full_ctx_str = _json.dumps(context, indent=2)
-    
-    tech_stack = architect_output.get("technology_stack", {}) if architect_output else {}
+def build_foundation_prompt(tech_stack: dict, full_ctx_str: str, correction: str = None) -> str:
     frontend = tech_stack.get("frontend", "Not specified")
     backend = tech_stack.get("backend", "Not specified")
     database = tech_stack.get("database", "Not specified")
+    
+    prompt = f"""You are the Developer Agent for ARIA. Output ONLY a single valid JSON object. Nothing else.
 
-    prompt = f"""You are the Developer Agent for ARIA. Your ONLY job is to output a single valid JSON object. Nothing else.
-
-⚠️ ABSOLUTE OUTPUT RULES — VIOLATIONS WILL BREAK THE PIPELINE:
-1. Do NOT write any text before or after the JSON. No greetings, no explanations, no "Here is the code".
-2. Do NOT wrap the JSON in markdown fences. No ```json, no ```. Just raw JSON starting with {{ and ending with }}.
-3. ALL code inside JSON string values MUST use \\n for newlines (escaped backslash-n), NEVER raw newlines.
-   CORRECT:   "main.py": "from fastapi import FastAPI\\napp = FastAPI()\\n"
-   WRONG:     "main.py": "from fastapi import FastAPI\napp = FastAPI()\n"
+⚠️ ABSOLUTE OUTPUT RULES:
+1. Do NOT write any text before or after the JSON.
+2. Do NOT wrap the JSON in markdown fences (no ```json).
+3. ALL code inside JSON string values MUST use \\n for newlines.
 4. ALL double quotes inside code strings MUST be escaped as \\".
-5. Keep the total codebase MINIMAL. 3-5 files max. Short code. Every extra line risks truncation.
 
 PROJECT CONTEXT:
-{full_ctx_str[:2000]}
+{full_ctx_str}
 
-APPROVED TECH STACK:
-Frontend: {frontend}
-Backend: {backend}
-Database: {database}
+Generate ONLY the project foundation files for a {frontend} + {backend} project.
 
-APPROVED EPICS AND TASKS:
-{planner_str[:1500]}
+Foundation files only:
+- package.json or requirements.txt
+- main entry point (main.py or App.jsx)
+- config files (.env.example, tailwind.config.js etc)
+- database connection or storage utility
 
----
+Do NOT over-engineer the foundation. Consolidate configurations and setup into as few files as possible. Skip unnecessary boilerplate.
 
 CODE REQUIREMENTS:
-1. FRONTEND: Generate a single `index.html` using CDN imports (React via Babel, Tailwind via CDN). No build step.
-2. BACKEND: Single `main.py` using FastAPI + SQLite (`sqlite:///./app.db`).
-   - MUST include: `Base.metadata.create_all(bind=engine)` so tables auto-create on startup.
-   - MUST include: `CORSMiddleware` with `allow_origins=["*"]`.
-   - MUST serve `index.html` as a static file on the GET "/" route using FileResponse.
-3. DATABASE: SQLite only. No Postgres, no MySQL.
-4. AUTH: None unless explicitly required.
-5. SEED DATA: Insert 3-5 realistic example rows directly in `main.py` using a startup event.
+1. FRONTEND: Use {frontend}. Follow standard conventions. Avoid complex build steps if possible.
+2. BACKEND: Use {backend}. Ensure the application can serve both the API and the static frontend.
+3. DATABASE: Use {database}. Set up the initial connection logic.
+
 """
     if correction:
-        prompt += f"\n\n=== HUMAN/QA CORRECTION ===\n{correction}\n"
-        prompt += "\n⚠️ CRITICAL: You are implementing a correction. Keep your fix short and precise. Output the full updated codebase, but DO NOT add unnecessary bloat or you will hit the token limit.\n"
+        prompt += f"\n=== HUMAN/QA CORRECTION ===\n{correction}\n"
+        prompt += "\n⚠️ Keep your fix precise. Output the full updated codebase for the foundation.\n"
 
     prompt += """
-OUTPUT FORMAT — output ONLY this JSON, nothing else:
-{
-  "files": {
-    "requirements.txt": "fastapi\\nuvicorn\\nsqlalchemy\\n",
-    "main.py": "from fastapi import FastAPI\\nfrom fastapi.middleware.cors import CORSMiddleware\\nfrom fastapi.responses import FileResponse\\nfrom sqlalchemy import create_engine, Column, Integer, String\\nfrom sqlalchemy.orm import declarative_base, sessionmaker\\nfrom pydantic import BaseModel\\n\\napp = FastAPI()\\napp.add_middleware(CORSMiddleware, allow_origins=['*'], allow_methods=['*'], allow_headers=['*'])\\nengine = create_engine('sqlite:///./app.db')\\nBase = declarative_base()\\n# ... full code here ...",
-    "index.html": "<!DOCTYPE html>\\n<html>\\n<head>\\n<title>App</title>\\n</head>\\n<body>\\n<!-- full React+Tailwind frontend via CDN here -->\\n</body>\\n</html>"
-  },
-  "setup_instructions": {
-    "steps": ["1. pip install -r requirements.txt", "2. python -m uvicorn main:app --reload", "3. Open http://localhost:8000 in your browser"],
-    "environment_variables": []
-  }
-}
+OUTPUT FORMAT:
+{{
+  "files": {{"filepath": "content"}},
+  "setup_instructions": {{"steps": [], "environment_variables": []}}
+}}
+"""
+    return prompt
+
+def build_epic_prompt(epic: dict, tech_stack: dict, existing_files: list, user_brief: str = "") -> str:
+    frontend = tech_stack.get("frontend", "Not specified")
+    backend = tech_stack.get("backend", "Not specified")
+    database = tech_stack.get("database", "Not specified")
+    
+    prompt = f"""You are the Developer Agent for ARIA. Output ONLY a single valid JSON object. Nothing else.
+
+⚠️ ABSOLUTE OUTPUT RULES:
+1. Do NOT write any text before or after the JSON.
+2. Do NOT wrap the JSON in markdown fences (no ```json).
+3. ALL code inside JSON string values MUST use \\n for newlines.
+4. ALL double quotes inside code strings MUST be escaped as \\".
+
+PROJECT GOAL:
+{user_brief}
+
+Generate code files for this epic ONLY:
+Epic: {epic.get('title', 'Unknown')}
+Tasks: {json.dumps(epic.get('tasks', []))}
+Tech stack: {frontend} + {backend} + {database}
+
+Already generated files (DO NOT regenerate these unless modifying them for this epic):
+{chr(10).join(existing_files)}
+
+Generate ONLY the new/modified files needed for this epic.
+Consolidate your code into a minimal number of files. Do NOT create empty helper files, unnecessary directory structures, or overly abstracted design patterns.
+If modifying an existing file, provide the complete, updated file. Ensure all code is strictly functional and fully complete. No placeholders. No TODOs.
+
+OUTPUT FORMAT:
+{{
+  "files": {{"filepath": "complete file content"}}
+}}
+"""
+    return prompt
+
+def build_patch_prompt(tech_stack: dict, existing_files: list, correction: str, user_brief: str = "") -> str:
+    prompt = f"""You are the Developer Agent for ARIA. Output ONLY a single valid JSON object. Nothing else.
+
+⚠️ ABSOLUTE OUTPUT RULES:
+1. Do NOT write any text before or after the JSON.
+2. Do NOT wrap the JSON in markdown fences (no ```json).
+3. ALL code inside JSON string values MUST use \\n for newlines.
+4. ALL double quotes inside code strings MUST be escaped as \\".
+
+PROJECT GOAL:
+{user_brief}
+
+You are in PATCH MODE. An automated QA run or a human reviewer has found issues with the codebase.
+Feedback/Test Logs:
+{correction}
+
+Already generated files (DO NOT regenerate these unless modifying them to fix the issues):
+{chr(10).join(existing_files)}
+
+Generate ONLY the new/modified files needed to fix the issues mentioned in the feedback.
+Consolidate your code into a minimal number of files.
+If modifying an existing file, provide the complete, updated file. Ensure all code is strictly functional and fully complete. No placeholders. No TODOs.
+
+OUTPUT FORMAT:
+{{
+  "files": {{"filepath": "complete file content"}}
+}}
 """
     return prompt
 
 def run(context_manager, correction: str = None) -> dict:
     context = context_manager.get_context()
     
-    if not context.get("Architect"):
-        print("[Developer Agent Error] Cannot find Architect output. Ensure Architect agent has been approved before running Developer.")
+    if not context.get("Architect") or not context.get("Planner"):
+        print("[Developer Agent Error] Missing Architect or Planner output.")
         return {}
-    if not context.get("Planner"):
-        print("[Developer Agent Error] Cannot find Planner output. Ensure Planner agent has been approved before running Developer.")
-        return {}
+
+    # Compress Context
+    compressed = compress_context_for_agent("Developer", context)
+    full_ctx_str = json.dumps(compressed, indent=2)
+
+    tech_stack = context["Architect"].get("technology_stack", {})
+    epics = context["Planner"].get("epics", [])
+    user_brief = context.get("USER_BRIEF", "")
+    
+    all_files = {}
+    setup = {}
 
     try:
-        prompt = build_prompt(context_manager, correction)
-        # Using 8000 max_tokens to accommodate the massive JSON structure
-        response_text = call_llm(prompt, agent_name="Developer", max_tokens=8000)
-        parsed_data = parse_json_from_llm(response_text)
+        # Patch Mode: if there's a correction and Developer has already run
+        if correction and "Developer" in context:
+            print("[Developer] Patch Mode Activated! Processing corrections...")
+            existing_files_dict = context["Developer"].get("files", {})
+            existing_files = list(existing_files_dict.keys())
+            
+            patch_prompt = build_patch_prompt(tech_stack, existing_files, correction, user_brief)
+            patch_res = call_llm(patch_prompt, agent_name="Developer", max_tokens=4000)
+            parsed_patch = parse_json_from_llm(patch_res)
+            
+            if parsed_patch:
+                patched_files = parsed_patch.get("files", {})
+                existing_files_dict.update(patched_files) # Merge patches
+                return {"files": existing_files_dict, "setup_instructions": context["Developer"].get("setup_instructions", {})}
+            else:
+                print("[Developer] Failed to parse patch output.")
+                return context["Developer"]
+                
+        # Chunk 1: Foundation
+        print("[Developer] Generating foundation...")
+        foundation_prompt = build_foundation_prompt(tech_stack, full_ctx_str, correction)
+        foundation_res = call_llm(foundation_prompt, agent_name="Developer", max_tokens=4000)
+        parsed_foundation = parse_json_from_llm(foundation_res)
+        
+        if parsed_foundation:
+            all_files.update(parsed_foundation.get("files", {}))
+            setup = parsed_foundation.get("setup_instructions", {})
+            
+        # Chunk 2-N: Epics
+        for idx, epic in enumerate(epics):
+            print(f"[Developer] Generating Epic {idx+1}/{len(epics)}: {epic.get('title')}")
+            epic_prompt = build_epic_prompt(epic, tech_stack, list(all_files.keys()), user_brief=user_brief)
+            epic_res = call_llm(epic_prompt, agent_name="Developer", max_tokens=4000)
+            parsed_epic = parse_json_from_llm(epic_res)
+            
+            if parsed_epic:
+                # Merge new/updated files
+                for fpath, content in parsed_epic.get("files", {}).items():
+                    all_files[fpath] = content
 
-        if not parsed_data:
-            print("Developer Agent Error: Failed to parse valid JSON from LLM.")
-            return {}
-
-        return parsed_data
+        return {"files": all_files, "setup_instructions": setup}
+        
     except Exception as e:
         print(f"Developer Agent Error: {str(e)}")
         return {}
@@ -259,8 +342,17 @@ def generate_developer_tasks_docx(docx_path, context_manager, dev_data):
         
         for env in envs:
             row_cells = table.add_row().cells
-            row_cells[0].text = env.get("key", "")
-            row_cells[1].text = env.get("description", "")
-            row_cells[2].text = env.get("example", "")
+            if isinstance(env, dict):
+                # Expected format: {"key": ..., "description": ..., "example": ...}
+                row_cells[0].text = env.get("key", "")
+                row_cells[1].text = env.get("description", "")
+                row_cells[2].text = env.get("example", "")
+            else:
+                # Flat string format: "DATABASE_URL=sqlite:///tasks.db"
+                env_str = str(env)
+                parts = env_str.split("=", 1)
+                row_cells[0].text = parts[0].strip()
+                row_cells[1].text = ""
+                row_cells[2].text = parts[1].strip() if len(parts) > 1 else env_str
 
     doc.save(docx_path)

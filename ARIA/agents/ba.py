@@ -145,12 +145,15 @@ def post_approval(data: dict, context_manager):
         project_name = supervisor_output.get("project_name", "Unknown Project")
     return generate_brd(data, project_name)
 
+from core.context_compressor import compress_context_for_agent
+
 def run(context_manager, correction: str = None) -> dict:
     """
     Runs the BA agent.
     Returns the parsed JSON output.
     """
-    context = context_manager.get_context()
+    raw_context = context_manager.get_context()
+    context = compress_context_for_agent("BA", raw_context)
     user_brief = context.get("USER_BRIEF", "")
     supervisor_output = context.get("Supervisor", {})
     
