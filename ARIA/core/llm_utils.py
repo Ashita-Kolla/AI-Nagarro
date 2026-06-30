@@ -17,7 +17,7 @@ AGENT_ROUTING = {
     "Supervisor": {
         "provider": Provider.GROQ,
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Small output (~700 tokens), scout is fine and saves 70b quota"
+        "reason": "Small output, scout is fast and cheap"
     },
     "BA": {
         "provider": Provider.GROQ,
@@ -37,27 +37,27 @@ AGENT_ROUTING = {
     "Developer": {
         "provider": Provider.GROQ,
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Faster than qwen3-32b on OpenRouter; JSON mode is OFF (NO_JSON_MODE_AGENTS) so Groq validator won't reject code strings"
+        "reason": "Heavy coding output, DeepSeek is excellent for code generation"
     },
     "QA": {
         "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Avoid 70b daily limit"
+        "model": "llama-3.3-70b-versatile",
+        "reason": "Needs high reasoning for testing logic, but code output is small"
     },
     "DevOps": {
         "provider": Provider.GROQ,
         "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Avoid 70b daily limit"
+        "reason": "Small output configuration"
     },
     "PM": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Structured JSON, no code needed"
+        "provider": Provider.HUGGINGFACE,
+        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "reason": "Basic structured JSON analysis, using HF for variety"
     },
     "Optimisation": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Analysis only, small output"
+        "provider": Provider.HUGGINGFACE,
+        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+        "reason": "Basic analysis, using HF for variety"
     },
 }
 
