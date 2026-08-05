@@ -46,18 +46,18 @@ AGENT_ROUTING = {
     },
     "DevOps": {
         "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
+        "model": "llama-3.1-8b-instant",
         "reason": "Small output configuration"
     },
     "PM": {
-        "provider": Provider.HUGGINGFACE,
-        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        "reason": "Basic structured JSON analysis, using HF for variety"
+        "provider": Provider.GROQ,
+        "model": "llama-3.1-8b-instant",
+        "reason": "Basic structured JSON analysis, changed to GROQ to avoid HF DNS issues"
     },
     "Optimisation": {
-        "provider": Provider.HUGGINGFACE,
-        "model": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        "reason": "Basic analysis, using HF for variety"
+        "provider": Provider.GROQ,
+        "model": "llama-3.1-8b-instant",
+        "reason": "Basic analysis, changed to GROQ to avoid HF DNS issues"
     },
 }
 
