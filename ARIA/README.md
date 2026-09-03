@@ -6,7 +6,7 @@ The project is built with a **Python FastAPI / LangGraph backend** and a **React
 
 ---
 
-## 🌟 Key Features
+## 🌟 Key Features of this Project 
 
 - **Multi-Agent Pipeline**: Specialized agents (BA, Architect, Planner, Developer, QA, DevOps, PM, Optimisation) working sequentially on your software brief.
 - **LangGraph Orchestration**: Uses state graphs and SQLite checkpoints to seamlessly pause, resume, and manage agent states.
@@ -27,12 +27,15 @@ The project is built with a **Python FastAPI / LangGraph backend** and a **React
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Python 3.9+
 - Node.js (for the frontend, though a local `node/` folder is included in the start script)
 - A Groq API Key (or other configured LLM provider)
 
 ### 1. Configuration
+
 Create a `.env` file in the root of the ARIA folder and add your LLM API key:
+
 ```env
 GROQ_API_KEY=your_api_key_here
 ```
@@ -42,6 +45,7 @@ GROQ_API_KEY=your_api_key_here
 You can run the application using either a unified helper script or manually in separate terminals.
 
 #### Option A: Running with the helper script (Recommended)
+
 You can start the frontend development server using the provided PowerShell script. (Make sure you have a separate terminal running the backend if the script only starts the frontend).
 
 ```powershell
@@ -53,18 +57,21 @@ cd "c:\Users\ashitakolla\OneDrive - Nagarro\Desktop\AI-Nagarro\ARIA"
 ```
 
 #### Option B: Running both manually in separate terminals
+
 If you prefer to run the backend and frontend manually:
 
 **Terminal 1: Backend**
+
 ```powershell
 # 1. Navigate to ARIA folder
 cd "c:\Users\ashitakolla\OneDrive - Nagarro\Desktop\AI-Nagarro\ARIA"
 
 # 2. Start the FastAPI/uvicorn server
-python -m uvicorn ws_server:app --port 8000
+.\.venv\Scripts\python.exe -m uvicorn ws_server:app --port 8000  
 ```
 
 **Terminal 2: Frontend**
+
 ```powershell
 # 1. Navigate to the ARIA folder
 cd "c:\Users\ashitakolla\OneDrive - Nagarro\Desktop\AI-Nagarro\ARIA"

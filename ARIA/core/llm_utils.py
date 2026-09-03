@@ -13,51 +13,59 @@ class Provider(Enum):
     HUGGINGFACE = "huggingface"
 
 # ── Agent routing ─────────────────────────────────────────────────────────────
+# All agents share one free OpenRouter model. Groq's free/dev tier caps at
+# 8000 TPM (tokens/minute, input+output combined) per model — too small for
+# agents like Architect/Developer that need multi-thousand-token responses,
+# and it was already erroring with 413 rate_limit_exceeded. OpenRouter's free
+# tier limits requests/day (~20/min, 200/day), not tokens/minute, so it
+# comfortably covers a full multi-agent pipeline run.
+FREE_MODEL = "nvidia/nemotron-3-super-120b-a12b:free"
+
 AGENT_ROUTING = {
     "Supervisor": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Small output, scout is fast and cheap"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Small output; moved off Groq (8000 TPM cap was too tight, llama-4-scout also no longer available)"
     },
     "BA": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Good at structured output, fast"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Structured output; moved off Groq (8000 TPM cap was too tight, llama-4-scout also no longer available)"
     },
     "Architect": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Avoid OpenRouter credit limit"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Needs ~8000 output tokens per call; Groq's 8000 TPM cap made this fail outright (413), OpenRouter free tier has no such ceiling"
     },
     "Planner": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Structured JSON planning, scout is sufficient"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Structured JSON planning; moved off Groq (8000 TPM cap was too tight, llama-4-scout also no longer available)"
     },
     "Developer": {
-        "provider": Provider.GROQ,
-        "model": "meta-llama/llama-4-scout-17b-16e-instruct",
-        "reason": "Heavy coding output, DeepSeek is excellent for code generation"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Heavy coding output (up to 8000 tokens); Groq's 8000 TPM cap made this fail outright, OpenRouter free tier has no such ceiling"
     },
     "QA": {
-        "provider": Provider.GROQ,
-        "model": "llama-3.3-70b-versatile",
-        "reason": "Needs high reasoning for testing logic, but code output is small"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Needs high reasoning for testing logic; llama-3.3-70b-versatile was retired by Groq (free/dev tier) on 2026-08-16"
     },
     "DevOps": {
-        "provider": Provider.GROQ,
-        "model": "llama-3.1-8b-instant",
-        "reason": "Small output configuration"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Small output configuration; llama-3.1-8b-instant was retired by Groq (free/dev tier) on 2026-08-16"
     },
     "PM": {
-        "provider": Provider.GROQ,
-        "model": "llama-3.1-8b-instant",
-        "reason": "Basic structured JSON analysis, changed to GROQ to avoid HF DNS issues"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Basic structured JSON analysis; llama-3.1-8b-instant was retired by Groq (free/dev tier) on 2026-08-16"
     },
     "Optimisation": {
-        "provider": Provider.GROQ,
-        "model": "llama-3.1-8b-instant",
-        "reason": "Basic analysis, changed to GROQ to avoid HF DNS issues"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL,
+        "reason": "Basic analysis; llama-3.1-8b-instant was retired by Groq (free/dev tier) on 2026-08-16"
     },
 }
 
@@ -69,7 +77,7 @@ MAX_TOKENS_MAP = {
     "Planner":     5000,   # was 3000 — multi-epic plans (4+ epics × tasks) truncated at 3k
     "Developer":   8000,
     "Environment":  500,
-    "QA":          5000,   # stays inside llama-3.3-70b-versatile 12k TPM window
+    "QA":          5000,   # FREE_MODEL (OpenRouter) — comfortably within its context window
     "DevOps":      1500,
     "PM":          1500,
     "Optimisation": 1000,
@@ -80,12 +88,10 @@ MAX_TOKENS_MAP = {
 # rejects responses with raw newlines in code strings (400 json_validate_failed).
 # Developer returns plain text; we parse JSON ourselves via parse_json_from_llm.
 #
-# QA is intentionally NOT in this set: llama-3.3-70b-versatile without JSON mode
-# ignores the JSON instruction entirely and outputs ### filename ### markdown.
-# With JSON mode ON, Groq may raise json_validate_failed — the existing handler
-# extracts failed_generation and _repair_json_string fixes raw newlines before
-# parse_json_from_llm sees it, so the recovery chain still works.
-NO_JSON_MODE_AGENTS = {"Developer", "QA"}
+# This set only affects agents routed to Groq (see _call_groq). QA now routes
+# to OpenRouter (z-ai/glm-5.2:free), which has no strict JSON mode to fight —
+# parse_json_from_llm handles extraction/repair for it regardless.
+NO_JSON_MODE_AGENTS = {"Developer"}
 
 # ── Available model cache ─────────────────────────────────────────────────────
 _AVAILABLE_MODELS: list = []
@@ -104,7 +110,7 @@ def _load_available_models():
 def _resolve_model(preferred: str) -> str:
     """
     Return preferred model if available, otherwise auto-pick from available list.
-    Priority: llama-4 > llama-3.3-70b > llama-3.1-8b-instant > any llama > anything
+    Priority: llama-4 > gpt-oss-120b > gpt-oss-20b > any llama > anything
     """
     if not _AVAILABLE_MODELS:
         return preferred  # No list — trust the caller
@@ -114,9 +120,8 @@ def _resolve_model(preferred: str) -> str:
     print(f"[LLM] '{preferred}' not available — auto-selecting from {len(_AVAILABLE_MODELS)} models...")
     priority = [
         lambda m: "llama-4" in m,
-        lambda m: "llama-3.3-70b" in m,
-        lambda m: "llama-3.1-8b-instant" in m,
-        lambda m: "llama-3.1-8b" in m,
+        lambda m: "gpt-oss-120b" in m,
+        lambda m: "gpt-oss-20b" in m,
         lambda m: "llama" in m,
         lambda m: True,
     ]
@@ -139,8 +144,8 @@ def call_llm(prompt, agent_name=None, max_tokens=None, temperature=0.3):
     Routes to Groq, OpenRouter, or HuggingFace based on agent requirements.
     """
     routing = AGENT_ROUTING.get(agent_name, {
-        "provider": Provider.GROQ,
-        "model": "llama-3.3-70b-versatile"
+        "provider": Provider.OPENROUTER,
+        "model": FREE_MODEL
     })
 
     provider = routing["provider"]
@@ -207,24 +212,37 @@ def _call_groq(prompt, model, max_tokens, temperature, agent_name):
                 pass
 
         print(f"[Groq Error] {agent_name}: {error_str}")
-        print(f"[Fallback] Routing {agent_name} to OpenRouter...")
-        return _call_openrouter(prompt, "deepseek/deepseek-chat", max_tokens, temperature)
+        print(f"[Fallback] Routing {agent_name} to OpenRouter (free model)...")
+        return _call_openrouter(prompt, FREE_MODEL, max_tokens, temperature)
 
-# Groq fallback models tried in order when OpenRouter is exhausted.
-# Each has progressively higher TPM so a 413 on one cascades to the next.
-# qwen3-32b: 6k TPM  |  llama-3.3-70b-versatile: 12k TPM  |  llama-3.1-8b-instant: 20k TPM
-_GROQ_FALLBACK_MODELS = [
-    "qwen/qwen3-32b",
-    "llama-3.3-70b-versatile",
-    "llama-3.1-8b-instant",
+# Other free OpenRouter models tried in rotation when the primary FREE_MODEL
+# is rate-limited or its upstream backend is congested (shared free-tier pool
+# 429s are per-model, not per-account, so a different free model often works).
+_FREE_MODEL_FALLBACKS = [
+    "z-ai/glm-5.2:free",
+    "minimax/minimax-m3:free",
+    "google/gemma-4-31b-it:free",
 ]
+
+# Groq models tried only as an absolute last resort, after every free
+# OpenRouter option is exhausted. Groq's free/dev tier caps at 8000 TPM
+# (tokens/minute, input+output combined) per model, so requests are capped
+# well below that here to avoid the same 413 rate_limit_exceeded loop.
+_GROQ_LAST_RESORT_MODEL = "openai/gpt-oss-20b"
+_GROQ_LAST_RESORT_MAX_TOKENS = 3000
 
 # Minimum seconds to wait between successive chunked-generation calls
 _CHUNK_MIN_INTERVAL = 1.0
 _last_openrouter_call: float = 0.0
 
 
-def _call_openrouter(prompt, model, max_tokens, temperature, max_retries: int = 3):
+# Auto-escalation ceiling and multiplier for truncated (finish_reason=="length")
+# responses — see the escalation block below _call_openrouter's retry loop.
+_MAX_TOKENS_CEILING = 16000
+_ESCALATION_FACTOR = 1.75
+
+
+def _call_openrouter(prompt, model, max_tokens, temperature, max_retries: int = 3, _tried_models=None, _escalated=False):
     global _last_openrouter_call
 
     api_key = os.environ.get('OPENROUTER_API_KEY')
@@ -232,15 +250,23 @@ def _call_openrouter(prompt, model, max_tokens, temperature, max_retries: int = 
         print("[OpenRouter Error] OPENROUTER_API_KEY is not set.")
         return None
 
+    # Track which free models we've already tried this call chain, so the
+    # fallback rotation below never retries the same congested model twice.
+    tried_models = _tried_models or set()
+    tried_models.add(model)
+
     body = {
         "model": model,
         "messages": [{"role": "user", "content": prompt}],
         "max_tokens": max_tokens,
-        "temperature": temperature
+        "temperature": temperature,
+        # Every agent here wants a direct structured answer within a tight
+        # token budget. Reasoning-capable free models (nemotron, glm, minimax)
+        # otherwise spend the whole max_tokens budget on visible chain-of-
+        # thought prose and never reach the actual JSON — this suppresses that
+        # on every model that honors OpenRouter's unified reasoning toggle.
+        "reasoning": {"enabled": False},
     }
-    # Disable reasoning for DeepSeek V4 Flash — saves tokens, faster response
-    if "deepseek-v4-flash" in model:
-        body["reasoning"] = {"enabled": False}
 
     for attempt in range(1, max_retries + 1):
         # ── Inter-chunk throttle ──────────────────────────────────────────────
@@ -261,7 +287,44 @@ def _call_openrouter(prompt, model, max_tokens, temperature, max_retries: int = 
                 timeout=120
             )
             response.raise_for_status()
-            return response.json()["choices"][0]["message"]["content"]
+            data = response.json()
+            choices = data.get("choices")
+            if not choices:
+                # OpenRouter can return HTTP 200 with no choices (e.g. an
+                # embedded provider error, empty upstream response). Surface
+                # it as a normal exception so the retry/rotation logic below
+                # handles it instead of crashing on a bare KeyError.
+                raise RuntimeError(f"OpenRouter response had no choices: {str(data)[:300]}")
+
+            choice = choices[0]
+            content = choice["message"]["content"]
+
+            # The response was cut off mid-generation before finishing the
+            # JSON. Rather than pre-allocating a big max_tokens ceiling on
+            # every call "just in case", only pay for more tokens on the rare
+            # call that actually needs them, and only once per call chain.
+            #
+            # finish_reason=="length" is the documented signal, but some free/
+            # preview models misreport or omit it, and their usage stats can
+            # be unreliable too (0 or missing completion_tokens even on a
+            # genuinely truncated response). So also fall back to a signal
+            # the API can't misreport: well-formed JSON always ends in '}' or
+            # ']' — content of meaningful length that doesn't is incomplete
+            # no matter what finish_reason/usage claim.
+            completion_tokens = data.get("usage", {}).get("completion_tokens", 0)
+            trimmed = content.rstrip().rstrip("`").rstrip()
+            looks_incomplete = len(trimmed) > 50 and trimmed[-1] not in "}]"
+            hit_ceiling = (
+                choice.get("finish_reason") == "length"
+                or completion_tokens >= max_tokens - 5
+                or looks_incomplete
+            )
+            if hit_ceiling and not _escalated and max_tokens < _MAX_TOKENS_CEILING:
+                escalated_tokens = min(int(max_tokens * _ESCALATION_FACTOR), _MAX_TOKENS_CEILING)
+                print(f"[OpenRouter] Response likely truncated at {max_tokens} tokens (finish_reason={choice.get('finish_reason')!r}, completion_tokens={completion_tokens}, looks_incomplete={looks_incomplete}). Retrying with {escalated_tokens}...")
+                return _call_openrouter(prompt, model, escalated_tokens, temperature, max_retries, tried_models, _escalated=True)
+
+            return content
 
         except requests.exceptions.HTTPError as e:
             status = e.response.status_code if e.response is not None else None
@@ -297,28 +360,29 @@ def _call_openrouter(prompt, model, max_tokens, temperature, max_retries: int = 
                 continue
             break
 
-    # ── All retries failed — walk Groq fallback model list ──────────────────
-    print(f"[OpenRouter] All {max_retries} attempts failed. Trying Groq fallback chain...")
-    client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
-    for fb_model in _GROQ_FALLBACK_MODELS:
-        try:
-            print(f"[Groq Fallback] Trying {fb_model}...")
-            fallback_resp = client.chat.completions.create(
-                messages=[{"role": "user", "content": prompt}],
-                model=fb_model,
-                temperature=temperature,
-                max_tokens=max_tokens,
-            )
-            return fallback_resp.choices[0].message.content
-        except Exception as groq_err:
-            err_str = str(groq_err)
-            if "413" in err_str or "rate_limit_exceeded" in err_str or "tokens" in err_str:
-                # Prompt too large for this model's TPM — try the next one
-                print(f"[Groq Fallback] {fb_model} TPM too small, trying next fallback...")
-                continue
-            print(f"[Groq Fallback Error] {fb_model}: {groq_err}")
-            break  # Non-TPM error — no point retrying with same prompt
-    print("[Groq Fallback] All fallback models exhausted.")
+    # ── This model exhausted — try another free OpenRouter model ────────────
+    next_free_model = next((m for m in _FREE_MODEL_FALLBACKS if m not in tried_models), None)
+    if next_free_model:
+        print(f"[OpenRouter] '{model}' exhausted. Rotating to free model '{next_free_model}'...")
+        # Single attempt per rotation model — the goal is to quickly find one
+        # that isn't congested, not to hammer each candidate 3x in a row.
+        return _call_openrouter(prompt, next_free_model, max_tokens, temperature, 1, tried_models)
+
+    # ── Every free model failed — absolute last resort: Groq, token-capped ──
+    print(f"[OpenRouter] All free models exhausted. Trying Groq last resort ({_GROQ_LAST_RESORT_MODEL})...")
+    try:
+        client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+        fallback_resp = client.chat.completions.create(
+            messages=[{"role": "user", "content": prompt}],
+            model=_GROQ_LAST_RESORT_MODEL,
+            temperature=temperature,
+            max_tokens=min(max_tokens, _GROQ_LAST_RESORT_MAX_TOKENS),
+        )
+        return fallback_resp.choices[0].message.content
+    except Exception as groq_err:
+        print(f"[Groq Last Resort Error]: {groq_err}")
+
+    print("[OpenRouter] All fallback options exhausted.")
     return None
 
 def _call_huggingface(prompt, model, max_tokens):
@@ -465,9 +529,12 @@ def parse_json_from_llm(text):
         # so the closing '"' we add below actually closes the string.
         if partial.endswith('\\'):
             partial = partial[:-1]
-        # Count unclosed braces and brackets
-        depth_brace = 0
-        depth_bracket = 0
+        # Track open braces/brackets on a stack so they close in the correct
+        # (reverse-of-opening) order. Closing all ']' before all '}' — as a
+        # flat count-based approach does — produces invalid JSON whenever an
+        # object is nested inside an array that itself isn't the outermost
+        # structure, e.g. {"epics":[{"title":"cut off mid-string.
+        open_stack = []
         in_str = False
         esc = False
         for ch in partial:
@@ -481,19 +548,20 @@ def parse_json_from_llm(text):
                 in_str = not in_str
                 continue
             if not in_str:
-                if ch == '{':
-                    depth_brace += 1
-                elif ch == '}':
-                    depth_brace -= 1
-                elif ch == '[':
-                    depth_bracket += 1
-                elif ch == ']':
-                    depth_bracket -= 1
-        # Close any dangling string, then close open arrays and objects
+                if ch in '{[':
+                    open_stack.append('}' if ch == '{' else ']')
+                elif ch in '}]' and open_stack:
+                    open_stack.pop()
+        # Close any dangling string first, then drop a dangling trailing
+        # comma/colon (truncation often cuts right after one, before the
+        # next key/element/value), then close open arrays and objects
+        # innermost-first.
         if in_str:
             partial += '"'
-        partial += ']' * max(0, depth_bracket)
-        partial += '}' * max(0, depth_brace)
+        stripped = partial.rstrip()
+        if stripped and stripped[-1] in ',:':
+            partial = stripped[:-1]
+        partial += ''.join(reversed(open_stack))
         try:
             result = json.loads(partial)
             print("[LLM JSON Parse] Recovered partial JSON by closing unclosed structures.")
@@ -502,6 +570,15 @@ def parse_json_from_llm(text):
             pass
 
     # 6. All strategies failed
-    print("[LLM JSON Parse Error] Could not extract valid JSON. Raw output snippet:")
-    print(text[:800])
+    print(f"[LLM JSON Parse Error] Could not extract valid JSON. Raw output length: {len(text)} chars.")
+    if len(text) <= 1600:
+        print(text)
+    else:
+        # Show both ends — the start alone can't distinguish "truncated
+        # mid-output" from "malformed somewhere in the middle/end", and the
+        # end is exactly where a truncation cutoff would show up.
+        print("--- head ---")
+        print(text[:800])
+        print("--- tail ---")
+        print(text[-800:])
     return None

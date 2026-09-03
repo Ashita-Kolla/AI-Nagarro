@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+groq
+requests
+python-docx
+langgraph
+langgraph-checkpoint-sqlite
+websockets
